@@ -3,4 +3,4 @@ Directories
 
 admin	: lrsd, command line utilities
 base	: skelton for base*.tgz, Makefile for building base*.tgz
-dist	: base*.tgz
+dist	: base*.tgz and initrd,bzImage,revoboot.pxe with version info

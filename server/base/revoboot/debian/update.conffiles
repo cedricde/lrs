@@ -1,0 +1,11 @@
+#!/bin/sh
+
+exit 0
+
+grep -v templates debian/conffiles > debian/conffiles.clean
+
+for i in images/templates/*
+do
+    echo "/tftpboot/revoboot/$i" >> debian/conffiles.clean
+done
+mv -f debian/conffiles.clean debian/conffiles

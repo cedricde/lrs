@@ -4,7 +4,7 @@
 ../admin/perl/create_config	revoboot/bin/create_config
 ../admin/perl/rename_host	revoboot/bin/rename_host
 ../../client/revimage/decompress-test	revoboot/bin/decompress-test
-../../client/grub.cdrom/grub-0.95/stage2/stage2_eltorito	revoboot/bin/grub.cdrom
+../../client/grub.cdrom/stage2/stage2_eltorito	revoboot/bin/grub.cdrom
 ../admin/lrsd			revoboot/bin/lrsd
 ../admin/perl/info		revoboot/bin/info
 ../admin/perl/inifile.pl	revoboot/bin/inifile.pl

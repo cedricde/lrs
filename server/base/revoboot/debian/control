@@ -1,0 +1,13 @@
+Source: lbs
+Section: utils
+Priority: optional
+Maintainer: Linbox Team <nobody@linbox.com>
+Build-Depends: debhelper (>> 3.0.0)
+Standards-Version: 3.5.2
+
+Package: lbs
+Architecture: any
+Depends: ${shlibs:Depends}, nfs-kernel-server, nfs-common, tftpd-hpa | atftpd
+Recommends: dhcp3-common, dhcp3-server
+Description: Linbox Backup Server core binaries (GPL edition)
+ Linbox Backup Server core binaries.
