@@ -1,0 +1,11 @@
+webmin-lbs-inventory (1.6.0) stable; urgency=low
+
+  * New release
+
+ -- Linbox Team <info@linbox.com>  Wed,  9 Jun 2004 12:39:16 +0200
+
+webmin-lbs-inventory (0.1) stable; urgency=low
+
+  * First package
+
+ -- Sebastien Bacher <sbacher@linbox.com>  Fri,  6 Feb 2004 11:09:00 +0100

@@ -1,0 +1,3 @@
+chemin_basedir=Répertoire Basedir,0
+chemin_CSV=Répertoire des fichiers CSV,0
+adresse_mail=Adresse mail,0

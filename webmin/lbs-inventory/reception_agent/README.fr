@@ -1,0 +1,8 @@
+Ce repertoire contient le cgi/script php de reception des infos de l'agent.
+Le fichier config.php contient la configuration, et chaque directive est 
+détaillé dans le fichier.
+Il faut que apache pointe d'une maniére ou d'une autre sur ce repertoire 
+(via un alias, cf /etc/httpd/conf/lbs-inventory.conf)
+
+
+

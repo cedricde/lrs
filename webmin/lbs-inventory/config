@@ -1,0 +1,3 @@
+chemin_CSV=/var/lib/ocsinventory
+chemin_basedir=/tftpboot/revoboot
+adresse_mail=ocsinventory

@@ -1,0 +1,50 @@
+#!/usr/bin/make -f
+
+clean:
+	rm -rf *~ debian/tmp debian/webmin-lbs-inventory
+	rm -f build-stamp
+	dh_clean
+
+build:
+	echo "Nothing to build"
+
+binary: binary-arch binary-indep
+
+binary-arch: 
+
+DESTDIR = debian/webmin-lbs-inventory
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs
+
+	debian/copyversion
+	-cp -af * $(DESTDIR)/usr/share/webmin/lbs-inventory/
+
+	-find $(DESTDIR) -name CVS -exec rm -rf {} \; 2>/dev/null
+	-find $(DESTDIR) -name .svn -exec rm -rf {} \; 2>/dev/null
+	-find $(DESTDIR) -name .keepme -exec rm -rf {} \; 2>/dev/null
+
+	rm -rf $(DESTDIR)/usr/share/webmin/lbs-inventory/debian
+	find $(DESTDIR) -name \*.cgi -o -name \*.php -exec chmod 755 {} \;
+
+	install --mode=600 config $(DESTDIR)/etc/webmin/lbs-inventory/config
+	touch $(DESTDIR)/etc/webmin/lbs-inventory/admin.acl
+
+binary-indep: install
+	dh_testdir
+	dh_testroot
+	dh_installdebconf
+	dh_installdocs README
+	dh_installchangelogs
+	dh_link
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_perl
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+

@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+
+/usr/sbin/update-webmin add lbs-inventory
+
+[ ! -d /var/lib/ocsinventory ] && mkdir /var/lib/ocsinventory
+chown www-data /var/lib/ocsinventory
+
+#DEBHELPER#

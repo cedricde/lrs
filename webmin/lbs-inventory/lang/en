@@ -1,0 +1,48 @@
+index_title=Inventory for LRS clients
+
+tit_error=Error
+
+err_cnf=Error : $1 command not found
+err_dnf='$1': Directory not found
+err_fnf='$1': File not found
+err_bootmenu_mustdef=Invalid menu. You must select a default menu item.
+err_bootmenu_atleastone=Invalid menu. You must select at least one boot menu item.
+err_bootmenu_baddef=Default boot menu '$1' is not valid, because it is not part of the selected boot menu items.
+err_invalcgi_badop=Invalid CGI request. Operation not registered.
+err_invalcgi_noimg=Invalid CGI request. No image argument.
+err_invalcgi_nomac=Invalid CGI request. No mac argument.
+err_invalcgi_nomenu=Invalid CGI request. No menu argument.
+err_invalcgi_toofewargs=Invalid CGI request. Too few arguments.
+err_mac_inval='$1': Invalid MAC address
+err_mac_mandat=The MAC address is mandatory.
+err_mac_used=MAC address already declared
+err_name_mandat=The name is mandatory.
+err_name_inval='$1': Invalid name.
+err_name_usedby=Name '$1' is already used by host '$2'.
+err_adminid_mandat=The admin ID is mandatory.
+err_ip_inval='$1': Invalid IP address.
+err_hwinfo_noini=Hardware configuration for host '$1' was not found.
+err_imgbase_usedby='$1': This image can't be removed, because it is currently used by host(s):<br> $2 .
+err_confnf=LRS configurtion file <b>$1</b> not found. Please check path in module configuration.
+err_paramnf=Parameter <tt>$1</tt> not found in file <b>$2</b> .
+err_basedirnf=LRS root directory <b>$1</b> not found. You should check <tt>basedir</tt> located into <tt>lbs.conf</tt> .
+err_cantlink=Unable to link <tt>$1</tt> with <tt>$2</tt> .
+author=<a href="http://www.freealter.com/"><b>Free&Alter Soft</b></a>
+version=version
+
+err_info_file=<br><b>No information about CPU,<br> Memory and VGA is avilable.</b><br><br>
+
+err_no_machine_recorded=No clients data in the inventory.
+
+err_garantie_file=<br><b>No information about <br> the Guarantie is avilable.</b><br><br>
+
+err_geo_file=<br><b>No information about <br> the Geographical Situation is avilable.</b><br><br>
+
+err_network_file=<br><b>No network information about <br> the machine is avilable.</b><br><br>
+
+
+err_ld_file=<br><b>No information about <br> logical drivers is avilable.</b><br><br>
+
+err_device_file=<br><b>No information about <br> devices is avilable.</b><br><br>
+
+lab_inv=Inv.

@@ -1,0 +1,35 @@
+index_title=Inventaire
+
+tit_error=Erreur
+
+err_no_machine_recorded=Aucun client n'a encore été enregistré dans l'inventaire.
+
+err_cnf='$1': Commande introuvable
+err_dnf='$1': Répertoire introuvable
+err_fnf='$1': Fichier introuvable
+err_bootmenu_mustdef=Menu invalide. Vous devez choisir un menu de boot par defaut.
+err_bootmenu_atleastone=Menu invalide. Vous devez choisir au moins 1 menu de démarrage.
+err_bootmenu_baddef=Le menu de boot par defaut '$1' est invalide, car il ne fait pas partie de la liste des menus de démarrage sélectionnés.
+err_invalcgi_badop=Requete CGI invalide. Opération non reconnue.
+err_invalcgi_noimg=Requete CGI invalide. Absence d'image.
+err_invalcgi_nomac=Requete CGI invalide. Absence d'adresse mac.
+err_invalcgi_nomenu=Requete CGI invalide. Absence de menu.
+err_invalcgi_toofewargs=Requete CGI invalide. Pas assez d'arguments.
+err_mac_inval='$1': Adresse MAC invalide.
+err_mac_mandat=L'adresse MAC est obligatoire.
+err_mac_used=Adresse MAC déjà déclarée
+err_name_mandat=Le nom est obligatoire.
+err_name_inval='$1': Format de nom invalide.
+err_name_usedby=Le nom '$1' est déjà utilisé par la machine '$2'.
+err_adminid_mandat=Le mot de passe d'identification est obligatoire.
+err_ip_inval='$1': Adresse IP invalide.
+err_hwinfo_noini=Configuration matérielle pour '$1' introuvable.
+err_imgbase_usedby='$1': Cette image ne pas etre effacée, car elle est actuellement utilisée par les machines:<br> $2 .
+err_confnf=Fichier de configuration LRS <b>$1</b> introuvable. Veuillez vérifier son chemin dans la configuration du module.
+err_paramnf=Paramètre <tt>$1</tt> introuvable dans <b>$2</b> .
+err_basedirnf=Le répertoire racine LRS <b>$1</b> est inaccessible. Veuillez vérifier le paramètre <tt>basedir</tt> dans le fichier <tt>lbs.conf</tt> .
+err_cantlink=Impossible détablir un lien <tt>$1</tt> avec <tt>$2</tt> .
+author=<a href="http://www.freealter.com/"><b>Free&ALter Soft</b></a>
+version=version
+
+lab_inv=Inv.

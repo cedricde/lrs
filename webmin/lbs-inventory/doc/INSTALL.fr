@@ -1,0 +1,80 @@
+            Faire fonctionner l'interface Web à OCSInventory sans 
+	       installer la suite complète Linbox Rescue Server
+
+Pré-requis:
+===========
+
+Sur le serveur:
+- Webmin >= 0.960 (voir http://www.webmin.com pour plus d'infos) installé
+  dans /usr/share/webmin/
+- Apache
+- PHP >= 4.1, en version Apache et en version CGI.
+  Sur une Debian Woody: paquets 'php4' et 'php4-cgi'
+  Sur une Mandrake: paquets 'apache2-mod_php' et 'php-cgi'
+
+Et sur les clients:
+- Le client OCS Inventory Linbox >= 2.2.0 disponible sur 
+  ftp://ftp.linbox.com/pub/lrs/inventory/
+  
+La principale différence entre le client Linbox et le client officiel, est que
+dans sa mouture Linbox, des scripts Python se chargent d'envoyer les fichiers
+CSV générés par l'agent OCS, au serveur central par HTTP.
+
+   Lrs-inventory.exe -> OCSInventoryCSV.exe -> Envoi des .csv par HTTP
+  
+
+Installation:
+=============
+
+- Installer les modules Webmin suivants depuis l'interface Webmin (ces 
+  modules sont dispo sur ftp://ftp.linbox.com/pub/lrs/webmin)
+  - lbs_common-x.x.x.wbm (version 1.3.0 ou mieux),
+  - lbs-inventory-x.x.x.wbm (version 1.6.0 ou mieux),
+  - lrs-theme-x.x.wbm
+
+- Comme indiqué sur http://phpwebmin.sf.net , ajouter les variables suivantes
+  dans le php.ini en cas d'alerte sécurité PHP:
+ 
+	cgi.force_redirect=1
+	cgi.redirect_status_env="MINISERV_CONFIG"
+  
+- Dans le répertoire /var/lib/lrs/, créer un lien de 'php' vers l'exécutable
+  CGI de php4.
+  Sur une Debian Woody: ln -s /usr/bin/php4 /var/lib/lrs/php
+  Sur une Mandrake: ln -s /usr/bin/php-cgi /var/lib/lrs/php
+  
+- Installer le fichier 'lbs-inventory.conf' dans Apache via un include dans
+  apache.conf ou apache2.conf, par exemple:
+  
+     Include /usr/share/webmin/lbs-inventory/reception_agent/lbs-inventory.conf
+     
+- Relancer Apache.
+
+- L'interface Webmin d'inventaire doit maintenant ressembler à celle de la 
+  documentation
+  (http://linbox.com/ucome.rvt?file=/any/fr/Produits/LRS/details/doc/ch06.html)
+  et la page http://serveur/lbs-transfer/transfer.php doit afficher 
+  'La page est bien accessible.'.
+   
+  
+Vérification:
+=============
+
+- Lancer LRSInventory.exe sur le client,
+- Le client lance alors l'agent OCSInventory,
+- Le client envoie les données à l'URL spécifiée durant l'installation, que
+  l'on peut aussi retrouver dans le fichier config.ini (généralement, 
+  http://SERVER/lbs-transfer/transfer.php).
+- Les fichiers .csv du client apparaissent dans /var/lib/ocsinventory sur
+  le serveur.
+
+Plus d'infos:
+=============
+
+La documentation du produit commercial LRS, ainsi que celle du module libre
+d'inventaire se trouve ici:
+
+http://linbox.com/ucome.rvt?file=/any/fr/Produits/LRS/details/doc/ch06.html
+
+Ce module est distribué sous les termes de la licence GPL. Voir le fichier
+COPYING dans ce répertoire. 
