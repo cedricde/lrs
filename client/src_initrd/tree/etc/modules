@@ -1,0 +1,31 @@
+# /etc/modules: kernel modules to load at boot time.
+
+mii
+crc32
+e100
+#eepro100
+8139too
+8139cp
+#3c59x debug=2 options=0x8007
+3c59x
+sk98lin
+via-rhine
+e1000
+dmfe
+8390
+ne2k-pci
+pcnet32
+b44
+sis900
+natsemi
+sundance
+tulip
+de4x5
+bcm5700
+# cannot autoprobe...
+# cs89x0
+# lance
+#tg3
+forcedeth
+tlan
+epic100

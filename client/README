@@ -2,5 +2,7 @@ Directories
 ===========
 
 grub.cdrom	: source of the CDROM restoration program
+src_initrd	: source for the diskless Linux initrd
 src_kernel	: makefile for the 2.6 diskless Linux kernel
 src_revoboot	: source of the PXE boot loader revoboot.pxe, based on GRUB
+

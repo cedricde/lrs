@@ -1,0 +1,19 @@
+#!/bin/sh
+#
+# Small script to build a 'symlinks' file
+#
+
+if [ "`find . -type l`" == "" ]
+then
+    echo "No symlinks found. Abort."
+    exit
+fi
+
+mv -f ./symlinks ./symlinks.old
+echo "#!/bin/sh" > ./symlinks
+
+find . -type l -exec echo -n "ln -sf " \; -exec readlink -n {} \; -exec echo " {}" \; >>./symlinks
+
+chmod 755 ./symlinks
+
+

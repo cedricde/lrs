@@ -1,0 +1,14 @@
+#!/bin/sh
+# Set SULOGIN to yes if you want a sulogin to be spawned from
+# this script *before anything else* with a timeout, like on SCO.
+[ "$SULOGIN" = yes ] && sulogin -t 30 $CONSOLE
+# Activate the swap device(s) in /etc/fstab. This needs to be done
+# before fsck, since fsck can be quite memory-hungry.
+# if [ -x /sbin/swapon ]
+# then
+#  swapon -a 2>/dev/null
+# fi
+# Ensure that bdflush (update) is running before any major I/O is
+# performed (the following fsck is a good example of such activity :).
+#[ -x /sbin/update ] && update
+mount -t proc /proc /proc

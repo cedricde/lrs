@@ -1,0 +1,29 @@
+#!/bin/sh
+
+echo -n "Configuring and Starting Network..."
+
+#Localhost
+ifconfig lo 127.0.0.1 && echo -n "lo "                                       
+
+ETH=eth0
+case "`cat /proc/cmdline`" in
+    *revoeth1*)
+	ETH=eth1
+    ;;
+    *revoeth2*)
+	ETH=eth2
+    ;;
+    *revoeth3*)
+    	ETH=eth3
+    ;;
+esac
+
+# save it
+echo $ETH >/etc/eth
+# dhcp
+ifconfig $ETH up && echo "$ETH"
+pump -i $ETH -h lrsclient --win-client-ident
+# multicast
+route add -net 224.0.0.0 netmask 240.0.0.0 dev $ETH
+# save the mac address
+ifconfig $ETH|grep HWaddr|sed 's/.*HWaddr //'|sed 's/[ ]//g' >/etc/mac

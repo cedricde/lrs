@@ -1,0 +1,27 @@
+#!/bin/sh
+
+PATH="/sbin:/bin:/usr/sbin:/usr/bin"
+
+# enable to have IDE devices listed after SCSI ones in /proc/partitions
+#insmod -s /lib/modules/ide-disk.o
+
+F=/etc/modules
+if grep " revofull" /proc/cmdline
+then
+F=/etc/modules.full
+fi
+
+# Loop over every line in /etc/modules.
+echo "[1mLoading $F: [0m"
+# make sure there is a LF at the end
+cat $F | 
+while read module args
+do
+	case "$module" in
+		\#*|"") continue ;;
+	esac
+		
+	echo -n "$module $args - "
+	insmod -s /lib/modules/"$module".ko $args >/dev/null 2>&1
+done
+echo
