@@ -1,0 +1,12 @@
+Tests :
+
+23/10/01 : Image Win98-fat , env 300Mo, via 3 hubs -> 1min20
+           idem, mais en connection via 1 seul hub -> 0min57
+
+	   Image WinME-fat , env 550Mo, via 3 hubs -> 2min30
+           idem, mais en connection via 1 seul hub -> 1min50
+	   
+02/01/02 : Image XP
+	   Via LBL : 4min40
+	   via NFS+Linux : 3min15
+

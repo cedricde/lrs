@@ -1,0 +1,4 @@
+Directories
+===========
+
+src_revoboot	: source of revoboot.pxe, based on GRUB
