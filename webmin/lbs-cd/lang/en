@@ -1,0 +1,27 @@
+AmountCopied=Already copied
+AskConfirm=Do you want to launch ISO generation
+CDBURNER_Module=Go to CD-Burner Module
+CDCapa=CD capacity
+ConfigFileContains=Image Configuration File contains
+ConfigFileDoesNotContainBasedir=Configuration File Does Not Contain a "basedir=" section.
+ConfigFileNotFound=Configuration File /etc/lbs.conf not found. Check Module configuration.
+Copying=Copying file
+DirectorySize=Size of directory (Kbytes) 
+DirMachine=Dir / Computer
+ImageDesc=Description
+ImageSize=Size (MB)
+ImageTitle=Title
+generate=Generate ISO files
+GenerateImageFor=Generate ISO image for
+Generating=Generating...
+LaunchMkisofs=Launch ISO creation
+ListofImages=List of images
+PleaseWait=Please Wait
+title=Create LRS CD-iso 
+
+lbl_Generate=generate
+lbl_IsoDone=ISO image successfully done
+lbl_Jack=Jacket
+lbl_ListofAvailableImages=Liste of available images
+lbl_ListofIsoImages=ISO images list
+lbl_NotAvailable=Not Available

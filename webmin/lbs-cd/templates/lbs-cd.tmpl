@@ -1,0 +1,40 @@
+<!-- BEGIN isolist -->
+	<CENTER>
+	<h2>{BIGTITLE}</h2>
+	<TABLE width='100%' border>
+	<tr {TB}><th>{ISONAME}</th><th nowrap>{JACK}</th><th nowrap>{SIZE}</th></tr>
+<!-- BEGIN row -->
+	<tr {CB}><td width="100%"><a href="{URL}">{ISONAME}</a></td><td><a href="{URL2}">{GEN}</a></td><td>{SIZE}</td></tr>
+<!-- END row -->
+	</TABLE>
+	</CENTER>
+<!-- END isolist  -->
+
+<!-- BEGIN hugelist -->
+	<CENTER>
+	<h2>{BIGTITLE}</h2>
+	<TABLE width='100%' border>
+	<tr {TB}><th>{DIRMACHINE}</th><th>{TITLE}</th><th>{DESC}</th><th>{SIZE}</th></tr>
+<!-- BEGIN row -->
+	<tr {CB}><td><a href="{URL}">{LOCATION}</a></td><td>{TITLE}</td><td>{DESC}</td><td>{SIZE}</td></tr>
+<!-- END row -->
+	</TABLE>
+	</CENTER>
+<!-- END hugelist -->
+
+
+<!-- BEGIN form -->
+	<h2>{SIZE}</h2>
+	<h2>{CONFFILECONTAINS}</h2>
+	<table width=100% border>
+	<tr {CB}><td><pre>
+	{CONTAIN}
+	</pre></td></tr>
+	</table><br>
+	
+	<form action="do_it.cgi">
+		<input type="hidden" name="dir" value="{URL}">
+		<input type="hidden" name="cdname" value="{CDTITLE}">
+		<input type="submit" value="{LAUNCH}">
+	</form>
+<!-- END form -->

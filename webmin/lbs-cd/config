@@ -1,0 +1,4 @@
+CDSize=656000
+TempDir=/tftpboot/revoboot/tmp
+StoreDir=/tftpboot/revoboot/iso/
+cdburner=../burner

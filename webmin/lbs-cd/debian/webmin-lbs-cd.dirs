@@ -1,0 +1,5 @@
+etc/webmin/lbs-cd
+usr/share/webmin/lbs-cd
+usr/share/webmin/lbs-cd/templates
+usr/share/webmin/lbs-cd/lang
+usr/share/webmin/lbs-cd/images

@@ -1,0 +1,15 @@
+Source: webmin-lbs-cd
+Section: utils
+Priority: optional
+Build-Depends-Indep: debhelper (>= 4.0) 
+Maintainer: Linbox Team <nobody@linbox.com>
+Standards-Version: 3.6.1
+
+Package: webmin-lbs-cd
+Section: utils
+Architecture: all
+Depends: webmin, cdrecord, mkisofs, webmin-lbs-common
+Description: Webmin CD burner module for the LRS
+ This package contains a Webmin module to generate bootables CDs with the 
+ images made by the Linux Backup System.
+ 

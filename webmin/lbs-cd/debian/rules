@@ -1,0 +1,58 @@
+#!/usr/bin/make -f
+
+clean:
+	rm -rf *~ debian/tmp debian/webmin-lbs-cd
+	rm -f build-stamp
+	dh_clean
+
+build:
+	echo "Nothing to build"
+
+binary: binary-arch binary-indep
+
+binary-arch: 
+
+DESTDIR = debian/webmin-lbs-cd
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs
+	debian/copyversion
+	
+	cp completion.html $(DESTDIR)/usr/share/webmin/lbs-cd
+	cp module.info $(DESTDIR)/usr/share/webmin/lbs-cd
+	install --mode=755 *.cgi *.pl *.tmpl $(DESTDIR)/usr/share/webmin/lbs-cd
+
+	install --mode=600 config $(DESTDIR)/etc/webmin/lbs-cd/config
+	touch $(DESTDIR)/etc/webmin/lbs-cd/admin.acl
+	install --mode=644 config.info $(DESTDIR)/usr/share/webmin/lbs-cd/config.info
+
+	for lang in lang/en lang/fr; do \
+                install --mode=644  $$lang\
+                        $(DESTDIR)/usr/share/webmin/lbs-cd/lang/;\
+        done
+
+	install --mode=644 templates/lbs-cd.tmpl  $(DESTDIR)/usr/share/webmin/lbs-cd/templates/lbs-cd.tmpl
+
+		for img in images/*.gif; do \
+                install --mode=644  $$img\
+                        $(DESTDIR)/usr/share/webmin/lbs-cd/images/;\
+        done
+
+binary-indep: install
+	dh_testdir
+	dh_testroot
+	dh_installdebconf
+	dh_installdocs
+	dh_installchangelogs
+	dh_link
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_perl
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
