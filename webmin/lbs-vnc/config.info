@@ -1,0 +1,3 @@
+lbs_conf=LRS global configuration file,0
+default_vnc_port=Default VNC TCP port,0
+default_httpvnc_port=Default VNC HTTP port,0

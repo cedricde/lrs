@@ -1,0 +1,12 @@
+index_title=VNC pour les clients LRS
+
+tit_error=Erreur
+
+err_cnf='$1': Commande introuvable
+err_dnf='$1': Répertoire introuvable
+err_fnf='$1': Fichier introuvable
+err_confnf=Fichier de configuration LRS <b>$1</b> introuvable. Veuillez vérifier son chemin dans la configuration du module.
+err_basedirnf=Le répertoire racine LRS <b>$1</b> est inaccessible. Veuillez vérifier le paramètre <tt>basedir</tt> dans le fichier <tt>lbs.conf</tt> .
+err_paramnf=Paramètre <tt>$1</tt> introuvable dans <b>$2</b>.
+
+lab_vnc=Ctrl.

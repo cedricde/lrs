@@ -1,0 +1,12 @@
+index_title=VNC for LBS clients
+
+tit_error=Error
+
+err_cnf=Error : $1 command not found
+err_dnf='$1': Directory not found
+err_fnf='$1': File not found
+err_confnf=LBS configurtion file <b>$1</b> not found. Please check path in module configuration.
+err_basedirnf=LBS root directory <b>$1</b> not found. You should check <tt>basedir</tt> located into <tt>lbs.conf</tt> .
+err_paramnf=Parameter <tt>$1</tt> not found in file <b>$2</b>.
+
+lab_vnc=Ctrl.

@@ -1,0 +1,5 @@
+name=lbs-vnc
+desc=LRS : Remote Client Control
+desc_fr=LRS : Prise de Contrôle à Distance
+version=0.5
+depends=0.94 lbs_common

@@ -1,0 +1,16 @@
+Source: webmin-lbs-vnc
+Section: utils
+Priority: optional
+Build-Depends-Indep: debhelper (>= 4.0) 
+Maintainer: Linbox <info@linbox.com>
+Standards-Version: 3.6.1
+
+Package: webmin-lbs-vnc
+Section: utils
+Architecture: all
+Depends: lbs, webmin, php4, php4-cgi, webmin-lbs-common
+Description: Webmin VNC module for the LRS
+ This package contains the Webmin module for the VNC part of the LRS. 
+ .
+ It allow you to control a remote computer with your web browser.
+ 

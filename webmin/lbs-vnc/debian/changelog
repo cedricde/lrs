@@ -1,0 +1,17 @@
+webmin-lbs-vnc (0.5) stable; urgency=low
+
+  * New release.
+
+ -- Linbox Team <info@linbox.com>  Fri, 25 Jun 2004 11:37:51 +0200
+
+webmin-lbs-vnc (0.2) stable; urgency=low
+
+  * Display an error page is the connection fails.
+
+ -- Sebastien Bacher <sbacher@linbox.com>  Fri,  7 May 2004 12:18:11 +0200
+
+webmin-lbs-vnc (0.1) stable; urgency=low
+
+  * First package
+
+ -- Sebastien Bacher <sbacher@linbox.com>  Fri,  6 Feb 2004 12:06:33 +0100

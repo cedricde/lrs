@@ -1,0 +1,3 @@
+lbs_conf=/etc/lbs.conf
+default_vnc_port=5900
+default_httpvnc_port=5800
