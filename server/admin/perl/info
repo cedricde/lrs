@@ -1,0 +1,297 @@
+#!/usr/bin/perl
+#
+# $Id: info 1686 2004-12-16 13:58:09Z root $
+#
+# Linbox Rescue Server
+# Copyright (C) 2005  Linbox FAS
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+my $devicelist;
+
+$mac = "";
+
+# Program
+
+sub getdevice {
+ my ($vendor,$device)=@_;
+ $vendor=sprintf "%04x",hex($vendor);
+ $device=sprintf "%04x",hex($device);
+
+ open(REF,$devicelist) or die;
+ while (<REF>)
+ {
+  next unless /^$vendor/;
+  chomp;
+  my ($titi,$vend)=split(/ +/,$_,2);
+  print "Vendor=$vend\n";
+  while (<REF>)
+  {
+   last unless /^[#\t]/;
+   next unless /^\t$device/;
+   chomp;
+   my ($titi,$dev)=split(/ +/,$_,2);
+   print "Device=$dev\n";
+   close(REF);
+   return;
+  }
+  print "Device=$device (unknown)\n";
+  close(REF);
+  return;
+ }
+ print "Vendor=$vendor (unknown)\nDevice=$device (unknown)\n";
+ close(REF);
+}
+
+sub getclass {
+ my ($class,$subclass)=@_;
+ $class=sprintf "%02x",hex($class);
+ $subclass=sprintf "%02x",hex($subclass);
+
+ open(REF,$devicelist) or die;
+ while (<REF>)
+ {
+  next unless /^C $class/;
+  chomp;
+  my ($titi,$toto,$cl)=split(/ +/,$_,3);
+  print "Class=$cl\n";
+  while (<REF>)
+  {
+   last unless /^\t/;
+   next unless /^\t$subclass/;
+   chomp;
+   my ($toto,$c)=split(/ +/,$_,2);
+   print "Type=$c\n";
+   close(REF);
+   return;
+  }
+  print "Type=$subclass (unknown)\n";
+  close(REF);
+  return;
+ }
+ print "Class=$class (unknown)\nType=$subclass (unknown)\n";
+ close(REF);
+}
+
+sub pci
+{
+ my $file=$_[0];
+ my $i=0;
+
+ open(HW,$file) or die;
+ while (<HW>)
+ {
+  next unless /^B:/;
+  chomp;
+  my %list = split(/[:,]/);
+
+  print "\n[PCI$i]\n";
+  print "Bus=$list{'B'}\nFunc=$list{'f'}\n";
+  # print " Vendor : $list{'v'} / Device : $list{'d'}\n";
+  getdevice($list{"v"}, $list{"d"});
+  # print " Class : $list{'c'} / SubClass : $list{'s'}\n";
+  getclass($list{"c"}, $list{"s"});
+  $i++;
+ }
+ close(HW);
+}
+
+sub misc
+{
+ my $file=$_[0];
+
+ open(MISC,$file) or die;
+ while (<MISC>)
+ {
+  if (/^MAC/)
+  {
+	my ($toto,$addr)=split(/:/,$_,2);
+	print "MacAddr=$addr";
+	$mac = $addr;
+	next;
+  }
+  if (/^M/)
+  {
+	my ($toto,$low,$titi,$high)=split(/[:,]/);
+	$low=hex($low);
+	$high=hex($high);
+	my $total=$low+$high;
+	print "LowMem=$low\nHighMem=$high\nTotalMem=$total\n";
+	next;
+  }
+  if (/^F/)
+  {
+	my ($toto,$freq)=split(/:/);
+	$freq=$freq/1000;
+	print "Freq=$freq\n";
+	next;
+  }
+  if (/^S0:/)
+    {
+      my ($t,$bios)=split(/:/);
+      chomp($bios);
+      print "Bios=$bios\n";
+      next;
+    }
+  if (/^S1:/)
+    {
+      my ($t,$sys)=split(/:/);
+      chomp($sys);
+      print "System=$sys\n";
+      next;
+    }
+  if (/^C/)
+  {
+	my @list=split(/[:,]/);
+
+	if ($list[13] == '47')
+	{
+		print "CpuVendor=Intel\n";
+		if ($list[1] == '4') {print "Model=486\n";next;}
+		if ($list[1] == '5') {print "Model=Pentium\n";next;}		
+		if ($list[1] == '6')
+		  {
+		    if ($list[2] == '3') {print "Model=Pentium II Klamath\n";next;}
+		    if ($list[2] == '5') {print "Model=Pentium II Deschutes\n";next;}
+		    if ($list[2] == '6') {print "Model=Celeron A or Pentium II PE\n";next;}
+		    if ($list[2] == '7') {print "Model=Pentium III Katmai\n";next;}
+		    if (($list[2] == '8'))
+		      {
+			if ($list[4] == '1') {print "Model=Celeron Coppermine w/SSE\n";next;}
+			if ($list[4] == '2') {print "Model=Pentium III Coppermine w/SSE\n";next;}
+			
+		      }
+		    if (($list[2] eq '9')) {print "Model=Pentium III Mobile\n";next;}
+		    if (($list[2] eq 'a')) {print "Model=Pentium III Xeon\n";next;}
+		    if (($list[2] eq 'b')) {print "Model=Pentium III 0.13u\n";next;}
+		    print "Model=Pentium Pro/II/III\n";
+		    next;
+		  }
+		if (($list[1] eq '7')) {print "Model=Itanium\n";next;}
+		if (($list[1] eq 'f')) {print "Model=Pentium 4\n";next;}
+		print "Model=???\n";
+		next;
+	}
+	if ($list[13] == '41')
+	{	
+		print "CpuVendor=AMD\n";
+		if (($list[1] == '5')) {print "Model=K5/K6\n";next;}
+		if ($list[1] == '6')
+		  {
+		    if ($list[2] == '1') {print "Model=Athlon 0.25u Slot A\n";next;}
+		    if ($list[2] == '2') {print "Model=Athlon 0.18u Slot A\n";next;}
+		    if ($list[2] == '3') {print "Model=Duron\n";next;}
+		    if ($list[2] == '4') {print "Model=Athlon 0.18u\n";next;}
+		    if ($list[2] == '6') {print "Model=Athlon MP/Mobile Athlon\n";next;}
+		    if ($list[2] == '7') {print "Model=Mobile Duron\n";next;}
+		    print "Model=Athlon/Duron\n";
+		    next;
+		  }
+		if (($list[1] == 'f')) {print "Model=Opteron/Athlon64\n";next;}
+		print "Model=???\n";
+		next;
+	}
+	if ($list[13] == '43')
+	{	
+		print "CpuVendor=Cyrix\n";
+		print "Model=???\n";
+		next;
+	}
+	print "CpuVendor=???\n";
+	print "Model=???\n";
+  }
+ }
+}
+
+sub disk
+{
+ my $file=$_[0];
+ my $i=0;
+
+ open(DISK,$file) or die;
+ while (<DISK>)
+ {
+  loop:
+	next unless /^D:/;
+
+	my $j=0;
+	my @list=split(/[:(),=]+/);
+	my $capa=int($list[6]/2048);
+
+	print "\n[DISK$i]\n";
+	$i++;
+
+	print "Name=$list[1]\nCyl=$list[3]\nHead=$list[4]\nSector=$list[5]\nCapacity=$capa\n";
+
+	while (<DISK>)
+	{
+		goto loop unless /^P:/;
+
+		my @part=split(/[:,]/);
+		$part[7]=int($part[7]/2048);
+		print "PartNum$j=$part[1]\n";
+		print "PartType$j=$part[3]\n";
+		print "PartLength$j=$part[7]\n";
+		$j++;
+	}
+ }
+ close(DISK);
+}
+
+sub hdmap
+{
+  my $file=$_[0];
+  
+  $mac =~ s/[^a-fA-F0-9]//g;
+  $mac = uc($mac);
+
+  open(INFO,">$basedir/images/$mac/hdmap") or return;
+  open(DISK,$file) or die;
+  while (<DISK>)
+    {
+      if (/^D:\(hd([0-9]+)\):[^=]+=([0-9]+)/) {
+	print INFO $1."=".$2."\n";
+      }
+    }
+  close(DISK);
+  close(INFO);
+}
+
+# MAIN
+
+open(F,"/etc/lbs.conf") or die;
+while (<F>)
+{
+ chomp;
+ (my $i,$basedir)=split /[ \t]*=[ \t]*/ if /^basedir[ \t]*=/i;
+}
+close(F);
+
+$devicelist=$basedir."/etc/pci.ids";
+
+# 2 nd argument ?
+$opt_f = $ARGV[1];
+if ($opt_f ne ''){
+  open(STDOUT,"> $opt_f");
+}
+
+print "#Generated from $ARGV[0]\n\n";
+
+print "[MAIN]\n";
+misc($ARGV[0]);
+pci($ARGV[0]);
+disk($ARGV[0]);
+hdmap($ARGV[0]);
+
