@@ -1,0 +1,7 @@
+Directories
+===========
+
+client	: software used by the LRS client (boot loaders, diskless Linux,
+	  OCS client)
+server	: software used by the server (lrsd daemon, base*tgz)
+webmin	: all Webmin modules
