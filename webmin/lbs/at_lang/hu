@@ -1,0 +1,38 @@
+# webmin-0.90at/lang/hu
+# translated by Gabor Keve <gabor.keve@orientp.hu>
+#
+index_title=Ütemezett feladatok
+index_header=Új ütemezett feladat
+index_user=Futtatás felhasználóként
+index_date=Futtatás megadott dátumkor
+index_time=Futtatás megadott idõpontban
+index_cmd=Futtatandó parancs
+index_id=Munka ID
+index_exec=Futás
+index_created=Készült 
+index_dir=Futás megadott könyvtárban
+index_return=parancs lista
+
+edit_title=Ütemezett feladat
+edit_cmd=Teljes futtatandó szkript
+edit_header=Ütemezett parancs leírása
+edit_delete=A parancs megszakítása
+edit_ejob=Az ütemezett feladat már nem létezik!
+edit_ecannot=Önnek nincs joga ezt az ütemezett feladatot szerkeszteni
+
+create_err=Nem lehet létrehozzni az ütemezett feladatot
+create_euser=Hibás vagy érvénytelen felhasználói név
+create_edate=Hibás vagy érvénytelen dátum
+create_ecmd=Nem lett parancs megadva
+create_efuture=A dátum és az idõ a múltban van
+create_edir=Hibás vagy érvénytelen könyvtár
+create_ecannot=Önnek nincs joga létrehozzni ütemezett feladatot ezzel a felhasználóval
+
+delete_err=Nem lehet megszakítani a parancsot
+delete_egone=A parancs már fut, vagy le lett törölve
+
+acl_users=Ezt a feladatot szerkesztheti a következõ felhasználó
+acl_all=Összes felhasználó
+acl_this=Jelenlegi Webmin felhasználó
+acl_only=Csak adott felhasználók
+acl_except=Semelyik felhasználó

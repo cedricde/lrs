@@ -1,0 +1,17 @@
+line0=Traffic control,11
+tc_iface=Network interface on which traffic shaping is done,0
+tc_rate=Network interface theorical throughput,0
+tc_limit=Network interface allowed TFTP restoration throughput,0
+
+line1=Restoration options,11
+restore_type=Restoration: type,1,0-TFTP in boot loader,NFS,MTFTP
+mtftp_wait=Restoration: MTFTP maximum waiting (in sec),3,0
+
+line2=Boot logo,11
+grub_splashimage=Full path to the XPM displayed at boot,0
+warning_message=Message displayed during backup / restoration,9,68,5,\n
+
+line3=Misc,11
+wake=Binary to wake PCs,0
+chemin_basedir=Path to the LRS Basedir (aka tftpboot),0
+add_password=Password for adding a new client,12

@@ -1,0 +1,5 @@
+line0=License information,11
+iface=Network interface ('eth0' usualy),0
+hwmac=Network interface MAC address,0
+license=Maximum declared clients,0
+key=Hexadecimal key,0

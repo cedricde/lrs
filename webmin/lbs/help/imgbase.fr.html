@@ -1,0 +1,40 @@
+<header>Images de base
+</header>
+
+<p>
+Cette page est accessible depuis la page d'accueil du module.
+Elle contient la liste de toutes les images de base du système, c'est à dire
+les images qui sont mises en partage pour toutes les machines actuellement
+déclarées sur le serveur LRS. 
+</p>
+
+<hr>
+
+Description des colonnes:<br>
+<ul>
+    <li><b>Image de base</b><br>
+    Noms des répertoires hébergeant les images sur le disque du serveur LRS.
+    Ceux-ci sont localisés dans <tt>(basedir)/imgbase</tt> .
+    </li>
+    <li><b>Titre</b><br>
+    Titre de l'image tel qu'il apparaît dans le menu de démarrage d'une
+    machine.
+    </li>
+    <li><b>Description</b><br>
+    Courte description concernant son contenu.
+    </li>
+    <li><b>Effacer</b><br>
+    Permet d'effacer complètement l'image en question. Notez qu'il n'est pas
+    possible d'effacer une image si celle-ci est actuellement utilisée dans
+    le menu d'une ou plusieurs machines (voir colonne <i>Utilisée par</i>).
+    Si c'est la cas, vous devez d'abord supprimer le nom de cette image
+    du menu de chaque machine l'utilisant.
+    </li>
+    <li><b>Utilisee par</b><br>
+    Affiche les noms de machines utilisant les images de base dans leur menu.
+    Notez que chaque nom de cette colonne est un lien hypertexte.
+    Ces liens sont des raccourcis qui vous envoient directement aux pages
+    de configuration des machines utilisatrices.
+    </li>
+</ul>
+

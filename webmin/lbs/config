@@ -1,0 +1,12 @@
+tc_iface=eth0
+tc_rate=100Mbit
+tc_limit=100Mbit
+
+restore_type=0
+mtftp_wait=5
+
+wake=/tftpboot/revoboot/bin/wake
+chemin_basedir=/tftpboot/revoboot
+
+grub_splashimage=
+warning_message=

@@ -1,0 +1,41 @@
+index_title=Réveils planifiés
+index_header=Nouveau réveil
+index_user=Lancer sous l'utilisateur
+index_date=Lancer à la date
+index_time=heure
+index_cmd=Machines à réveiller
+index_id=Job ID
+index_exec=Lancer le
+index_created=Créé le
+index_dir=Lancer dans le répertoire
+index_return=Liste des commandes
+index_cdate=Date
+index_ctime=Heure
+index_mac=Adresses MAC
+index_none=aucun
+
+edit_title=Commande planifiée
+edit_cmd=Script complet à exécuter
+edit_header=Détail de la commande planifiée
+edit_delete=Annuler cette commande
+edit_ejob=La commande planifiées n'existe plus!
+edit_ecannot=You are not allowed to edit this scheduled command
+
+create_err=Impossible de créer la commande planifiée
+create_euser=Missing or invalid username
+create_edate=Date ou heure manquante ou invalide
+create_ecmd=No commands entered
+create_efuture=Date et heure dans le passé
+create_edir=Missing or invalid directory
+create_ecannot=You are not allowed to create scheduled commands for this user
+
+delete_err=Failed to cancel command
+delete_egone=Commande déjà lancée ou effacée
+
+acl_users=Can edit scheduled commands for
+acl_all=All users
+acl_this=Current Webmin user
+acl_only=Only users
+acl_except=All except users
+
+

@@ -1,0 +1,12 @@
+webmin-lbs (2.4.0) stable; urgency=low
+
+  * New release.
+
+ -- Linbox Team <info@linbox.com>  Wed, 30 Jun 2004 14:32:26 +0200
+
+webmin-lbs (1.6.2) stable; urgency=low
+
+  * First package
+
+ -- Sebastien Bacher <sbacher@linbox.com>  Tue, 17 Feb 2004 12:25:50 +0100
+

@@ -1,0 +1,41 @@
+index_title=Scheduled Wake ups
+index_header=New scheduled wake up
+index_user=Run as user
+index_date=Run on date
+index_time=Run at time
+index_cmd=Systems to wake up
+index_id=Job ID
+index_exec=Run at
+index_created=Created on
+index_dir=Run in directory
+index_return=commands list
+index_cdate=Current date
+index_ctime=Current time
+index_mac=MAC Addresses
+index_none=none
+
+edit_title=Scheduled Command
+edit_cmd=Full script to execute
+edit_header=Scheduled command details
+edit_delete=Cancel this command
+edit_ejob=Scheduled command no longer exists!
+edit_ecannot=You are not allowed to edit this scheduled command
+
+create_err=Failed to created schedule command
+create_euser=Missing or invalid username
+create_edate=Missing or invalid date or time
+create_ecmd=No commands entered
+create_efuture=Date and time is in the past
+create_edir=Missing or invalid directory
+create_ecannot=You are not allowed to create scheduled commands for this user
+
+delete_err=Failed to cancel command
+delete_egone=Command already run or deleted
+
+acl_users=Can edit scheduled commands for
+acl_all=All users
+acl_this=Current Webmin user
+acl_only=Only users
+acl_except=All except users
+
+

@@ -1,0 +1,42 @@
+<header>Formulaire DHCP
+</header>
+
+<p>
+ Ce formulaire permet de forcer l'ajout d'une nouvelle machine, et
+ de l'enregistrer dans la configuration du serveur DHCP (et aussi dans celle
+ du LRS).
+</p>
+
+<hr>
+
+Description des champs:<br>
+<ul>
+  <li>Le champ <b>Nom</b>: C'est le nom à donner à la machine.
+  Il doit etre formé d'une chaîne de caractères alphanumériques uniquement,
+  et éventuellement du signe '-' (intervalle [a-z], [A-Z] et '-').</li>
+
+  <li>Le champ <b>Adresse MAC</b>: Adresse physique de la carte
+  réseau de la machine. Composé de 6 nombres hexadécimaux d'une longueur de
+  2 digits chacun, et séparés par des double-points '<tt>:</tt>' .<br>
+  Exemple: 01:aa:45:e4:05:26</li>
+
+  <li>Le champ <b>Adresse IP</b>: Ce champ est optionnel. S'il est vide,
+  une adresse valide sera choisie automatiquement.
+  Si toutefois vous remplissez ce champ, veillez à ce que l'adresse soit
+  en rapport avec l'intervalle d'adresses défini dans la configuration du
+  serveur DHCP (cf <tt>/etc/dhcpd.conf</tt>) .
+  Vous pouvez aussi entrer <tt>Dynamic</tt> si votre serveur DHCP n'est pas configuré
+  pour donner des adresses IP statiques.</li>
+
+  <li>Le champ <b>Admin ID</b>: Mot de passe nécessaire à l'enregistrement
+  de la machine. Il ne doit être connu que par la ou les personne(s)
+  abilitée(s) à enregistrer de nouvelles machines.</li>
+</ul>
+
+<p>
+Lorsque vous enregistrez une nouvelle machine avec ce formulaire, une nouvelle
+entrée est alors créée dans <tt>dhcpd.conf</tt>. Ensuite, cette information
+est également répercutée sur le LRS (fichier <tt>ether</tt>), qui créera à
+son tour un répertoire spécifique pour cette machine. 
+</p>
+

@@ -1,0 +1,17 @@
+line0=Bande passante,11
+tc_iface=Interface réseau pour la limite de BP,0
+tc_rate=Débit théorique de cette interface,0
+tc_limit=Débit max. pour une restauration en TFTP,0
+
+line1=Options de restauration,11
+restore_type=Restauration: type,1,0-TFTP au boot,1-NFS,2-MTFTP
+mtftp_wait=Restauration MTFTP: temps d'attente maxi (en sec),3,0
+
+line2=Logo au boot,11
+grub_splashimage=Chemin complet du fichier XPM affiché au boot,0
+warning_message=Message affiché pendant la sauvegarde et restauration,9,68,5,\n
+
+line3=Divers,11
+wake=Executable pour reveiller les PCs,0
+chemin_basedir=Path to the LRS Basedir (aka tftpboot),0
+add_password=Mot de passe pour l'ajout de clients,12

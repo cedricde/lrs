@@ -1,0 +1,118 @@
+<!-- BEGIN fileslist -->
+	<center>
+		<h2>{CHANGE_FILE}</h2>
+		<form method='post'>
+		<select name='file'>
+<!-- BEGIN file -->
+			<option value='{FULLFILENAME}'>{FILENAME}</option>
+<!-- END file -->
+		</select>
+		<br>
+		<input type='submit' name='create' value='{CREATE}' />
+		<input type='submit' name='modify' value='{EDIT}' />
+		<input type='submit' name='copy' value='{COPY}' />
+		<input type='submit' name='delete' value='{DELETE}' />
+		</form>
+	</center>
+<!-- END fileslist -->
+
+<!-- BEGIN createfile -->
+	<center>
+		<h2>{CREATE_FILE}</h2>
+		<form method='post'>
+		<br>
+		<select name='directory'>
+			<option value='images/templates/'>images/templates/</option>
+		</select>
+
+		<input type='text' name='file' value='' />
+		<input type='submit' name='create2' value='{CREATE}' />
+		</form>
+	</center>
+<!-- END createfile -->
+
+<!-- BEGIN deletefile -->
+	<center>
+		<h2>{DELETE_FILE}</h2>
+		<form method='post'>
+		<br>
+		<input type='hidden' name='file' value='{FILE}' />
+		<input type='submit' name='cancel' value='{CANCEL}' />
+		<input type='submit' name='delete2' value='{CONFIRM}' />
+		</form>
+	</center>
+<!-- END deletefile -->
+
+<!-- BEGIN copyfile -->
+	<center>
+		<h2>{COPY_FILE}</h2>
+		<form method='post'>
+		<br>
+		<select name='directory'>
+			<option value='images/templates/'>images/templates/</option>
+		</select>
+		<input type='hidden' name='file' value='{FILE}' />
+		<input type='text' name='newfile' value='' />
+		<input type='submit' name='copy2' value='{COPY}' />
+		</form>
+	</center>
+<!-- END deletefile -->
+
+<!-- BEGIN postinst -->
+	<form method='post'>
+	<input type='hidden' name='file' value='{FILE}' />
+	<input type='hidden' name='numfields' value='{NUMFIELDS}' />
+	<center>
+	<h1>{LBL_EDIT} {FILE}</h1>
+	<table style='border-width:0px'>
+		<tr>
+			<td style='border-width: 0px' colspan='3' align='center'><h2>{LBL_DESC}</h2></td>
+		</tr><tr>
+			<td style='border-width: 0px' colspan='3' align='center'><input name='desc' size='80' value='{DESC}'/></td>
+		</tr><tr>
+			<td style='border-width: 0px' colspan='3' align='center'><h2>{LBL_COMMENTS}</h2></td>
+		</tr><tr>
+			<td style='border-width: 0px' colspan='3' align='center'><textarea name='comment' rows='5' cols='80' />{COMMENTS}</textarea></td>
+		</tr><tr>
+			<td style='border-width: 0px' colspan='3' align='center'><h2>{LBL_COMMANDS}</h2></td>
+		</tr><tr align='center' {TB}>
+			<td>{LBL_COMMAND}</td><td>{LBL_ARGUMENTS}</td><td>&nbsp;</td>
+		</tr>
+<!-- BEGIN operation -->
+		<tr {CB} >
+			<td>
+				<select name='op_{NUM}_keyword'>
+					<option value='{COMMAND}'>{COMMAND_LOC}</option>
+					<option value=''></option>
+					<option value='Mount'>Mount</option>
+					<option value='RegistryAddString'>RegistryAddString</option>
+					<option value='RegistryAddRun'>RegistryAddRun</option>
+					<option value='RegistryAddRunOnce'>RegistryAddRunOnce</option>
+					<option value='CopySysprepInf'>CopySysprepInf</option>
+					<option value='ChangeSID'>ChangeSID</option>
+					<option value='ChangeSIDAndName'>ChangeSIDAndName</option>
+					<option value='Busybox'>{FREE_FIELD}</option>
+				</select>
+			</td>
+			<td>
+				<input name='op_{NUM}_args' size='50' value='{ARGS}'/>
+			</td>
+			<td>
+				<input type='submit' name='op_{NUM}_del' value='{SUPPRESS}' />
+			</td>
+		</tr>
+<!-- END operation -->
+<!-- BEGIN comment-->
+			<input type='hidden' name='op_{NUM}_keyword' value='Comment' />
+			<input type='hidden' name='op_{NUM}_args' value='{ARGS}' />
+<!-- END comment-->
+
+	</table>
+	<br>
+	<input type='submit' name='op_add' value='{ADDLINE}' />
+	<input type='submit' name='save' value='{VALIDATE}' />
+	<input type='submit' name='cancel' value='{CANCEL}' />
+	</center>
+	</form>
+<!-- END postinst -->
+	

@@ -1,0 +1,5 @@
+line0=Informations sur la licence,11
+iface=Interface réseau ('eth0' normalement),0
+hwmac=Adresse MAC de l'interface réseau,0
+license=Nombre maximum de clients,0
+key=Clé hexadécimale,0

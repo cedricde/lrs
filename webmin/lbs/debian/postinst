@@ -1,0 +1,8 @@
+#!/bin/sh
+
+[ -f /etc/webmin/module.infos.cache ] && rm /etc/webmin/module.infos.cache
+
+set -e
+/usr/sbin/update-webmin add lbs
+
+#DEBHELPER#
