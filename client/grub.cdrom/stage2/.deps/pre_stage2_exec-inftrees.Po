@@ -1,0 +1,15 @@
+pre_stage2_exec-inftrees.o : \
+ zlib/inftrees.c zlib/zutil.h zlib/zlib.h zlib/zconf.h \
+ shared.h ../config.h ../stage1/stage1.h mb_header.h mb_info.h \
+ zlib/inftrees.h zlib/inffixed.h
+zlib/inftrees.c :
+zlib/zutil.h :
+zlib/zlib.h :
+zlib/zconf.h :
+shared.h :
+../config.h :
+../stage1/stage1.h :
+mb_header.h :
+mb_info.h :
+zlib/inftrees.h :
+zlib/inffixed.h :

@@ -1,0 +1,24 @@
+pre_stage2_exec-builtins.o : \
+ builtins.c shared.h ../config.h ../stage1/stage1.h \
+ mb_header.h mb_info.h filesys.h pc_slice.h term.h builtins_lbs.h \
+ serial.h terminfo.h apic.h smp-imps.h md5.h builtins_lbs.c \
+ zlib/zlib.h zlib/zconf.h shared-lbl.h
+builtins.c :
+shared.h :
+../config.h :
+../stage1/stage1.h :
+mb_header.h :
+mb_info.h :
+filesys.h :
+pc_slice.h :
+term.h :
+builtins_lbs.h :
+serial.h :
+terminfo.h :
+apic.h :
+smp-imps.h :
+md5.h :
+builtins_lbs.c :
+zlib/zlib.h :
+zlib/zconf.h :
+shared-lbl.h :

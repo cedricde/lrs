@@ -1,0 +1,15 @@
+iso9660_stage1_5_exec-builtins_lbs.o : \
+ builtins_lbs.c shared.h ../config.h ../stage1/stage1.h \
+ mb_header.h mb_info.h filesys.h pc_slice.h term.h zlib/zlib.h \
+ zlib/zconf.h
+builtins_lbs.c :
+shared.h :
+../config.h :
+../stage1/stage1.h :
+mb_header.h :
+mb_info.h :
+filesys.h :
+pc_slice.h :
+term.h :
+zlib/zlib.h :
+zlib/zconf.h :

@@ -1,0 +1,10 @@
+pre_stage2_exec-zfunc.o : \
+ zlib/zfunc.c shared.h ../config.h ../stage1/stage1.h \
+ mb_header.h mb_info.h zlib/zfunc.h
+zlib/zfunc.c :
+shared.h :
+../config.h :
+../stage1/stage1.h :
+mb_header.h :
+mb_info.h :
+zlib/zfunc.h :

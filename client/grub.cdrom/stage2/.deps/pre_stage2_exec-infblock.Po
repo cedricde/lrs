@@ -1,0 +1,17 @@
+pre_stage2_exec-infblock.o : \
+ zlib/infblock.c zlib/zutil.h zlib/zlib.h zlib/zconf.h \
+ shared.h ../config.h ../stage1/stage1.h mb_header.h mb_info.h \
+ zlib/infblock.h zlib/inftrees.h zlib/infcodes.h zlib/infutil.h
+zlib/infblock.c :
+zlib/zutil.h :
+zlib/zlib.h :
+zlib/zconf.h :
+shared.h :
+../config.h :
+../stage1/stage1.h :
+mb_header.h :
+mb_info.h :
+zlib/infblock.h :
+zlib/inftrees.h :
+zlib/infcodes.h :
+zlib/infutil.h :

@@ -1,4 +1,5 @@
 Directories
 ===========
 
-src_revoboot	: source of revoboot.pxe, based on GRUB
+grub.cdrom	: source of the CDROM restoration program
+src_revoboot	: source of the PXE boot loader revoboot.pxe, based on GRUB
