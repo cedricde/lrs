@@ -39,7 +39,7 @@ dist:
 	#rsync -v --exclude .svn ../postinst/templates/* revoboot/images/templates/
 	(cd revoboot/imgskel;./symlinks)
 	chown nobody revoboot/images/data
-	tar cvzf $(TMPBASE) --exclude CVS --exclude .svn $(SRCDIR)
+	tar cvzf $(TMPBASE) --exclude ./revoboot/debian --exclude CVS --exclude .svn $(SRCDIR)
 	cp $(TMPBASE)  $(DESTDIR)/base_$(TODAY).tgz
 	(cd revoboot;tar -czvf ../$(DESTDIR)/bin-update_$(TODAY).tgz --exclude .svn --exclude BASENUM --exclude CVS bin lib images/data images/templates imgbase)
 	rm $(TMPBASE)
