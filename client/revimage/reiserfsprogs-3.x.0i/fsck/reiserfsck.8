@@ -1,0 +1,87 @@
+.\" -*- nroff -*-
+.\" Copyright 1996-2001 Hans Reiser.
+.\" 
+.TH REISERFSCK 8 "January 2001" "Reiserfs utilities"
+.SH NAME
+reiserfsck \- check a Linux Reiserfs file system
+.SH SYNOPSIS
+.B reiserfsck 
+[
+.B -arvixV
+] [
+.B -l logfilename
+] [
+.B --rebuild-tree
+] [
+.B --check
+] [
+.B --rebuild-sb
+] [
+.B --interactive
+] [
+\fB --logfile \fI logfilename
+] [
+.B --fix-fixable
+]
+.I device
+.SH DESCRIPTION
+It looks for reiserfs filesystem on a device, replays transactions
+which are to be replayed and either check or repair the filesystem
+.TP
+.I device
+is the special file corresponding to the device (e.g /dev/hdXX for
+IDE disk partition or /dev/sdXX for SCSI disk partition).
+.SH OPTIONS
+.TP
+.B --check
+This checks filesystem consistency. This is a default action. It may
+be used on a filesystem mounted read-only
+.TP
+.B --rebuild-tree
+This rebuilds filesystem tree using leaf nodes found on the
+device. Normally, you do not need this, but if you have to rebuild
+tree - please backup whole partition first or at least the most
+important data if you can mount the partition.
+.TP
+.B --rebuild-sb
+.TP
+.B --interactive, -i
+This makes 
+.B reiserfsck
+to stop after each pass completed.
+.TP
+\fB --logfile \fIfilename, \fB-l \fI filename
+makes
+.B reiserfsck
+to put info about found corruptions in logfile rather than on stderr
+.TP
+.B --fix-fixable, -x
+This makes 
+.B reiserfsck
+to recover corruptions which can be fixed w/o --rebuild-tree when it
+is runnig in check mode. Corruptions which can be fixed so far: bad
+pointers to data blocks, wrong directory's st_size and st_blocks,
+directories entries pointing to nowhere can be deleted
+.TP
+.B -a
+When it is set - 
+.B reiserfsck
+assumes that it is called by fsck -A and just returns even if
+filesystem seems not umounted cleanly
+.TP
+.B -r
+ignored
+.TP
+.B -V
+Prints version and exits
+.SH AUTHOR
+This version of
+.B reiserfsck
+has been written by Hans Reiser <reiser@idiom.com>.
+.SH BUGS
+There are probably few of them. Please, report bugs to Hans Reiser <reiser@idiom.com>.
+.SH TODO
+Faster recovering, signal handling, objectid sharing, etc.
+.SH SEE ALSO
+.BR mkreiserfs (8),
+.BR debugreiserfs (8)

@@ -1,0 +1,11 @@
+#!/bin/sh
+#
+ETH=`cat /etc/eth`
+MAC=`cat /etc/mac`
+
+. /etc/netinfo.sh
+SRV=$Next_server
+[ -n "$Option_177" ] && SRV=`echo $Option_177|cut -d : -f 1`
+
+ping -c 10 $SRV
+ping -c 10 -s 512 $SRV

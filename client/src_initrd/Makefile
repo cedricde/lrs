@@ -11,8 +11,8 @@ MKDEV=$(shell pwd)/MAKEDEV
 IMAGES=image_error image_lvmreiserfs image_raw image_swap image_e2fs image_fat image_ntfs image_reiserfs image_xfs image_jfs image_ufs
 SRCLIN=/usr/src/linux/
 
-AUTOSAVE_DIR=../../revimage/revimage/autosave
-IMAGE_DIR=../../revimage/revimage
+AUTOSAVE_DIR=../revimage/autosave
+IMAGE_DIR=../revimage
 POSTINST_DIR=../../postinst
 
 all: initrd
@@ -28,7 +28,7 @@ initrd: Makefile MAKEDEV pump/pump
 	# get the latest pump
 	strip pump/pump
 	cp -f pump/pump $(LOOP)/bin
-	cp -f $(IMAGE_DIR)/../atftp-0.7/atftp $(LOOP)/bin
+	# cp -f $(IMAGE_DIR)/../atftp-0.7/atftp $(LOOP)/bin
 	# get the latest autosave/autorestore
 	for n in autorestore revorestore revosendlog revowait revogetname revosetdefault ;do \
 	    cp -f $(IMAGE_DIR)/autorestore/$$n $(LOOP)/bin ;\
@@ -55,5 +55,4 @@ initrd: Makefile MAKEDEV pump/pump
 	gzip -6c $(INITRD) > $(INITRD).gz
 
 pump/pump: pump/Makefile
-	-ln -sf pump-0.8.11 pump
 	(cd pump; make; strip pump)

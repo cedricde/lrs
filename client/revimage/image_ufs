@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# todo: magic = 0x00011954 or 0x54190100   at oftset 8192+0x55c
+
+exit 1

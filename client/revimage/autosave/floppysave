@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# Save logs helper script
+#
+# $Id: floppysave,v 1.2 2003/10/29 14:12:53 ludo Exp $
+#
+
+echo "Insert a blank MSDOS formatted floppy and press Enter"
+read toto
+mount /dev/fd0 /mnt
+echo "Saving log files:"
+echo "messages"
+cp -f /var/log/messages /mnt
+echo "pci info"
+cat /proc/pci >> /mnt/messages
+echo 
+umount /mnt
+echo
+echo
+echo "Now you can send the 'messages' file to support@linbox.com"
+

@@ -2,7 +2,13 @@ Directories
 ===========
 
 grub.cdrom	: source of the CDROM restoration program
+revimage	: source of the binaries which compress a filesystem
 src_initrd	: source for the diskless Linux initrd
 src_kernel	: makefile for the 2.6 diskless Linux kernel
 src_revoboot	: source of the PXE boot loader revoboot.pxe, based on GRUB
+
+The diskless initrd and all the utilities, are taken from a Debian Woody, or
+should be recompiled on a Debian Woody. The interesting side effect, is that
+if you need to add a binary to the initrd, you just have to drop a Woody 
+binary.
 

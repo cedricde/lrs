@@ -1,0 +1,3 @@
+
+/* prototypes */
+double now(void);
