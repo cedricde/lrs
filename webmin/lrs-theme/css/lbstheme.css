@@ -1,0 +1,182 @@
+/* Linbox Rescue Server theme
+   Copyright (C) 2005  Linbox FAS
+
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 2
+ of the License, or (at your option) any later version.
+*/
+
+
+/* orange super foncé    : #EA4F26
+  orange passé          : #FCD3C2
+  orange très passé     : #FCF7F5 */
+
+hr {
+	border  	: 1px solid #EA4F26;
+	height  	: 1px;
+}
+
+div#tooltip {
+        background-color: #FCF7F5;
+        border          : 1px solid #EA4F26;
+        padding         : 0.2em;
+        font-size       : 0.8em;
+}
+
+div#maintitle {
+	position	: absolute;
+	left    	: 70px;
+	top     	: 18px;
+	font-size       : 37px;
+	background-image: url(/images/fd-table4.gif);
+	background-repeat: no-repeat;
+	background-position: 3px 0px;
+}
+
+div#subtitle {
+	position	: absolute;
+	left   	 	: 72px;
+	top     	: 61px;
+	font-size       : 10px;
+}
+
+div#adminlinks {
+	position	: absolute;
+	right   	: 5px;
+	top     	: 5px; 
+	text-align      : right;
+}
+
+div#body {
+	width   	: 100%;	
+        padding-top     : 4px;
+	clear   	: both;
+	background-color: white;
+	border  	: 1px solid white;
+}
+
+div#backlink {
+	border  	: 0px solid white;
+	margin  	: 0px;
+	padding 	: 2px;
+	background-image: url(/images/haut_05.gif);
+	background-color: white;
+}
+
+div#footer {
+	border  	: 0px solid white;
+	margin  	: 0px;
+	padding-top	: 5px;
+	border-top      : 1px solid black;
+	border-bottom   : 1px solid black;
+}
+
+div#top_menu 
+{	
+	width           : 100%;
+	text-align      : center;	
+	border-top      : 1px solid #FFFFFF;
+	border-bottom   : 1px solid black;
+	line-height     : 150%
+	background-color: #EA4F26;
+}
+
+.top_menu { 
+	font-size       : 12px;
+}
+
+.top_menu_sel { 
+	font-size       : 12px;
+}
+
+table.webmincategories {
+	border  	: 0px;
+}
+
+table.lbsonglet {
+	border  	: 0px;
+}
+
+
+table.webminmodule {
+	border-collapse : separate;
+	border  	: 1px groove #EA4F26;
+}
+
+table.webminmodule:hover{
+	border  	: 1px solid #EA4F26;
+}
+
+
+td.webmincategories {
+	border-width  	: 0px;
+}
+
+.noborder {
+	border-width  	: 0px;
+}
+
+
+input,textarea {
+	border  	: 1px solid #EA4F26;
+	margin  	: 5px;
+	padding 	: 2px;
+}
+
+input[type=submit] {
+	background-color: #efdcd7;
+	border  	: 2px groove #EA4F26;
+	padding 	: 3px;
+	margin-left, margin-right : 6px
+}
+
+input[type=submit]:hover {
+	border  	: 2px groove #EA4F26;
+	margin-left, margin-right : 5px
+}
+
+select {
+	margin-bottom: 4px;
+}
+
+input:hover,textarea:hover {
+	background-color: #E0E0E0;
+}
+
+a:link {
+       color: #000000;
+       text-decoration: underline;
+}
+                                                                               
+                                                             
+a:visited {
+       color: #000000;
+       text-decoration: underline;
+}
+                                                                               
+                                                             
+a:hover {
+       color: #999999;
+       text-decoration: none;
+}
+                                                                               
+                                                             
+a:active {
+       color: #EA4F26;
+       text-decoration: underline;
+}
+
+.leftcolumn {
+	float: left; 
+	width: 48%; 
+	position: relative; 
+	left: 1%;
+}
+
+.rightcolumn {
+	float: right; 
+	width: 48%; 
+	position: relative; 
+	right: 1%;
+}

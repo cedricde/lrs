@@ -1,0 +1,39 @@
+Linbox Rescue Server theme
+Copyright (C) 2005  Linbox FAS
+
+This module is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+
+IMPORTANT !
+===========
+
+Please note that this theme uses Linbox brand and the Linbox logo which 
+are subject to trademark law, and that trademark law is not copyright law.
+The "Linbox" trademark is a trademark of Linbox Free&Alter soft SARL, 
+in France and other countries and is used by permission.
+
+If a user modifies the Software, then the user must replace all images containing 
+the "Linbox" trademark such as, linbox_haut_01.gif, linbox-icon-small.gif 
+and favicon.ico in the './images' directory.
+
+Linbox FAS grants you the right to use the logo as is, without any 
+modification for the sole use within Webmin. The logo ("penguin box" and 
+Linbox name) may not be modified in any ways without a prior written 
+agreement of Linbox FAS SARL.
+
+It is not incompatible with the GPL since the logo files are not part 
+of the program itself (the LRS theme), they are simply data used by that 
+program, and changing the logo data has absolutely no effect on the 
+functional use of the program.

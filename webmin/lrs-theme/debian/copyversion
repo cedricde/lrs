@@ -1,0 +1,16 @@
+#!/bin/sh
+#
+# Check that debian/changelog and module.info versions are in sync
+#
+
+[ -d debian ] && cd debian
+[ changelog -ot ../theme.info ] && exit 0
+
+echo "Updating theme.info version"
+
+VER=`head -1 changelog|cut -f 2 -d " "|tr -d \(\)`
+#echo *$VER*
+
+INFO=`grep -v version= ../theme.info`
+echo -e "$INFO\nversion=$VER" > ../theme.info
+exit 1
