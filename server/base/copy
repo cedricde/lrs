@@ -1,0 +1,30 @@
+#!/bin/bash
+#
+# $Id$
+#
+# 'copy' to update files
+# 'copy -t' for a dry run
+#
+
+exec 3<&0 <files
+
+while true
+do
+    read RES
+    F1=`echo $RES|awk '{print $1;}'`
+    F2=`echo $RES|awk '{print $2;}'`
+    if [ "$RES" = "" ]; then
+	break
+    fi
+    if [ ! -f $F1 ]; then
+        echo "$F1 not readable !!!"	
+    fi
+    if [ $F1 -nt $F2 ]; then
+        echo "$F1 is newer"
+	if [ -z $1 ]; then
+	    cp -vfd $F1 $F2
+	fi
+    fi
+done
+
+exec <&3 3<&-

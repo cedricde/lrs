@@ -1,0 +1,14 @@
+timeout 20
+color 7/1 15/3
+default 1
+
+title Disque Dur Local  / Local Hard Disk
+desc Demarrage sur disque dur local
+root (hd0)
+chainloader +1
+
+title Ajout d'un client / Add a client
+desc Prise en compte d'une nouvelle station LBS
+identify
+reboot
+

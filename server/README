@@ -1,0 +1,5 @@
+Directories
+===========
+
+base	: skelton for base*.tgz, Makefile for building base*.tgz
+dist	: base*.tgz
