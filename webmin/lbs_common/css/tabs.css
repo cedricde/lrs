@@ -1,0 +1,96 @@
+/*
+ * stylesheet for the upper tabs ("category")
+ */
+
+/*
+ * style for each row of tabs
+ */
+ul#lbsonglet {
+        list-style-type         : none;                 /* no "puce" */
+        padding                 : 0px;                  /* default padding */
+        margin                  : 0px;                  /* default margin */
+        padding-left            : 5px;                  /* space @ left*/
+        padding-bottom          : 25px;                 /* space from next line of tabs */
+        border-bottom           : 1px solid #ef4d21;    /* line between each tab */ 
+}
+
+/*
+ * style for each tab
+ */
+ul#lbsonglet li {
+        float                   : left;                 /* append to the left of the previous element */
+        height                  : 21px;                 /* tab's height */
+        background-color        : #FCD3C2;              /* tab's back color */
+        margin                  : 3px 5px 0px 0px;      /* margin TRBL (spacing between cells)*/
+        border                  : 1px solid #EF4D21;    /* border around each tab */
+}
+
+/*
+ * override for the current tab
+ */
+ul#lbsonglet li.bouton_select {
+        border-bottom           : 1px solid white;      /* bottom border is white */
+        background-color        : white;                /* and also the background */
+}
+
+/*
+ * overide for unselectable tabs
+ */
+ul#lbsonglet li.bouton_unselect {
+        border-bottom           : 1px solid #ef4d21;    /* border like around the tab */
+        color                   : #888888;              /* ut text is grey */
+        cursor                  : default;              /* and the cursor inactive */
+}
+
+/*
+ * anchor inside tabs
+ */
+ul#lbsonglet a {
+        display                 : block;                /* block */
+        text-decoration         : none;                 /* no underline */
+        margin                  : 0px;                  /* default margin */
+        padding                 : 6px;                  /* padding of *the anchor* left + right (inside the tab) */
+        padding-top             : 2px;                  /* padding of *the anchor* top (inside the tab) */
+        padding-bottom          : 2px;                  /* padding of *the anchor* bottom (inside the tab) */
+}
+
+/*
+ * anchor inside current tab
+ */
+ul#lbsonglet a.select {
+        font                    : bold 14px sans-serif; /* is bold to be more visible */
+}
+
+/*
+ * "on the fly" behavior of anchor inside current tab
+ */
+ul#lbsonglet a.select:hover{
+        padding-bottom          : 2px;                  /* to draw the border */
+        border-bottom           : 1px dashed #EF4D21;   /* dashed and visible bottom border */
+}
+
+/*
+ * anchor inside unselectable tabs (shouldn't append)
+ */
+ul#lbsonglet a.unselect:hover {
+        background              : white;                /* white */
+        color                   : grey;                 /* and grey */
+        border-bottom           : 1px dashed #ef4d21;
+        padding-bottom          : 3px;
+}
+
+/*
+ * div opend after the tabs
+ */
+ 
+div.cadre {                                     
+        border-style    	: solid; 
+        border-top-width        : 0px;                  /* no border on the top */
+        border-right-width      : 1px;                  /* but on */
+        border-bottom-width     : 1px;                  /* the three */
+        border-left-width       : 1px;                  /* other sides */
+        border-color    	: #EF4D21;              /* normal color */
+        padding 		: 5px;
+        margin 		        : 0px;
+        clear                   : left;
+}

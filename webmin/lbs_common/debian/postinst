@@ -1,0 +1,40 @@
+#!/bin/sh
+
+[ -f /etc/webmin/module.infos.cache ] && rm /etc/webmin/module.infos.cache
+
+set -e
+/usr/sbin/update-webmin add lbs_common
+
+mkdir -p /var/lib/lrs
+
+phplink=/var/lib/lrs/php
+
+if [ ! -e /usr/bin/php4 ]
+    then
+    echo Setting the php link according to the Debian distribution version
+    # php4-cgi is not installed. We set the link according to the Debian
+    # distribution version.
+    vers=`cat /etc/debian_version`
+    if [ "$vers" = "3.0" ]
+    then
+	target=/usr/bin/php4
+    else
+	target=/usr/bin/php4-cgi
+    fi	
+else
+    echo Setting the php link according to the php4-cgi package version
+    phpversion=`dpkg -s php4-cgi 2>&1 | egrep "^Version: " | sed 's/Version: //'`
+    vers=${phpversion:0:5}
+    if [ "$vers" = "4:4.1" ]
+	then
+	target=/usr/bin/php4	
+    else
+	target=/usr/bin/php4-cgi
+    fi
+fi
+
+ln -fs $target $phplink
+echo Link set to $target
+
+
+#DEBHELPER#

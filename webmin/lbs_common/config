@@ -1,0 +1,2 @@
+lbs_conf=/etc/lbs.conf
+free_disk_dir=/tftpboot/revoboot

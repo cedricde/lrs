@@ -1,0 +1,15 @@
+Source: webmin-lbs-common
+Section: utils
+Priority: optional
+Build-Depends-Indep: debhelper (>= 4.0) 
+Maintainer: Linbox Team <info@linbox.com>
+Standards-Version: 3.6.1
+
+Package: webmin-lbs-common
+Section: utils
+Architecture: all
+Depends: webmin
+Suggests: lbs
+Description: Common Webmin module for the LRS
+ This package contains the Webmin module common to all LRS modules. 
+ 

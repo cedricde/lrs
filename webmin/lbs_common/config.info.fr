@@ -1,0 +1,2 @@
+lbs_conf=Fichier de configuration LRS,0
+free_disk_dir=Répertoire utilisé pour l'affichage de l'espace disque,0
