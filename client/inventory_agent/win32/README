@@ -1,0 +1,33 @@
+I - Required tools
+
+To build this (fantastic) piece of software, you will need:
+
+- Python 2.2 (with win32 bindings)
+- Paul Baranowski's Installer:
+   http://paulbaranowski.org/modules.php?name=Downloads&d_op=getit&lid=8
+- OCS Inventory v2:
+   http://prdownloads.sourceforge.net/ocsinventory/OCSInventory_2.01R4.zip?download
+- InnoSetup 4.2.7: 
+   http://downloads.pcworld.com/pub/new/utilities/isetup-4.2.7.exe
+
+At this moment, there are some issue with recent version of python (2.4) and
+the setup's code is NOT compatible with InnoSetup v5+ . And the Inventory Agent is
+only OCS v2 compatible. Feel free to upgrade ;)
+
+II - Create the environnement
+
+- get the LRS Inventory Agent last trunk
+- get PB'Installer tool, uncompress, then move <uncomp dir>/installer_6a2/Installer
+  into <build dir>/Installer
+- get OCS Inventory v2, uncompress, then move <uncomp dir>/Application into 
+  <build dir>/OCS
+
+III - Creating the Agent Binary
+
+Simply run "Build.bat", at the projet root dir. The agent (lrs-inventory.exe)
+should appear in the "Spec" dir.
+
+IV - Packaging the Agent Binary
+
+Simply "compile" setup.iss in the "Setup" dir. The setup should appear in the
+"Setup" dir.

@@ -1,0 +1,24 @@
+Copyright (C) 2003, 2004 Linbox / Free & Alter Soft.
+
+This tool is a wrapper around OCSinventory to send the results
+of a software inventory to a single server via HTTP. 
+
+That server must run the LRS Inventory Webmin module (available on
+ftp.linbox.com).
+
+For more information, read the LRS documentation:
+
+  http://www.linbox.com/en/docs/ch06.html
+  
+OCSinventory is free software made by Didier LIROULET and many others, more
+infomation at: http://ocsinventory.sourceforge.net/
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 2, or (at your option) any
+later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
