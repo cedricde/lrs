@@ -27,5 +27,6 @@ bcm5700
 # lance
 #tg3
 forcedeth
+r8169
 tlan
 epic100
