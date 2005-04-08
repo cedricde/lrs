@@ -23,7 +23,7 @@
 #include "pci.h"
 #include <shared.h>
 
-//#define	DEBUG	1
+#define	DEBUG	1
 
 static unsigned int pci_ioaddr = 0;
 static int lastbus=-1;
@@ -380,8 +380,8 @@ static void pcibios_init(void)
 			continue;
 		}
 #if	DEBUG
-		grub_printf("pcibios_init : BIOS32 Service Directory "
-			"structure at 0x%X\n", check);
+		//grub_printf("pcibios_init : BIOS32 Service Directory "
+		//	"structure at 0x%X\n", check);
 #endif
 		if (!bios32_entry) {
 			if (check->fields.entry >= 0x100000) {
@@ -391,8 +391,8 @@ static void pcibios_init(void)
 			} else {
 				bios32_entry = check->fields.entry;
 #if	DEBUG
-				grub_printf("pcibios_init : BIOS32 Service Directory"
-					" entry at 0x%X\n", bios32_entry);
+				//grub_printf("pcibios_init : BIOS32 Service Directory"
+				//	" entry at 0x%X\n", bios32_entry);
 #endif
 				bios32_indirect.address = bios32_entry;
 			}
