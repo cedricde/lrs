@@ -1082,15 +1082,13 @@ sub checkfordaemon {
     if (! -r $config{'lbs_conf'}) { return; }
         
     my $run = system ("ps ax|grep -v grep|grep -q getClientResponse");
-    if ($run != 0)
-        {
+    my $run2 = system ("ps ax|grep -v grep|grep -q lrsd");
+    if ($run != 0 && $run2 != 0)
+	{
 	    print "<font size='+2' color='red'><br>";
 	    print $text{'err_gcr_not_running'};
 	    print "<br><br></font>";
-#	print "<pre>/etc/lbs.conf:\n\n";
-#	print `cat /etc/lbs.conf`;	
-#	print "</pre>";
-      }
+	}
 }
 
 #
