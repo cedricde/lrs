@@ -1,0 +1,6 @@
+desc=LRS : Files Backup
+desc_fr=LRS : Sauvegarde Fichiers
+name=BackupPC
+category=Webmin
+depends=0.94 lbs_common
+version=0.8

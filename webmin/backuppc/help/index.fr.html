@@ -1,0 +1,87 @@
+<header>Backuppc</header>
+<h3>Introduction</h3>
+<p>Ce module vous permet de sauvegarder et de restaurer les partitions
+ du disque dur d'un ou plusieurs PC, indépendamment
+ du système d'exploitation installé. Son architecture est de type
+ client/serveur, et conçue pour fonctionner sur un réseau local.
+ Concrètement, le serveur est l'ordinateur qui centralise et administre les
+ sauvegardes sur son disque, et les clients sont les postes de travail à
+ sauvegarder ou restaurer.
+ La particularité de ce système, est qu'aucun logiciel spécifique n'est
+ installé sur le disque de chaque PC client, et qu'il est indépendant
+ de l'OS à sauvegarder.
+</p>
+<hr>
+<a name="dhcp"></a>
+<h3>Client avec une configuration DHCP</h3>
+<p>Pour contacter le client, backuppc doit connaitre la configuration reseau de ce client. <br>
+- Si le client possède une addresse IP statique ou si le client peut être joint via une
+   requète NetBios, positionez l'option sur 'Non'; <br>
+- si le client ne peut être trouvé que par la recherche dans les plages d'adresses DHCP
+  disponibles, positionnez l'option sur 'Oui'. </p>
+<hr>
+<a name="xfer"></a>
+<h3>Méthode de transfert pour la sauvegarde</h3>
+<p>Vous pouvez choisir entre plusieurs méthodes de transfert pour la sauvegarde. <br>
+Les méthodes possibles sont : <BR>
+<li><b>'smb'</b></li>
+Sauvegarde via smbclient et le protocole SMB. Le meilleur choix pour WinXX..<BR>
+<li><b>'rsync'</b></li>
+Sauvegarde via rsync (rsh ou ssh). Le meilleur choix pour Linux/Unix. Peut aussi marcher sous WinXX.<br>
+<li><b>'rsyncd'</b></li>
+Sauvegarde via démon rsync sur le client. Le meilleur choix pour Linux/Unix si vous avez rsyncd qui marche sur cette machine. Possible sous WinXX.<BR>
+<li><b>'tar'</b></li>
+Sauvegarde via tar, tar par ssh, rsh ou nfs. Linux/Unix.
+<hr>
+<a name="shares"></a>
+<h3>Fichiers partagés</h3>
+<p>Si le client a sauvegarder est lié a des fichiers partagés, alors vous
+devez les spécifiers si vous voulez les sauvegarder également.<br>
+Par exemple, si le client possède sa paratition /home monté a partir d'une autre ordinateur,
+vous devez specifier que vous voulez que cette partition soit aussi sauvegarder integralement.
+<hr>
+<a name="ssh"></a>
+<h3>SSH</h3>
+<p>Ssh permet d'exécuter des commandes en tant qu'utilisateur privilegié sur la machine cliente. Ssh est paramêtré pour permettre au BackupPC du serveur de se connecter comme root sur le client sans demander de mot de passe. <br>
+En étant root sur la machine du client, utilisez ssh-keygen pour genérer la clé privée/public sans la demande de mot de passe : <TT>ssh-keygen -t rsa -N ''</TT>. Cela sauvegarde la clé public dans ~/.ssh/id_rsa.pub et la clé privé dans~/.ssh/id_rsa. <br>
+Le bouton <I>Créer</I> exécute la même commande sur le serveur (si le bouton n'apparaît pas, les clés existent déjà). <br>
+Pour permettre à BackupPC de se connecter en ssh comme root, vous devez placer la clé publique de BackupPC dans la liste d'hosts authorisés de root. <br>
+Chargez la clé public de BackupPC (BackupPC_id_rsa.pub) par le lien <I>BackupPC_id_rsa.pub</I> et attachez-la au fichier ~/.ssh/authorized_keys2 de root sur le client : <br>
+<TT>touch ~/.ssh/authorized_keys2<br>cat BackupPC_id_rsa.pub >> ~/.ssh/authorized_keys2</TT>
+<hr>
+<a name="periods"></a>
+<h3>Périodes de sauvegardes</h3>
+<p>Vous pouvez sélectionnez une période minimum en jours entre les sauvegardes complètes et entre les sauvegardes incrémentales. <br>
+La période entre les sauvegardes est exprimée en jours. <br>
+Comme la durée de sauvegarde s'ajoute à la période, pour connaître la période réelle entre 2 sauvegardes, il faut estimer la durée de sauvegarde et la retrancher à la période désirée entre 2 sauvegardes. <br>
+Par exemple si la sauvegarde prend 40 minutes (#0,03 jours) et si l'on souhaite sauvegarder chaque jour, alors on donne une période de 1 - 0,03 jours = 0,97 jours. <br>
+Si cette valeur est <b>-1</b> alors ne pas faire de sauvegardes de cette machine. Les sauvegardes seront toujours manuelles (par l'interface Web).<BR><b>-2</b> : ne pas faire de sauvegardes de cette machine, en aucun cas. <br>
+Ces valeurs spéciales sont utiles pour un client qui ne doit plus être sauvegardé, mais dont les fichiers seront gardés pour restauration d'autres machines.
+</p>
+<hr>
+<a name="blackout"></a>
+<h3>Le system 'Blackout'</h3>
+<p>Des machines qui sont souvent connectées au réseau peuvent être sauvegardées la nuit, pour réduire la charge des machines et du réseau. <br>
+Pour chaque PC, après un certain nombre de contacts réussis, on arrête de le contacter pendant les periodes données. <br>
+Par défaut on ne les contacte pas de 7h00 à 19h30, du lundi au vendredi.
+</p>
+<hr>
+<a name="maxbackups"></a>
+<h3>Sauvegardes maximums simultanées</h3>
+<p>Vous pouvez sélectionnez le nombre maximum de sauvegarde simultanée possible. S'il n'y a pas de demandes de sauvegarde des utilisateurs c'est le nombre maximal de sauvegardes. <br>
+Les demandes de sauvegarde d'un utilisateur, c'est le nombre maximal de sauvegardes qu'un utilisateur peut déclencher depuis l'interface Webmin. <br>
+Nombre max. de sauvegardes + nombre max. de sauvegardes d'un utilisateur donne le nombre de demandes qui peuvent être effectuées en même temps.
+</p>
+<hr>
+<a name="wakeup"></a>
+<h3>Réveil du serveur</h3>
+<p>Vous pouvez programmez le serveur pour se reveiller et faire des sauvegardes. Le temps est mesuré en heures depuis minuit et peut être fractionnel (ex. 4.25 signifie 4h15). <br>
+Si les machines sauvegardées sont toujours branchées, vous pouvez avoir 1-2 réveils durant la nuit. Sinon, pour les portables, il vaut mieux effectuer des réveils fréquents pour maximiser les chances de sauvegarde. <br>
+Exemples : <TABLE ALIGN="CENTER" BORDER="1" CELLSPACING="0" VSPACE="3" CELLPADDING="2"><TR><TD><TT>22.5 - à 22h.30<BR>1..23 - chaque heure, sauf minuit<BR>2,4,6,8,10,12,14,16,18,20,22 - toutes les 2 heures</TT></TD></TR></TABLE>
+</p>
+<hr>
+<a name="dhcplist"></a>
+<h3>Plages DHCP</h3>
+<p>Si le client est configurer en DHCP, alors vous devez listez des adresses DHCP à parcourir pour trouver les machines à sauvegarder. Cette liste ne peut contenir que des réseaux de classe C.
+</p>
+<hr>

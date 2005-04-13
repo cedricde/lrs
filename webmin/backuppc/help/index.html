@@ -1,0 +1,84 @@
+<header>Backuppc</header>
+<h3>Introduction</h3>
+<p>This module allows you to save and restore operations of PC hard disk partitions across a local network.
+This system is based on a client/server architecture, and wants to be independent, regardless the clients operating system. <br>
+In other words, the server is the computer which centralizes and manages the backups, and the clients are workstations whose hard disks partitions have to be saved. <br>
+No special software utility is needed on client's hard disk to realize backups and restorations, and no matter what type of operating system is installed on.
+</p>
+<hr>
+<a name="dhcp"></a>
+<h3>client with dhcp configuration</h3>
+<p>To contact the client, backuppc need to know how its network configuration is set. <br>
+- If the client has a static IP address or if the client can be found using a Netbios
+  request, set to 'No' the DHCP flag ; <br>
+- if the client can only be found by looking through the DHCP pool then set the DHCP flag
+  to 'Yes'.</p>
+<hr>
+<a name="xfer"></a>
+<h3>Method transport for backing up</h3>
+<p>You can choose many method transport for backing up your client. <br>
+Valid values are: <BR>
+<li><b>'smb'</b></li>
+Backup and restore via smbclient and the SMB protocol. Best choice for WinXX.<BR>
+<li><b>'rsync'</b></li>
+Backup and restore via rsync (via rsh or ssh). Best choice for Linux/Unix. Can also work on WinXX. <br>
+<li><b>'rsyncd'</b></li>
+Backup and restre via rsync daemon on the client. Best choice for Linux/Unix if you have rsyncd running on the client. Can also work on WinXX.<BR>
+<li><b>'tar'</b></li>
+Backup and restore via tar, tar over ssh, rsh or nfs. Good choice for Linux/Unix.</p>
+<hr>
+<a name="shares"></a>
+<h3>Shared folders</h3>
+<p>If the client you want to back up has some shared folder, you can set which you want
+to save too.<br>
+For exemple, if the client has its /home mounted from an other host, you must specify 
+you want to save the shared folder /home.</p>
+<hr>
+<a name="ssh"></a>
+<h3>SSH features</h3>
+<p>Ssh allows BackupPC to run as a priviledged user on the client, since it needs sufficient permissions to read all the backup files. Ssh is setup so that BackupPC on the server can ssh as root on the client without being propmted for the password. <br>
+As root on the client machine, use ssh-keygen to generate a public/private key pair, without a pass-phrase: <TT>ssh-keygen -t rsa -N ''</TT>. This will save the public key in ~/.ssh/id_rsa.pub and the private key in ~/.ssh/id_rsa. <br>
+The button <I>Create</I> executes the same command on the server (if the button doesn't appear the keys exist already). <br>
+To allow BackupPC to ssh to the client as root, you need to place BackupPC's public key into root's authorized list on the client. <br>
+Download the BackupPC's public key (BackupPC_id_rsa.pub) from the link <I>BackupPC_id_rsa.pub</I> and append it to roots ~/.ssh/authorized_keys2 file on the client: <br>
+<TT>touch ~/.ssh/authorized_keys2<br>cat BackupPC_id_rsa.pub >> ~/.ssh/authorized_keys2</TT>
+</p>
+<hr>
+<a name="periods"></a>
+<h3>Backing up periods</h3>
+<p>You can set a minimum periods in days between full backups and incremental backups. A full dump will only be done if at least this much time has elapsed since the last full dump, and at least the incremental period has elapsed since the last successful dump. <br>
+Typically this is set slightly less than an integer number of days. The time taken for the backup, plus the granularity of the wakeup schedule will make the actual backup interval a bit longer.<BR>
+There are two special values for the full period :
+<li>-1</li>
+Don't do any regular backups on this machine.  Manually requested backups (via the CGI interface) will still occur.
+<li>-2</li>
+Don't do any backups on this machine. Manually requested backups (via the CGI interface) will be ignored. <br>
+These special settings are useful for a client that is no longer being backed up (eg: a retired machine), but you wish to keep the last backups available for browsing or restoring to other machines.
+</p>
+<hr>
+<a name="blackout"></a>
+<h3>Blackout feature</h3>
+<p>PCs that are always or often on the network can be backed up afterhours, to reduce PC, network and server load during working hours. For each PC, a count of consecutive successive contacting is maintained. <br>
+Afterwards, the PC is subject to "blackout" and not backed up during specified hours and days. <br>
+The default settings specify the blackout period from 7:00am to 7:30pm local time on Mon-Fri.
+</p>
+<hr>
+<a name="maxbackups"></a>
+<h3>Maximum backups</h3>
+<p>You can set the maximum simultaneous backup. If there are no user backup requests then this is the maximum number of simultaneous backups. <br>
+User backup requests is an additional number of simultaneous backups that users can run. <br>
+Max. backup + max backup = total of simultaneous backup.
+</p>
+<hr>
+<a name="wakeup"></a>
+<h3>Wake up feature</h3>
+<p>You can program the server to wake up itself and do some backups. Times are measured in hours since midnight and can be fractional if necessary (eg: 4.25 means 4:15am). <br>
+If hosts you are backing up are always connected to the network you might have 1-2 wakeups each night. Otherwise, if you are backing up laptops you will want to have frequent wakeups to maximized the chance that each laptop is backed up. <br>
+Examples:<TABLE ALIGN="CENTER" BORDER="1" CELLSPACING="0" VSPACE="3" CELLPADDING="2"><TR><TD><TT>22.5 - at 22:30<BR>1..23 - every hour, except midnight<BR>2,4,6,8,10,12,14,16,18,20,22 - every 2 hours</TT></TD></TR></TABLE>
+</p>
+<hr>
+<a name="dhcplist"></a>
+<h3>dhcp scanning</h3>
+<p>If clients in the conf/hosts have the DHCP flag set, you must specify a list of DHCP address ranges to search looking for PCs to backup. This is an array of hashes for each class C address range.
+</p>
+<hr>

@@ -1,0 +1,17 @@
+Source: webmin-backuppc
+Section: utils
+Priority: optional
+Build-Depends-Indep: debhelper (>= 4.0) 
+Maintainer: LRS Team <libre@linbox.com>
+Standards-Version: 3.6.1
+
+Package: webmin-backuppc
+Section: utils
+Architecture: all
+Depends: lbs, webmin, php4, php4-cgi, backuppc, webmin-lbs-common
+Description: Webmin backuppc module for the LRS
+ This package contains the Webmin module for backuppc. 
+ .
+ The backuppc module allows to generate simple configuration files for the
+ backuppc's hosts.
+ 
