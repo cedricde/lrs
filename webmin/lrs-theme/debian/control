@@ -8,7 +8,7 @@ Standards-Version: 3.6.1
 Package: webmin-lrs-theme
 Section: utils
 Architecture: all
-Depends: lbs, webmin, php4, php4-cgi, webmin-lbs-common
+Depends: webmin, php4, php4-cgi, webmin-lbs-common
 Description: Webmin Linbox LRS theme
  This package contains the nice Webmin Linbox LRS theme. 
  
