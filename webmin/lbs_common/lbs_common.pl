@@ -289,12 +289,13 @@ my $mac_with_dot        = url_encode(mac_add_columns(mac_remove_columns($in{'mac
                                                 my %toreplaces;                                         # will contain words to replace
                                                 my $todisplay=0;
                                                 while ($url2 =~ s/%([^%]*)%//) {                        
-                                                        $toreplaces{$1}++;                           # fill the array
+                                                        $toreplaces{$1}++;                              # fill the array
                                                 }
 
                                                 $todisplay = 1 if ($toreplaces{'host'} && $host && $host ne "");
                                                 $todisplay = 1 if ($toreplaces{'group'} && $group && $group ne "");
                                                 $todisplay = 1 if ($toreplaces{'mac'} && $mac && $mac ne "");
+                                                $todisplay = 1 if ($toreplaces{'mac_with_dot'} && $mac && $mac ne "");
                                                 $todisplay = 1 if ($toreplaces{'mac_with_dot'} && $mac_with_dot && $mac_with_dot ne "");
                                                 $todisplay = 1 if ($toreplaces{'group'} && $toreplaces{'group'} && ( $group ne "" || $profile ne "") );
                                                 $todisplay = 1 if (lc($menu{$onglet}{'DATAS'}{'dont_shade'}) eq "y");
@@ -306,7 +307,7 @@ my $mac_with_dot        = url_encode(mac_add_columns(mac_remove_columns($in{'mac
                                                 $profile = "" unless $profile;
                                                 
                                                 if (keys(%toreplaces) == 0 || $todisplay) {
-                                                        $url =~ s/(.*)%mac_with_dot%(.*)/$1$mac_with_dot$2/     	                # perhaps an "mac_with_dot" arg given ?
+                                                        $url =~ s/(.*)%mac_with_dot%(.*)/$1$mac_with_dot$2/             # perhaps an "mac_with_dot" arg given ?
                                                                 if $url =~ m/%mac_with_dot%/;
                                                         $url =~ s/(.*)%mac%(.*)/$1$mac$2/       			# perhaps an "mac" arg given ?
                                                                 if $url =~ m/%mac%/;            
@@ -319,7 +320,7 @@ my $mac_with_dot        = url_encode(mac_add_columns(mac_remove_columns($in{'mac
                                                         $template->assign('URL', $url);
                                                         if ($label) {                                                   # shown only if there is a label
                                                                 $template->assign('NOM_LIEN', $label);
-                                                                if ($selected) {                   # got THE selected onglet
+                                                                if ($selected) {                                        # got THE selected onglet
                                                                         $template->assign('IS_SELECTED', 'select');     # so paint it
                                                                 } else {
                                                                         $template->assign('IS_SELECTED', 'unselect');   
