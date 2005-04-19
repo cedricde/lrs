@@ -378,12 +378,18 @@ function saveBackupFile($host, $xfermethod, $shares_str, $username, $passwd, $fu
       fwrite($fh, "\$Conf{RsyncdSharePasswd} = '$passwd';\n\n");
     }
   } 
-  fwrite($fh, "\$Conf{FullPeriod} = $full;\n");
-  fwrite($fh, "\$Conf{IncrPeriod} = $incr;\n\n");
+  
+        if ($full != "")
+                fwrite($fh, "\$Conf{FullPeriod} = $full;\n");
+        if ($incr != "")
+                fwrite($fh, "\$Conf{IncrPeriod} = $incr;\n\n");
 
-  fwrite($fh, "\$Conf{BlackoutHourBegin} = $blackout_begin;\n");
-  fwrite($fh, "\$Conf{BlackoutHourEnd} = $blackout_end;\n");
-  fwrite($fh, "\$Conf{BlackoutWeekDays} = [$blackout_days];\n");
+        if ($blackout_begin != "")
+                fwrite($fh, "\$Conf{BlackoutHourBegin} = $blackout_begin;\n");
+        if ($blackout_end != "")
+                fwrite($fh, "\$Conf{BlackoutHourEnd} = $blackout_end;\n");
+        if ($blackout_days != "")
+                fwrite($fh, "\$Conf{BlackoutWeekDays} = [$blackout_days];\n");
 
   fwrite($fh, "\n$unchangedConf\n");
  
