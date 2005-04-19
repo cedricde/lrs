@@ -227,8 +227,22 @@ my $host                = $in{'host'};
 my $group               = $in{'group'};
 my $profile             = $in{'profile'};
 my %menu;
+
+        # when coming from some modules (backuppc f.ex.), the mac adress
+        # can *not* be given: in this case we count on the hostname to
+        # compute it
+        
+        if (not defined $in{'mac'} and defined $in{'host'} and $LRS_HERE) {
+                
+                my %einfo;
+                my $etherfile = "$lbsconf{'basedir'}/etc/ether";
+                main::etherLoad( $etherfile, \%einfo);
+                $in{'mac'} = main::etherGetMacByName(\%einfo, $host, 1);
+        }
+
 my $mac                 = url_encode(mac_remove_columns($in{'mac'})) if $in{'mac'};
 my $mac_with_dot        = url_encode(mac_add_columns(mac_remove_columns($in{'mac'}))) if $in{'mac'};
+
         # get the tabs according to installed modules
         foreach my $module (@LRS_MODULES) {
         	get_hash_from_menu("$ENV{'SERVER_ROOT'}/$module/menus", \%menu) if foreign_check($module);
