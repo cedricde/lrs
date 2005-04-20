@@ -1,5 +1,5 @@
 <BR>
-<FORM METHOD="post" ACTION="affiche.cgi{GET_DATA}">
+<FORM METHOD="post" ACTION="affiche.cgi{GET_DATA}" name="backuppc_configform">
 
 
   <table cellpadding="2" cellspacing="0" border="0" width="100%" class="cadre">
@@ -34,7 +34,7 @@
               <!-- END share_row -->
               ... 
               <!-- BEGIN user_pass_configure -->
-              <a href="#" onClick="window.location.href='choix.cgi{GET_DATA}&username='+username.value+'&passwd='+passwd.value">( Configurer )</a>
+              <a href="#" onClick="window.location.href='choix.cgi{GET_DATA}&username='+document.backuppc_configform.username.value+'&passwd='+document.backuppc_configform.passwd.value">( Configurer )</a>
               <!-- END user_pass_configure -->
               <!-- BEGIN configure -->
               <a href="#" onClick="window.location.href='choix.cgi{GET_DATA}'">( Configurer )</a>

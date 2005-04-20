@@ -1,5 +1,5 @@
 <BR>
-<FORM METHOD="post" ACTION="affiche.cgi{GET_DATA}">
+<FORM METHOD="post" ACTION="affiche.cgi{GET_DATA}" name="backuppc_configform">
 
   <table cellpadding="2" cellspacing="0" border="0" width="100%" class="cadre">
     <tr>
@@ -33,7 +33,7 @@
               <!-- END share_row -->
               ... 
               <!-- BEGIN user_pass_configure -->
-              <a href="#" onClick="window.location.href='choix.cgi{GET_DATA}&username='+username.value+'&passwd='+passwd.value">( Configure )</a>
+              <a href="#" onClick="window.location.href='choix.cgi{GET_DATA}&username='+document.backuppc_configform.username.value+'&passwd='+document.backuppc_configform.passwd.value">( Configure )</a>
               <!-- END user_pass_configure -->
               <!-- BEGIN configure -->
               <a href="#" onClick="window.location.href='choix.cgi{GET_DATA}'">( Configure )</a>
@@ -86,7 +86,7 @@
   </p>
   <table cellpadding="2" cellspacing="0" border="0" width="100%" class="cadre">
     <tr>
-      <td bgcolor="#e2e2e2">&nbsp;<font face="arial" size="3"><b>{HOST} using DHCP</b></font>
+      <td bgcolor="#e2e2e2">&nbsp;<font face="arial" size="3"><b>Is {HOST} using DHCP</b></font>
         <a HREF="" onClick="window.open('/help.cgi/backuppc/index#dhcp','help','width=450,height=250,scrollbars=yes')" ALT="Aide" TITLE="Aide"><IMG SRC="images/qm.png" BORDER="0"></A>
       </td>
     </tr>
