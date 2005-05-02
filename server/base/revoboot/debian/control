@@ -1,7 +1,7 @@
 Source: lbs
 Section: utils
 Priority: optional
-Maintainer: Linbox Team <nobody@linbox.com>
+Maintainer: Linbox Team <libre@linbox.com>
 Build-Depends: debhelper (>> 3.0.0)
 Standards-Version: 3.5.2
 
