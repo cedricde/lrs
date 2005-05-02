@@ -1,12 +1,12 @@
 #! /bin/sh
-# start/stop the LBS server
 #
+# start/stop the LRS server
 #
 
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 DAEMON=/tftpboot/revoboot/bin/lbs_starter
 NAME=lbs
-DESC="Linbox Backup Server"
+DESC="Linbox Rescue Server"
 
 test -x $DAEMON || exit 0
 
