@@ -541,14 +541,17 @@ my $mac = shift ;
 }
 
 
-# $macaddr etherGetMacByName (\%einfo, $name)
+# $macaddr etherGetMacByName (\%einfo, $name, $isshortname ?)
 # Retourne une adresse MAC a partir d'un nom d'hote.
 # Se base sur la structure retournee par etherLoad().
+# si shortname est defini, tronque chaque nom en version courte (nom netbios
+# en principe)
 #
 sub etherGetMacByName
 {
 my $einfo = shift ;
 my $name = shift ;
+my $isshortname = shift ;
 my ($k,$v, $l) ;
 
 	# Ne pas differencier maj/min:
@@ -557,6 +560,7 @@ my ($k,$v, $l) ;
 	foreach $k ( keys %{$einfo} ) {
 		$v = ${$einfo}{$k} ;
 		$l = lc( $$v[1] ) ;
+		$l =~ s|.*/|| if defined($isshortname);
 		return $k if ($l eq $name) ;
 	}
 
