@@ -1,9 +1,11 @@
 # /etc/modules: kernel modules to load at boot time.
 
+pcmcia_core
+yenta_socket
 mii
 crc32
+
 e100
-#eepro100 full_duplex=1
 8139too full_duplex=1
 8139cp
 #3c59x debug=2 options=0x8007
@@ -22,11 +24,12 @@ sundance
 tulip full_duplex=1
 de4x5
 bcm5700
-# cannot autoprobe...
-# cs89x0
-# lance
-#tg3
+tg3
 r8169
 forcedeth
 tlan
 epic100
+
+# cannot autoprobe...
+# cs89x0
+# lance

@@ -27,3 +27,4 @@ pump -i $ETH -h lrsclient --win-client-ident
 route add -net 224.0.0.0 netmask 240.0.0.0 dev $ETH
 # save the mac address
 ifconfig $ETH|grep HWaddr|sed 's/.*HWaddr //'|sed 's/[ ]//g' >/etc/mac
+sed 's/[: ]//g'</etc/mac >/etc/shortmac

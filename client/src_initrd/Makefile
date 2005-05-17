@@ -30,9 +30,10 @@ initrd: Makefile MAKEDEV pump/pump
 	cp -f pump/pump $(LOOP)/bin
 	# cp -f $(IMAGE_DIR)/../atftp-0.7/atftp $(LOOP)/bin
 	# get the latest autosave/autorestore
-	for n in autorestore revorestore revosendlog revowait revogetname revosetdefault ;do \
+	for n in autorestore revorestore revosendlog revowait revogetname revosetdefault revoinc revoinv ;do \
 	    cp -f $(IMAGE_DIR)/autorestore/$$n $(LOOP)/bin ;\
 	done 
+	cp -f $(IMAGE_DIR)/autorestore/revoboot $(LOOP)/etc/init.d ;\
 	for n in bench bench.ping ;do \
 	    cp -f $(IMAGE_DIR)/bench/$$n $(LOOP)/bin ;\
 	done 
@@ -46,6 +47,7 @@ initrd: Makefile MAKEDEV pump/pump
 	fi
 	# drivers
 	-find $(SRCLIN)/drivers/net $(SRCLIN)/lib  -name "*.ko" -exec cp -av {} $(LOOP)/lib/modules \;
+	-find $(SRCLIN)/drivers/pcmcia -name "*.ko" -exec cp -av {} $(LOOP)/lib/modules \;
 	# latest imagers
 	for i in $(IMAGES); do cp -f $(IMAGE_DIR)/$$i $(LOOP)/revobin/ ;done
 	# clean
