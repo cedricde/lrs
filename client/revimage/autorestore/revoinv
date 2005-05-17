@@ -1,0 +1,100 @@
+#!/bin/sh
+#
+# HW Inventory 
+#
+# $Id$
+#
+# TODO: DOS drives and partitions
+# 
+ETH=`cat /etc/eth`
+MAC=`cat /etc/mac`
+
+. /etc/netinfo.sh
+SRV=$Next_server
+[ -n "$Option_177" ] && SRV=`echo $Option_177|cut -d : -f 1`
+
+# self-explanatory...
+# cannot use busybox's printf which does not support hex output
+hex()
+{
+    case $1 in
+    10) 
+	echo a
+	;;
+    11)
+	echo b
+	;;
+    12)
+	echo c
+	;;
+    13)
+	echo d
+	;;
+    14)
+	echo e
+	;;
+    15)
+	echo f
+	;;
+    *)
+	echo $1
+	;;
+    esac
+}
+
+# read a number in stdin and output its hex value
+dectohex()
+{
+    NUM=`tr -cd 01234567989`
+    OUT=""
+    while [ $NUM != "0" ]
+    do
+	
+	OUT="`hex $(($NUM%16))`$OUT"
+	NUM=$(($NUM/16))
+    done
+    echo $OUT
+}
+
+diskinfo()
+{
+    NUM=-1
+    sfdisk -l -uS|grep /dev|tr -s " "|while read FIRST ALL
+    do
+	if [ $FIRST = "Disk" ]
+	then
+	    NUM=$(($NUM+1))
+	    echo "D:(hd$NUM):CHS()$ALL"
+	else
+	    echo "P:$ALL"
+	fi
+    done
+    exit
+}
+
+pciinfo()
+{
+    # still missing: bus number, function number.
+    cat /proc/pci|grep Class|sed 's/.*Class \([^:]*\): PCI device \([^:]*\):\([^ ]*\).*/B:0,f:0,v:\2,d:\3,c:\1/'
+}
+
+echo "*** Sending inventory ***"
+
+MEM=`cat /proc/meminfo |grep MemTotal|dectohex`
+FREQ=`cat /proc/cpuinfo|grep "^cpu MHz"|tr -cd 0123456789`
+CPU1=`cat /proc/cpuinfo|grep "^cpu fami"|tr -cd 0123456789`
+CPU2=`cat /proc/cpuinfo|grep "^model"|tr -cd 0123456789`
+CPU4=`cat /proc/cpuinfo|grep "^stepping"|tr -cd 0123456789`
+CPUV=47
+grep AuthenticAMD /proc/cpuinfo && CPUV=41
+PCI=`pciinfo`
+#diskinfo
+
+DATA="M:280,U:$MEM
+$PCI
+C:$CPU1,$CPU2,0,$CPU4,0,0,0,0,0,0,0,0,$CPUV
+F:$FREQ"
+
+
+echo -en "\252$DATA\00Mc:$MAC" | nc -p 1001 -w 1 $SRV 1001
+sleep 1

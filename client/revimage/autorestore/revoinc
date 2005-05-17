@@ -1,0 +1,19 @@
+#!/bin/sh
+#
+# Tell the server to create the image directory
+#
+ETH=`cat /etc/eth`
+MAC=`cat /etc/mac`
+
+. /etc/netinfo.sh
+SRV=$Next_server
+[ -n "$Option_177" ] && SRV=`echo $Option_177|cut -d : -f 1`
+
+echo "*** Creating backup directory ***"
+
+# shared or not ?
+TYPE="COPY"
+grep /imgbase/Base /etc/cmdline && TYPE="BASE"
+
+echo -en "\354$TYPE\00Mc:$MAC" | nc -p 1001 -w 1 $SRV 1001
+sleep 1

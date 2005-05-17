@@ -1,0 +1,219 @@
+#!/bin/sh
+#
+# $Id$
+#
+# First script that's launched. Takes all the main decisions
+#
+
+# Wait for the interface to be configured
+checkip()
+{
+SEC=0
+# check if eth0 is up
+while true                                                                      
+do                                                                              
+    sleep 1                                                                     
+    if ifconfig $ETH|grep RUNNING >/dev/null ;then                              
+	break
+    else
+        echo "*** $ETH: not yet configured ($SEC) ***"
+	SEC=$(($SEC+1))
+	if [ $SEC -gt 30 ]; then
+	    whiptail --title "Fatal Error" --backtitle "Linbox Rescue Server" --yesno "I cannot configure the NIC
+
+Possible causes:
+1- More than one NIC and DHCP requests are sent on the wrong NIC
+2- No suitable driver found for the NIC
+
+Do you want to put some log files on a floppy disk ?" 15 70
+	    [ "$?" = "0" ] && floppysave
+	    SEC=0
+	    /etc/init.d/network start
+	fi
+	continue
+    fi
+    if ifconfig $ETH|grep inet.addr >/dev/null ;then
+	break
+    else
+        echo "*** $ETH: no IP received !!! ***"
+    fi
+done
+sleep 1
+}
+
+# get the warning message
+get_warn_message()
+{
+    cd /etc
+    /bin/atftp --tftp-timeout 1 -g -r $BASE/etc/warning.txt $SRV 69 2>/dev/null
+    cd /
+}
+
+# Pre-install (init-inst in fact)
+do_pre_inst()
+{
+    if grep -q revopost /etc/cmdline ; then
+	/bin/postmount
+	MAC=`cat /etc/shortmac`
+	echo -e "\n=== `date` ===" >> /revoinfo/$MAC/postinst.log
+	/bin/doinitinst 2>&1 | tee -a /revoinfo/$MAC/postinst.log
+        umount /mnt 2>/dev/null
+	sleep 5
+	umount /opt
+	umount /revoinfo
+        umount /revosave
+    fi
+}
+
+# Restore
+do_restore()
+{
+    /bin/autorestore
+}
+
+# Backup
+do_backup()
+{
+    /bin/revoinc
+    /bin/autosave
+    du -k /revosave > /revosave/size.txt
+}
+
+# Post-install
+do_postinst()
+{
+    if grep -q revorestore /etc/cmdline ;then
+	umount /revoinfo
+	umount /revosave
+    fi
+    /bin/postmount
+    echo -e "\n=== `date` ===" >> /revoinfo/$MAC/postinst.log
+    /bin/dopostinst 2>&1 | tee -a /revoinfo/$MAC/postinst.log
+    grep -q revodebug /etc/cmdline || umount /mnt 2>/dev/null
+    sleep 5
+}
+
+# whiptail echo
+wecho()
+{
+    whiptail --title "Info" --backtitle "Linbox Rescue Server" --infobox "$1" 10 70
+}
+
+# print the menu
+parse_menu()
+{
+    NUM=0
+
+    while read TYPE ARGS
+    do
+	ARGS=`echo $ARGS|tr '"\201\202\203\204\205\207\210\211\212' ' ьйвдазкли' `
+	case $TYPE in
+	    title)
+		NUM=$(($NUM+1))
+		eval LTITLE_$NUM=\"$ARGS\"
+	    ;;
+	    desc)
+		eval LDESC_$NUM=\"$ARGS\"
+	    ;;
+	    kernel)
+		eval LKERN_$NUM=\"$ARGS\"
+	    ;;	    
+	esac
+    done < /tmp/menu
+    
+    CMD="whiptail --title \"Boot Menu for `cat /etc/lbxname`\" --backtitle \"Linbox Rescue Server\" --menu \" \" 20 70 12 "
+    I=1
+    while [ $I -le $NUM ]
+    do
+	CMD="$CMD $I \"\$LTITLE_$I\" "
+	I=$(($I+1))
+    done
+    eval $CMD 2>/tmp/ret
+}
+
+# CDROM boot
+do_cdrom()
+{
+    # tell the LRS we have booted
+    /bin/revoinv
+    /bin/revosendlog 0
+    # get the menu
+    wecho "Downloading menu for `cat /etc/lbxname`"
+    cd /tmp
+    rm -f menu
+    /bin/atftp --tftp-timeout 1 -g -r $BASE/cfg/$MAC -l menu $SRV 69 2>/dev/null
+    # no menu => stop
+    [ ! -f menu ] && wecho "No menu available. Cannot continue." && exit 
+    parse_menu
+    eval CMDLINE=\$LKERN_`cat /tmp/ret`
+    [ "$CMDLINE" ] || exit
+
+    # fake /proc/cmdline 
+    echo $CMDLINE | cut -f 2- -d " "> /etc/cmdline
+
+    # recurse
+    $0
+    exit    
+}
+
+#
+# Env Set-up
+#
+cp -f /proc/cmdline /etc
+ETH=`cat /etc/eth`
+BASE="/tftpboot/revoboot"
+grep -q revodebug /etc/cmdline || checkip
+MAC=`cat /etc/shortmac`
+pump -i $ETH -s >/etc/netinfo.log
+sed -e "s/Device/#/" -e "s/: */=/" -e "s/	//" -e "s/ /_/g" </etc/netinfo.log >/etc/netinfo.sh
+. /etc/netinfo.sh
+
+# LRS server IP
+SRV=$Next_server
+[ -n "$Option_177" ] && SRV=`echo $Option_177|cut -d : -f 1`
+
+# IP check
+if [ "$SRV" = "0.0.0.0" ]; then
+    echo "*** Possible DHCP server configuration problem !"
+    echo "*** Got $SRV as boot server !"
+    cat /etc/netinfo.log
+    sleep 60
+fi
+
+# date
+echo -n "*** Getting current time from $SRV..."
+rdate $SRV
+
+# try to get the name
+revogetname >/etc/lbxname
+
+# get the warning message
+get_warn_message
+
+# Restore => mount a tmpfs
+grep -q revorestore /etc/cmdline && mount -t tmpfs -o size=96M tmpfs /tmpfs
+
+# Debug ?
+grep -q revodebug /etc/cmdline && exit 0
+
+# CDROM boot ?
+grep -q revocdrom /etc/cmdline && do_cdrom
+
+# Backup / Restore
+if grep -q revosavedir /etc/cmdline ;then
+    # launch initial pre-inst scripts
+    do_pre_inst    
+    # Now backup/restore    
+    if grep -q revorestore /etc/cmdline ;then
+	do_restore
+    else
+        grep -q revopost /etc/cmdline || do_backup
+    fi
+fi
+
+# Postinstall 
+if grep -q revopost /etc/cmdline ; then
+    do_postinst
+fi
+
+grep -q revodebug /etc/cmdline || reboot

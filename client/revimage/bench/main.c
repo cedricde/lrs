@@ -129,7 +129,7 @@ void commandline(void)
 {
     unsigned char *ptr, *ptr2;
 
-    if ((ptr = find("revosavedir=", "/proc/cmdline"))) {
+    if ((ptr = find("revosavedir=", "/etc/cmdline"))) {
 	ptr2 = ptr;
 	while (*ptr2 != ' ')
 	    ptr2++;

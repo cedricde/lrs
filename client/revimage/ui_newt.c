@@ -156,8 +156,11 @@ void update_misc(void)
     sprintf(buf,"Bitrate        : %ld KBps",bps/1024);
     newtLabelSetText(bitrate,buf);
 
-    if (bps>0) remain=(todo-done)/bps;
-          else remain=99*60*60+59*60+59;
+//    if (bps>0) remain=(todo-done)/bps;
+//          else remain=99*60*60+59*60+59;
+    if (diff > 20)  remain=(((double)todo/(double)done)*(double)diff)-diff;
+    else remain=99*60*60+59*60+59;    
+    
     if (remain < 0) remain = 0;
     h=remain/3600;
     m=(remain/60)%60;
@@ -177,7 +180,7 @@ void update_block(int current, int nb)
   g_old_curr=current;
   g_old_nb=nb;
     
-  newtScaleSet(sc1, per);
+  //newtScaleSet(sc1, per);
     
   update_file(per);
   update_misc();
@@ -189,7 +192,10 @@ void update_block(int current, int nb)
 void update_progress(int percent)
 {
     char buf[80];
-    float p = (100.0 * g_old_curr + percent) / g_old_nb;
+    //float p = (100.0 * g_old_curr + percent) / g_old_nb;
+    // only use the amount of real data read    
+    float p = (100.0 * (float)done) / (float)todo;
+
     if (p > 100) p = 100;
 
     newtScaleSet(sc1, p);

@@ -622,7 +622,7 @@ void commandline(void)
 {
     unsigned char *ptr, *ptr2;
 
-    if ((ptr = find("revosavedir=", "/proc/cmdline"))) {
+    if ((ptr = find("revosavedir=", "/etc/cmdline"))) {
 	ptr2 = ptr;
 	while (*ptr2 != ' ')
 	    ptr2++;
@@ -631,7 +631,7 @@ void commandline(void)
 	strcpy(storagedir, ptr);
     }
 
-    if ((ptr = find("slownfs", "/proc/cmdline"))) {
+    if ((ptr = find("slownfs", "/etc/cmdline"))) {
 	/* decrease the NFS packet size */
 	rsize = 1024;
     }
@@ -800,6 +800,7 @@ int main(int argc, char *argv[])
   // debug info
   gethost();
   mysystem1("date");
+  mysystem1("cat /etc/cmdline");
   mysystem1("cat /proc/cmdline");
   mysystem1("cat /proc/version");
   mysystem1("cat /proc/partitions");

@@ -668,7 +668,7 @@ void commandline(void)
 {
     unsigned char *ptr, *ptr2;
 
-    if ((ptr = find("revosavedir=", "/proc/cmdline"))) {
+    if ((ptr = find("revosavedir=", "/etc/cmdline"))) {
 	ptr2 = ptr;
 	while (*ptr2 != ' ')
 	    ptr2++;
@@ -677,7 +677,7 @@ void commandline(void)
 	strcpy(storagedir, ptr);
     }
 
-    if ((ptr = find("slownfs", "/proc/cmdline"))) {
+    if ((ptr = find("slownfs", "/etc/cmdline"))) {
 	/* decrease the NFS packet size */
 	rsize = 1024;
     }
@@ -687,7 +687,7 @@ void commandline(void)
     fops.close = tftp_close;
     fops.get = tftp_get;
     
-    if ((ptr = find("revorestorenfs", "/proc/cmdline"))) {
+    if ((ptr = find("revorestorenfs", "/etc/cmdline"))) {
       /* nfs restore */
       fops.open = file_open;
       fops.close = file_close;

@@ -10,8 +10,8 @@ SRV=$Next_server
 
 # get the delay on the command line
 T=0
-if grep -q revowait= /proc/cmdline ;then
-    T=`sed -e 's/.*revowait=\([0-9]*\).*/\1/' </proc/cmdline`
+if grep -q revowait= /etc/cmdline ;then
+    T=`sed -e 's/.*revowait=\([0-9]*\).*/\1/' </etc/cmdline`
 fi
 
 [ -z $T ] && exit 0

@@ -10,7 +10,7 @@ SRV=$Next_server
 if [ "$1" = "2" -o "$1" = "3" -o "$1" = "4" -o "$1" = "5" ]
 then
     # Also log the image name
-    N=`sed -e 's/.*revosavedir=\([^ ]*\).*/\1/' </proc/cmdline`
+    N=`sed -e 's/.*revosavedir=\([^ ]*\).*/\1/' </etc/cmdline`
     N=`basename $N`
     echo -en "L${1}-${N}\0Mc:$MAC" | nc -p 1001 -w 1 $SRV 1001    
 else

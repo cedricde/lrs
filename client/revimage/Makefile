@@ -4,7 +4,7 @@
 
 OBJ=compress.o ui_newt.o
 
-CFLAGS=-Wall -O2 -s -DLBLIMAGEVER=\"1.1\" -I./zlib-1.2.1 -I./e2fsprogs-1.22/lib/ 
+CFLAGS=-Wall -O2 -s -DLBLIMAGEVER=\"1.2\" -I./zlib-1.2.1 -I./e2fsprogs-1.22/lib/ 
 LIBS= -L./zlib-1.2.1/ -lz -lnewt 
 RFSOBJS=./reiserfsprogs/lib/libcore.a
 

@@ -39,7 +39,7 @@ else
 fi
 
 # Get NFS options
-if grep -q slownfs /proc/cmdline
+if grep -q slownfs /etc/cmdline
 then
     NFSOPT=rsize=1024,wsize=1024,udp
 else 
