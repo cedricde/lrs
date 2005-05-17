@@ -8,7 +8,7 @@ root (hd0)
 chainloader +1
 
 title Ajout d'un client / Add a client
-desc Prise en compte d'une nouvelle station LBS
+desc Prise en compte d'une nouvelle station LRS
 identify
 reboot
 
