@@ -5,7 +5,7 @@
 #
 BASE=/tftpboot/revoboot
 
-function mypidof()
+mypidof()
 {
         if `which pidof >/dev/null 2>&1`; then
                 pidof "$@"
