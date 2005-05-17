@@ -214,18 +214,8 @@ exist (unsigned char *string)
 int
 inc_func (char *arg, int flags)
 {
-  unsigned char buffer[] = " xxxx\0";
-
-  buffer[0] = 0xEC;
-  buffer[1] = arg[0];
-  buffer[2] = arg[1];
-  buffer[3] = arg[2];
-  buffer[4] = arg[3];
-
-  udp_init ();
-  udp_send_withmac (buffer, 6, 1001, 1001);
-  udp_close ();
-
+  /* not used anymore. now done in the initrd */
+    
   return 0;
 }
 
