@@ -4,7 +4,7 @@ tc_rate=Network interface theorical throughput,0
 tc_limit=Network interface allowed TFTP restoration throughput,0
 
 line1=Restoration options,11
-restore_type=Restoration: type,1,0-TFTP in boot loader,NFS,MTFTP
+restore_type=Restoration: type,1,0-TFTP in boot loader,1-NFS,2-MTFTP
 mtftp_wait=Restoration: MTFTP maximum waiting (in sec),3,0
 
 line2=Boot logo,11
