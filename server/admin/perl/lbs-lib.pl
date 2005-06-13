@@ -2,7 +2,6 @@
 #
 # $Id$
 #
-#
 # Linbox Rescue Server
 # Copyright (C) 2005  Linbox FAS
 #
@@ -28,7 +27,8 @@ require "inifile.pl" ;
 
 
 $_lbslibversion = "1.4.3" ;
-$_lbsdebug = 0 ;
+$_lbsdebug      = 0 ;
+$WOL_EXTENSION  = "wol";
 
 %_errors_en = (
 	'RAW' =>		q($1),
@@ -1310,167 +1310,180 @@ return @titles ;
 # Retourne 1 si OK, ou 0 si erreur.
 #
 sub makeUserMenu
-{
-my $home = $_[0] ;
-my $mac = toMacFileName($_[1]) ;
+  {
+    my $home = $_[0] ;
+    my $mac = toMacFileName($_[1]) ;
 
-my $defaultpos = 0 ;
-my @menus = () ;
+    my $defaultpos = 0 ;
+    my @menus = () ;
 
-my $menupath = $home . "/cfg/" . $mac ;
-my $imagepath = $home . "/images/" . $mac ;
-my $menuheader = "" ;
-my $bootmenu = "" ;
-my $one = "" ;
-my $m ;
-my $numselect = 0 ;
-my %hdr ;
-my %minfo ;
-my $hostconf = $home . "/images/" . $mac . "/header.lst" ;
-my $imgname ;
+    my $menupath = $home . "/cfg/" . $mac ;
+    my $imagepath = $home . "/images/" . $mac ;
+    my $menuheader = "" ;
+    my $bootmenu = "" ;
+    my $one = "" ;
+    my $m ;
+    my $numselect = 0 ;
+    my %hdr ;
+    my %minfo ;
+    my $hostconf = $home . "/images/" . $mac . "/header.lst" ;
+    my $imgname ;
 
-my $copynumdata;
-my $basenumdata ;
+    my $copynumdata;
+    my $basenumdata ;
 
- if (not hdrLoad($hostconf, \%hdr)) {
- 	lbsError("makeUserMenu","FILE_LOAD",$hostconf) ;
- 	return 0 ;
- }
+    # WOL requested ?
+    if (-f $home . "/images/" . $mac . "/wol") {
+      # check if the timestamp is not too old
+      my $wol = $home . "/images/" . $mac . "/wol";
+      my $ts = (stat($wol))[9];
+      if (time() - $ts > 600) {
+	# 10 minutes: the wol request has expired ...
+	# we should tell the admin
+      } else {
+	# wol requested, use the alternate menu
+	$hostconf = $home . "/images/" . $mac . "/header.lst.wol";
+      }
+      unlink($wol);	
+    }
 
- if (-f "$imagepath/COPYNUM") {
- 	fileLoad("$imagepath/COPYNUM", \$copynumdata) ;
- 	chomp($copynumdata);
- }
- else {
- 	$copynumdata = "COPYNUM" ;
- }
+    # Load header.lst
+    if (not hdrLoad($hostconf, \%hdr)) {
+      lbsError("makeUserMenu","FILE_LOAD",$hostconf) ;
+      return 0 ;
+    }
+
+    if (-f "$imagepath/COPYNUM") {
+      fileLoad("$imagepath/COPYNUM", \$copynumdata) ;
+      chomp($copynumdata);
+    } else {
+      $copynumdata = "COPYNUM" ;
+    }
 
 
- if (-f "$home/imgbase/BASENUM") {
- 	fileLoad("$home/imgbase/BASENUM", \$basenumdata) ;
- 	chomp($basenumdata);
- }
- else {
- 	$basenumdata = "BASENUM" ;
- }
+    if (-f "$home/imgbase/BASENUM") {
+      fileLoad("$home/imgbase/BASENUM", \$basenumdata) ;
+      chomp($basenumdata);
+    } else {
+      $basenumdata = "BASENUM" ;
+    }
 
- # 
- my %conf = ();
- iniLoad("/etc/webmin/lbs/config", \%conf);
- my $revorestore = iniGetVal(\%conf, "-", "restore_type");
- my $revowait = iniGetVal(\%conf, "-", "mtftp_wait");
- my $grub_splashimage = iniGetVal(\%conf, "-", "grub_splashimage");
+    # 
+    my %conf = ();
+    iniLoad("/etc/webmin/lbs/config", \%conf);
+    my $revorestore = iniGetVal(\%conf, "-", "restore_type");
+    my $revowait = iniGetVal(\%conf, "-", "mtftp_wait");
+    my $grub_splashimage = iniGetVal(\%conf, "-", "grub_splashimage");
  
- #
- my $eth = "0";
- $eth = hdrGetVal(\%hdr, "header", "ethnum");
- my $kernelopts = "";
- $kernelopts = hdrGetVal(\%hdr, "header", "kernelopts");
+    #
+    my $eth = "0";
+    $eth = hdrGetVal(\%hdr, "header", "ethnum");
+    my $kernelopts = "";
+    $kernelopts = hdrGetVal(\%hdr, "header", "kernelopts");
 
- @menus = hdrGetMenuNames(\%hdr) ;
+    @menus = hdrGetMenuNames(\%hdr) ;
 
- foreach $m (@menus) {
+    foreach $m (@menus) {
 
-	hdrGetMenuInfo(\%hdr, $m, \%minfo) ;
+      hdrGetMenuInfo(\%hdr, $m, \%minfo) ;
 
-	if ($minfo{'visu'} eq "yes") {
-		# Determiner la pos du menu par defaut:
-		$defaultpos = $numselect if ($minfo{'def'} eq "yes") ;
+      if ($minfo{'visu'} eq "yes") {
+	# Determiner la pos du menu par defaut:
+	$defaultpos = $numselect if ($minfo{'def'} eq "yes") ;
 	
-		$one = hdrConcatMenuItems(\%hdr, $m) ;
-		$one = encodeCP850($one) ;
+	$one = hdrConcatMenuItems(\%hdr, $m) ;
 
-		$imgname = $minfo{'image'} ;
+	$one = encodeCP850($one) ;
 
-		$one =~ s/MAC/$mac/ ;
-		$one =~ s/PATH/$imagepath\/$imgname/g ;
+	$imgname = $minfo{'image'} ;
 
-		$one =~ s/COPYNUM/$copynumdata/ ;
-		$one =~ s/BASENUM/$basenumdata/ ;
+	$one =~ s/MAC/$mac/ ;
+	$one =~ s/PATH/$imagepath\/$imgname/g ;
+
+	$one =~ s/COPYNUM/$copynumdata/ ;
+	$one =~ s/BASENUM/$basenumdata/ ;
 
 		
-		if ($revorestore eq "" || $revorestore eq "0") {
-		  # tftp grub restore
-		  # nothing to do
-		} else {
-		  # linux based restore
-		  if ($minfo{'image'} =~ /((Base|Local)-[0-9].*)/) 
-		    {
-		      # base image restoration
-		      my $imgt = "imgbase";
-		      my $imgo = "revorestore";
+	if ($revorestore eq "" || $revorestore eq "0") {
+	  # tftp grub restore
+	  # nothing to do
+	} else {
+	  # linux based restore
+	  if ($minfo{'image'} =~ /((Base|Local)-[0-9].*)/) {
+	    # base image restoration
+	    my $imgt = "imgbase";
+	    my $imgo = "revorestore";
 
-		      if ($revorestore eq "1") {
-			$imgo = "revorestorenfs";
-		      } elsif ($revowait ne "0") {
-			$imgo .= " revowait=$revowait";
-		      }
-		      if ($minfo{'image'} =~ /Local/) {
-			$imgt = "images/$mac";
-		      }
+	    if ($revorestore eq "1") {
+	      $imgo = "revorestorenfs";
+	    } elsif ($revowait ne "0") {
+	      $imgo .= " revowait=$revowait";
+	    }
+	    if ($minfo{'image'} =~ /Local/) {
+	      $imgt = "images/$mac";
+	    }
 		      
-		      #print "$1 $revorestore \n";
-		      my $o_title = "";
-		      my $o_desc = "";
-		      foreach my $line (split (/\n/, $one))
-			{
- 			  if ($line =~ /^\s*title /) {
-			    $o_title = $line;
-			  }
-			  if ($line =~ /^\s*desc /) {
-			    $o_desc = $line;
-			  }
-			}
-		      $one = "$o_title\n$o_desc";
-		      if ($revorestore eq "1") {
-			$one =~ s/(^\s*title.*)/$1 (NFS)/;
-		      } elsif ($revorestore eq "2") {
-			$one =~ s/(^\s*title.*)/$1 (MTFTP)/;
-		      }
-		      $one .= "
+	    #print "$1 $revorestore \n";
+	    my $o_title = "";
+	    my $o_desc = "";
+	    foreach my $line (split (/\n/, $one)) {
+	      if ($line =~ /^\s*title /) {
+		$o_title = $line;
+	      }
+	      if ($line =~ /^\s*desc /) {
+		$o_desc = $line;
+	      }
+	    }
+	    $one = "$o_title\n$o_desc";
+	    if ($revorestore eq "1") {
+	      $one =~ s/(^\s*title.*)/$1 (NFS)/;
+	    } elsif ($revorestore eq "2") {
+	      $one =~ s/(^\s*title.*)/$1 (MTFTP)/;
+	    }
+	    $one .= "
 kernel (nd)$home/bin/bzImage.initrd revosavedir=/$imgt/$imgname $imgo quiet revopost
 initrd (nd)$home/bin/initrd.gz
 ";
-		      #print $one;
-		    }
-		}
-
-		$one = addEmptyLine($one) ;
-
-		# adding of other linux boot options:
-		if ($eth ne "0" && $eth ne "") {
-		    $one =~ s/(kernel \(nd\).*revosavedir.*)/$1 revoeth$eth/;
-		}
-		if ($kernelopts ne "") {
-		    $one =~ s/(kernel \(nd\).*revosavedir.*)/$1 $kernelopts/;
-		}
-		
-		$bootmenu .= $one ;
-		
-		$numselect++ ;
+	    #print $one;
+	  }
 	}
- }
 
- $menuheader = hdrConcatMenuItems(\%hdr, "header") ;
- $menuheader =~ s/DEFNUM/$defaultpos/ ;
- if ($grub_splashimage ne "") {
-    $menuheader .= "\nsplashimage (nd)$grub_splashimage\n";
- }
- $menuheader = addEmptyLine($menuheader) ;
+	$one = addEmptyLine($one) ;
 
- # Generation du fichier final:
- if (not open FF, "> $menupath") {
- 	lbsError("makeUserMenu","RAW","Writing '$menupath': $!") ;
- 	return 0 ;
- }
+	# adding of other linux boot options:
+	if ($eth ne "0" && $eth ne "") {
+	  $one =~ s/(kernel \(nd\).*revosavedir.*)/$1 revoeth$eth/;
+	}
+	if ($kernelopts ne "") {
+	  $one =~ s/(kernel \(nd\).*revosavedir.*)/$1 $kernelopts/;
+	}
+		
+	$bootmenu .= $one ;
+		
+	$numselect++ ;
+      }
+    }
 
- 	print FF $menuheader ;
- 	print FF $bootmenu ;
+    $menuheader = hdrConcatMenuItems(\%hdr, "header") ;
+    $menuheader =~ s/DEFNUM/$defaultpos/ ;
+    if ($grub_splashimage ne "") {
+      $menuheader .= "\nsplashimage (nd)$grub_splashimage\n";
+    }
+    $menuheader = addEmptyLine($menuheader) ;
 
- close(FF) ;
+    # Generation du fichier final:
+    if (not open FF, "> $menupath") {
+      lbsError("makeUserMenu","RAW","Writing '$menupath': $!") ;
+      return 0 ;
+    }
 
-return 1 ;
-}
+    print FF $menuheader ;
+    print FF $bootmenu ;
+
+    close(FF) ;
+
+    return 1 ;
+  }
 
 
 # createEntry($lbs_home, $mac, $ip, $name)
@@ -1628,6 +1641,17 @@ my %hdr ;
  
  hdrDeleteMenu(\%hdr, $menu) ;
  hdrSave($hostconf,\%hdr) ;
+
+        # regular and scheduled menus should be sync before entering this menu
+        # so either we should copy regular to scheduled, or
+        # we commit the previous changes to the existing file
+        if (-f "$hostconf.$WOL_EXTENSION") {
+                hdrLoad("$hostconf.$WOL_EXTENSION", \%hdr);
+                hdrDeleteMenu(\%hdr, $menu) ;
+                hdrSave("$hostconf.$WOL_EXTENSION",\%hdr) ;
+        } else {
+                system("cp -a $hostconf $hostconf.$WOL_EXTENSION") ;
+        }
  
 1;
 }
@@ -1684,6 +1708,22 @@ my %hdr ;
  hdrSetVal(\%hdr, $menu, "include", $include) if (length($include)) ;
 
  hdrSave($hostconf,\%hdr) ;
+
+        # regular and scheduled menus should be sync before entering this menu
+        # so either we should copy regular to scheduled, or
+        # we commit the previous changes to the existing file
+        if (-f "$hostconf.$WOL_EXTENSION") {
+                my %schedhdr;
+                hdrLoad("$hostconf.$WOL_EXTENSION", \%schedhdr);
+                hdrAddMenu(\%schedhdr, $menu);
+                hdrSetVal(\%schedhdr, $menu, "def", "no") ;
+                hdrSetVal(\%schedhdr, $menu, "visu", "yes") ;
+                hdrSetVal(\%schedhdr, $menu, "image", $image) ;
+                hdrSetVal(\%schedhdr, $menu, "include", $include) if (length($include)) ;
+                hdrSave("$hostconf.$WOL_EXTENSION",\%schedhdr) ;
+        } else {
+                system("cp -a $hostconf $hostconf.$WOL_EXTENSION") ;
+        }
 
 1;
 }
@@ -1820,7 +1860,23 @@ my ($menu,$include,$newlink) ;
  hdrSetVal(\%hdr, $menu, "include", $include) if (length($include)) ;
 
  hdrSave($hostconf,\%hdr) ;
- 
+
+        # regular and scheduled menus should be sync before entering this menu
+        # so either we should copy regular to scheduled, or
+        # we commit the previous changes to the existing file
+        if (-f "$hostconf.$WOL_EXTENSION") {
+                my %schedhdr;
+                hdrLoad("$hostconf.$WOL_EXTENSION", \%schedhdr);
+                hdrAddMenu(\%schedhdr, $menu);
+                hdrSetVal(\%schedhdr, $menu, "def", "no") ;
+                hdrSetVal(\%schedhdr, $menu, "visu", "no") ;
+                hdrSetVal(\%schedhdr, $menu, "image", $image) ;
+                hdrSetVal(\%schedhdr, $menu, "include", $include) if (length($include)) ;
+                hdrSave("$hostconf.$WOL_EXTENSION",\%schedhdr) ;
+        } else {
+                system("cp -a $hostconf $hostconf.$WOL_EXTENSION") ;
+        }
+
 1;
 }
 
