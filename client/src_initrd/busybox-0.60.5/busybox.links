@@ -35,6 +35,7 @@
 /sbin/klogd
 /linuxrc
 /bin/ln
+/sbin/loadkmap
 /usr/bin/logger
 /bin/ls
 /sbin/lsmod
