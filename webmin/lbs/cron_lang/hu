@@ -1,0 +1,82 @@
+index_title=Tervezett Cron munkák
+index_user=Fehasználó
+index_active=Érvényes?
+index_command=Parancs
+index_none=Ezen a rendszeren nincsenek cron munkák
+index_create=Új cron munka készítése
+index_allow=A felhasználók hozzáférésének ellenõrzése a cron munkákhoz
+index_return=a cron listához
+
+edit_title=Cron munka szerkesztése
+create_title=Cron munka készítése
+edit_ecannot=Önnek nincs jogosultsága szerkeszteni ennek a felhasználónak a cron munkáit.
+edit_details=A munka beállításai
+edit_user=Cron munka futtatása mint
+edit_active=Aktív?
+edit_commands=Parancsok
+edit_command=Parancs
+edit_input=Adatbevitel a parancshoz
+edit_when=Mikor futtassa
+edit_mins=Percek
+edit_hours=Órák
+edit_days=Napok
+edit_months=Hónapok
+edit_weekdays=Hét napjai
+edit_all=Mindben
+edit_selected=Választottban ..
+edit_run=Futtatás most
+
+month_1=Január
+month_2=Február
+month_3=Március
+month_4=Április
+month_5=Május
+month_6=Június
+month_7=Július
+month_8=Augusztus
+month_9=Szeptember
+month_10=Október
+month_11=November
+month_12=December
+
+day_0=Vasárnap
+day_1=Hétfõ
+day_2=Kedd
+day_3=Szerda
+day_4=Csütörtök
+day_5=Péntek
+day_6=Szombat
+
+save_err=A cron munka elmentése nem sikerült.
+save_ecmd=Ön nem adott meg futtatandó parancsot.
+save_euser=Egy felhasználót muszáj kiválasztani.
+save_eallow=A(z) '$1' felhasználónak nincs jogosultsága hozzáférni a cron-hoz.
+save_ecannot=Önnek nincs jogosultsága létrehozni '$1' cron munkáit.
+save_enone=Semmilyen $1 nem lett kiválasztva végrehajtáshoz.
+
+allow_title=Cron hozzáférés-szabályzás
+allow_desc=Ezzel az ûrlappal megadhatja, hogy mely felhasználók hozhatnak létre és futtathatnak cron munkákat.
+allow_ecannot=Ön nem szabályozhatja a felhasználók hozzáférését a cron-hoz.
+allow_all1=Az összes felhasználó tiltása
+allow_all2=Az összes felhasználó tiltása a root-ot kivéve
+allow_all3=Az összes felhasználó engedélyezése
+allow_allow=Csak a listában szereplõ felhasználók engedélyezése
+allow_deny=Csak a listában szereplõ fehasználók tiltása
+
+env_title=Cron környezet
+env_ecannot=Ön nem állíthatja be ennek a felhasználónak a cron környezetét.
+env_desc=$1 cron környezete
+env_name=Változó neve
+env_value=Értéke
+env_ename=A(z) '$1' egy érvénytelen változó név.
+
+exec_title=Cron munka végrehajtása
+exec_ecannot=Önnek nincs jogosultsága ennek a felhasználónak a nevében cron munkát végrehajtani.
+exec_cmd=A $1 parancs kimenete...
+exec_none=Nincs kimenet.
+
+acl_users=Tudja szerkeszteni a cron munkáit
+acl_all=Az összes felhasználónak
+acl_only=Csak az alábbi felhasználóknak
+acl_except=Mindekiét, kivéve az alábbi felhasználókat
+acl_control=Tudja szabályozni a felhasználói hozzáférést a cron-hoz?

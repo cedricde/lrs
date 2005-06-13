@@ -15,7 +15,7 @@ chdir("$root_directory/lbs_common");
 foreign_require("lbs_common", "lbs_common.pl"); 
 
 lbs_common::print_header( $text{'index_title'}, "imgbase", "");
-lbs_common::print_html_tabs(['list_of_machines', "wol_tasks"]);
+lbs_common::print_html_tabs(['list_of_machines', "wol_tasks", "at"]);
 
 @jobs = &list_atjobs();
 @jobs = grep { &can_edit_user(\%access, $_->{'user'}) } @jobs;
@@ -52,6 +52,8 @@ print "<tr $tb> <td><b>$text{'index_header'}</b></td> </tr>\n";
 print "<tr $cb> <td><table>\n";
 
 print "<input type=hidden name=user value='root'>\n";
+print "<input type=hidden name=group value='".$in{'group'}."'>\n";
+print "<input type=hidden name=profile value='".$in{'profile'}."'>\n";
 
 @now = localtime(time());
 print "<tr> <td><b>$text{'index_date'}</b></td>\n";

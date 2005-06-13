@@ -59,9 +59,11 @@ global $module_info;
 		$tit = substr($title, 0, strpos($title, " "));
 	else
 		$tit = $title;
-		
-	if (theme_header($tit, $rightside)) # si on peut executer la fonctione "theme_header" du theme nous le faissons ici
+	
+	if (function_exists('theme_header')) {
+	    if (theme_header($tit, $rightside)) 
         	return;
+	}
    
 	$charset=$force_charset ? $force_charset : "iso-8859-1";
 	lib_PrintHeader($charset);
@@ -328,9 +330,11 @@ function lib_footer($page,$name){
   global $module_info; //associative array
   global $module_name;
 
-  if (theme_footer()) # si on peut executer la fonctione "theme_footer" du theme nous le faissons ici
-    return; 
-
+  if (function_exists('theme_footer')) {
+    if (theme_footer()) 
+	return; 
+  }
+  
   $url=$page;
   if($url == "/"){
     $url="/?cat=$module_info[category]";

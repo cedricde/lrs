@@ -34,6 +34,8 @@ $VERSION =~ s/\$Rev: (\d+) \$/$module_info{version} (r.$1)/;
 
 our $POSTINST_PATH='images/templates';
 
+our $WOL_EXTENSION="wol";
+
 # get the good module
 foreign_require("lbs_common", "lbs_common.pl");
 
@@ -355,20 +357,26 @@ close LOG;
 #   \@presel: ref de la liste des items a preselectionner.
 #   \@desc: ref de la liste des descriptions des items.
 #   \@status: ref de la liste du statut de chaque menu item.
-#
+#  (and scheduled ones)
 sub print_bootmenu_form {
-my $firstarg= $_[0];
-my $default = $_[1];
-my $items   = $_[2];
-my $titles  = $_[3];
-my $presel  = $_[4] ? $_[4] : [];
-my $desc    = $_[5];
-my $status  = $_[6];
+my $firstarg    = $_[0];
+my $default     = $_[1];
+my $scheddefault= $_[2];
+my $items       = $_[3];
+my $scheditems  = $_[4];
+my $titles      = $_[5];
+my $presel      = $_[6] ? $_[6] : [];
+my $schedpresel = $_[7] ? $_[7] : [];
+my $desc        = $_[8];
+my $status      = $_[9];
+my $schedstatus = $_[10];
 my $i;
 my $item;
-my $menuchk    = "";
-my $defaultchk = "";
+my $scheditem;
 my $st;
+my $schedst;
+my $menuchk     = "";
+my $defaultchk  = "";
 
 my ($mac, $group, $profile)=($firstarg->{'mac'}, $firstarg->{'group'}, $firstarg->{'profile'});
 
@@ -376,15 +384,18 @@ my $umac = urlize($mac);    # Fonction Webmin.
 my $umenu;
 my $decor;
 
-my @toprow = (
-$text{'lab_defchoice'}, $text{'lab_display'},
-$text{'lab_menu'},      $text{'lab_desc'}
-);
-my ( @lol, @radio, @check );
+my $onmouse = " onmouseover=\"tooltip.show(this);\" onmouseout=\"tooltip.hide(this);\"";
+my $help = "<img src='images/qm2.gif'>";
 
-# Texte des boutons
-my $but_apply      = $text{'but_apply'};
-my $but_return     = $text{'but_return'};
+my @toprow = (
+    "<div title='".$text{'tooltip_defchoice'}."' $onmouse>".$text{'lab_defchoice'}."$help</div>", 
+    "<div title='".$text{'tooltip_display'}."' $onmouse>".$text{'lab_display'}."$help</div>",
+    $text{'lab_menu'},      
+    $text{'lab_desc'},
+    "<div title='".$text{'tooltip_scheddefchoice'}."' $onmouse>".$text{'lab_scheddefchoice'}."$help</div>",
+    "<div title='".$text{'tooltip_scheddisplay'}."' $onmouse>".$text{'lab_scheddisplay'}."$help</div>",
+);
+my ( @lol, @radio, @check, @schedradio, @schedcheck);
 
 # Attributs de la table:
 my %tabattr = (
@@ -393,45 +404,57 @@ my %tabattr = (
 	'tr_body'   => $cb,
 	'border'    => "border=1 width='100%'",
 );
-	# Le tableau des menus
+	print "<script type=\"text/javascript\" src=\"/lbs_common/js/tooltip.js\"></script>\n";
+	print "<div id=\"tooltip\" style=\" position: absolute; visibility: hidden;\"></div>\n";
+	# Le tableau des menus	
 	print "<center>\n";
 	
 	print "<form action=\"bootmenu.cgi\">";
 
 	for ( $i = 0 ; $i < scalar( @{$items} ) ; $i++ ) {
-		$item = $$items[$i];
-		$st   = $$status[$i];
+		$item      = $$items[$i];
+		$st        = $$status[$i];
+		$scheditem = $$scheditems[$i];
+		$schedst   = $$schedstatus[$i];
 		
 		if ( $st == 0 ) {# Good status:
+
+                        # default choices for regular boot
 			$defaultchk = "";
 			$defaultchk = "checked" if ( $item eq $default );
-			
+			push @radio, "<input type=radio name='default' value=\"$item\" $defaultchk>";
 			$menuchk = "";
 			$menuchk = "checked" if ( grep { $item eq $_ } @$presel );
+			push @check, "<input type=checkbox name='menu' value=\"$item\" $menuchk>";
 			
-			push @radio, "<input type=radio name=default value=\"$item\" $defaultchk>";
-			push @check, "<input type=checkbox name=menu value=\"$item\" $menuchk>";
-			
-			# Convertion de la description en hyperlien.
-			# On utilise un attribut de style pour ne pas que ces liens
-			# soient soulignes.
-			#
+			# description => hyperlink conversion.
+			# We use a specific style so links are not underlined.
 			$decor = 'style="text-decoration:none"';
 			$umenu = urlize($item);
 			
-			$$desc[$i] = "<a href=\"desc.cgi?mac=$umac&obj=desc&menu=$umenu\" $decor>" . html_escape( $$desc[$i] ) . "</a>";
-			
 			$$titles[$i] = "<a href=\"title.cgi?mac=$umac&obj=title&menu=$umenu\" $decor>" . html_escape( $$titles[$i] ) . "</a>";
+			$$desc[$i] = "<a href=\"desc.cgi?mac=$umac&obj=desc&menu=$umenu\" $decor>" . html_escape( $$desc[$i] ) . "</a>";
+
+                        # default choices for scheduled boot
+			$defaultchk = "";
+			$defaultchk = "checked" if ( $scheditem eq $scheddefault );
+			push @schedradio, "<input type=radio name='scheddefault' value=\"$item\" $defaultchk>";
+			$menuchk = "";
+			$menuchk = "checked" if ( grep { $scheditem eq $_ } @$schedpresel );
+			push @schedcheck, "<input type=checkbox name='schedmenu' value=\"$item\" $menuchk>";
+                        
 		} else { # Bad status:
 			push @radio, "&nbsp;";
 			push @check, "&nbsp;";
 			$$titles[$i] = lbs_common::colorStatus( $st, html_escape( $$titles[$i] ) );
 			$$desc[$i]   = lbs_common::colorStatus( $st, html_escape( $$desc[$i] ) );
+			push @schedradio, "&nbsp;";
+			push @schedcheck, "&nbsp;";
 		}
 	}
 
         
-	push @lol, [@radio], [@check], [ @{$titles} ], [ @{$desc} ];
+	push @lol, [@radio], [@check], [ @{$titles} ], [ @{$desc} ], [@schedradio], [@schedcheck], ;
 	lbs_common::lolRotate( \@lol );
 	print lbs_common::make_html_table( "", \@toprow, \@lol, \%tabattr );
 	
@@ -442,8 +465,9 @@ my %tabattr = (
 	        print "<input type=hidden name=profile value=\"$profile\">\n";
         }
 	print "<input type=hidden name=form value=\"bootmenu\">\n";
-	print "<input type=submit name=apply value=\"$but_apply\">\n";
-	print "<input type=submit name=cancel value=\"$but_return\">\n";
+	print "<input type=submit name=apply value=\"$text{'but_apply'}\">\n";
+	print "<input type=submit name=sync value=\"$text{'but_sync'}\">\n";
+	print "<input type=submit name=cancel value=\"$text{'but_return'}\">\n";
 	
 	print "</form>\n";
 	

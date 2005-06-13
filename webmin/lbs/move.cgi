@@ -22,7 +22,7 @@
 use strict;
 
 # ... and vars
-use vars qw (%access %config %in %lbsconf %text $VERSION);
+use vars qw (%access %config %in %lbsconf %text $VERSION $WOL_EXTENSION);
 # get some common functions ...
 require "lbs.pl";
 
@@ -134,7 +134,7 @@ if (exists($in{'cancel'})) {
                                 }
                                 my $origpath = "$lbs_home/imgprofiles/$in{'profile'}/$in{'group'}";
                                 if (opendir ORIGPATH, $origpath) {
-                                        my $cmd = "cp -a " . join " ", map "$origpath/$_", grep { -l "$origpath/$_" or $_ eq "header.lst" } readdir(ORIGPATH);
+                                        my $cmd = "cp -a " . join " ", map "$origpath/$_", grep { -l "$origpath/$_" or $_ eq "header.lst" or $_ eq "header.lst.$WOL_EXTENSION" } readdir(ORIGPATH);
                                         closedir CFGPATH;
                                         $cmd .= " $cfgpath";
                                         system($cmd);
@@ -181,7 +181,7 @@ if (exists($in{'cancel'})) {
                                 }
                                 my $origpath = "$lbs_home/imgprofiles/$in{'profile'}/$in{'group'}";
                                 if (opendir ORIGPATH, $origpath) {
-                                        my $cmd = "cp -a " . join " ", map "$origpath/$_", grep { -l "$origpath/$_" or $_ eq "header.lst" } readdir(ORIGPATH);
+                                        my $cmd = "cp -a " . join " ", map "$origpath/$_", grep { -l "$origpath/$_" or $_ eq "header.lst" or $_ eq "header.lst.$WOL_EXTENSION" } readdir(ORIGPATH);
                                         closedir CFGPATH;
                                         $cmd .= " $cfgpath";
                                         system($cmd);
@@ -467,8 +467,24 @@ sub moveBase2Hdr_Multi {
         hdrSetVal(\%hdr, $menu, "visu", "no") ;
         hdrSetVal(\%hdr, $menu, "image", $image) ;
         hdrSetVal(\%hdr, $menu, "include", $include) if (length($include)) ;
-        
         hdrSave($hostconf,\%hdr) ;
+        
+        # regular and scheduled menus should be sync before entering this menu
+        # so either we should copy regular to scheduled, or
+        # we commit the previous changes to the existing file
+        if (-f "$hostconf.$WOL_EXTENSION") {
+                my %schedhdr;
+                hdrLoad("$hostconf.$WOL_EXTENSION", \%schedhdr);
+                hdrAddMenu(\%schedhdr, $menu);
+                hdrSetVal(\%schedhdr, $menu, "def", "no") ;
+                hdrSetVal(\%schedhdr, $menu, "visu", "no") ;
+                hdrSetVal(\%schedhdr, $menu, "image", $image) ;
+                hdrSetVal(\%schedhdr, $menu, "include", $include) if (length($include)) ;
+                hdrSave("$hostconf.$WOL_EXTENSION",\%schedhdr) ;
+        } else {
+                system("cp -a $hostconf $hostconf.$WOL_EXTENSION") ;
+        }
+       
 }
 
 sub moveHdr2Local_Multi {
@@ -495,7 +511,18 @@ sub moveHdr2Local_Multi {
          
         hdrDeleteMenu(\%hdr, $menu) ;
         hdrSave($hostconf,\%hdr) ;
+
+        # regular and scheduled menus should be sync before entering this menu
+        # so either we should copy regular to scheduled, or
+        # we commit the previous changes to the existing file
+        if (-f "$hostconf.$WOL_EXTENSION") {
+                hdrLoad("$hostconf.$WOL_EXTENSION", \%hdr);
+                hdrDeleteMenu(\%hdr, $menu) ;
+                hdrSave("$hostconf.$WOL_EXTENSION",\%hdr) ;
+        } else {
+                system("cp -a $hostconf $hostconf.$WOL_EXTENSION") ;
+        }
+
         unlink("$hostdir/$image") if (-l "$hostdir/$image"); 
 }
-
 

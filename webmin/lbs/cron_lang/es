@@ -1,0 +1,92 @@
+index_title=Tareas de Cron Catalogadas
+index_user=Usuario
+index_active=¿Activa?
+index_command=Comando
+index_none=No hay tareas de cron en este sistema
+index_create=Crear una nueva tarea de cron en catálogo
+index_allow=Controlar el acceso de usuarios a tareas de cron
+index_return=lista de cron
+
+edit_title=Editar Tarea de Cron
+create_title=Crear Tarea de Cron
+edit_ecannot=No estás autorizado a editar tareas de cron para este usuario
+edit_details=Detalles de Tarea
+edit_user=Ejecutar tarea de cron como
+edit_active=¿Activa?
+edit_commands=Comandos
+edit_command=Comando
+edit_input=Entrada del comando
+edit_when=Cuándo ejecutar
+edit_minutes=Minutos
+edit_hours=Horas
+edit_days=Días
+edit_months=Meses
+edit_weekdays=Días de Semana
+edit_all=Todos
+edit_selected=Seleccionado...
+edit_run=Ejecutar Ahora
+
+month_1=Enero
+month_2=Febrero
+month_3=Marzo
+month_4=Abril
+month_5=Mayo
+month_6=Junio
+month_7=Julio
+month_8=Agosto
+month_9=Septiembre
+month_10=Octubre
+month_11=Noviembre
+month_12=Diciembre
+
+day_0=Domingo
+day_1=Lunes
+day_2=Martes
+day_3=Miércoles
+day_4=Jueves
+day_5=Viernes
+day_6=Sábado
+
+save_err=Error al salvar tarea de cron
+save_ecmd=No has digitado un comando para ejecutar
+save_euser=Debes de seleccionar un usuario
+save_euser2=El usuario '$1' no existe
+save_eallow=El usuario '$1' no está autorizado a acceder a cron...
+save_ecannot=No estás autorizado a crear o a editar tareas de cron para '$1'
+save_enone=No has seleccionado un $1 para ejecutar
+
+allow_title=Controlar Acceso de Cron
+allow_desc=Este formulario te permite controlar qué usuarios pueden crear y ejecutar tareas de cron.
+allow_ecannot=No puedes controlar el acceso del usuario a cron
+allow_all1=Denegar a todos los usuarios
+allow_all2=Denegar a todos los usuarios excepto a root
+allow_all3=Permitir a todos los usuarios
+allow_allow=Permitir sólo a los usuarios listados
+allow_deny=Denegar sólo a los usuarios listados
+
+env_title=Entorno de Cron
+env_ecannot=No puedes editar el entorno de cron para este usuario
+env_desc=Entorno de Cron para $1
+env_name=Nombre de Variable
+env_value=Valor
+env_ename='$1' no es un Nombre de Variable válido
+
+exec_title=Ejecutar Tarea de Cron
+exec_ecannot=No estás autorizado a ejecutar tareas de cron para este usuario
+exec_cmd=Salida del comando $1 ...
+exec_none=No se ha generado salida
+
+acl_users=Puedo editar tareas de cron para
+acl_all=Todos los usuarios
+acl_only=Sólo los usuarios
+acl_except=Todos excepto los usuarios
+acl_control=¿Puedo controlar el acceso de usuarios a cron?
+
+log_modify=Modificada tarea de cron para $1
+log_modify_l=Modificada tarea de cron "$2" para $1
+log_create=Creada tarea de cron para $1
+log_create_l=Creada tarea de cron "$2" para $1
+log_delete=Borrada tarea de cron para $1
+log_exec=Ejecutada tarea de cron como $1
+log_exec_l=Ejecutada tarea de cron "$2" como $1
+log_allow=Cambiado acceso de usuario a cron

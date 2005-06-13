@@ -47,7 +47,7 @@ ReadParse() ;
 
 etherLoad($etherfile, \%einfo) or error( lbsGetError() ) ;
 
-$redir = "at/index.cgi?";
+$redir = "";
 
 if (exists $in{'mac'}) {
 
@@ -59,10 +59,9 @@ if (exists $in{'mac'}) {
 	    error(text("err_mac_inval",$mac)) ;
 	}
 
-	$redir .= "ext_cmd=".urlize("$in{mac}");
+	$redir .= "ext_cmd=".urlize("$in{mac}")."&mac=".urlize("$in{mac}");
 	
-	redirect($redir) ;
-	exit(0) ;
+	#redirect($redir) ;
 }
 elsif (exists $in{'group'}) {
 	my $macs = "";
@@ -76,12 +75,25 @@ elsif (exists $in{'group'}) {
 		$macs .=  $k." ";
 	    }
 	}
-	$redir .= "ext_cmd=".urlize("$macs");
+	$redir .= "ext_cmd=".urlize("$macs")."&group=".urlize($in{'group'})."&profile=".urlize($in{'profile'});
 	
-	redirect($redir) ;
+	#redirect($redir) ;
 } else {
 	error($text{'err_invalcgi_nomac'}) ;
 }
+
+lbs_common::print_header( $text{'tit_wol'}, "imgbase", "");
+lbs_common::print_html_tabs(['list_of_machines', "wol_tasks"]);
+
+print "<center>";
+print "<h2><a href='at/index.cgi?$redir'>".$text{'lab_wol_one'}."</a></h2>\n";
+print "<h2><a href='cron/edit_cron.cgi?new=1&$redir'>".$text{'lab_wol_per'}."</a></h2>\n";
+print "</center>";
+
+lbs_common::print_end_menu();		
+lbs_common::print_end_menu();		
+
+footer("/lbs-common/", $text{'index'});
 
 # DEBUG
 #&showConfig() ;

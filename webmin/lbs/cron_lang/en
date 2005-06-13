@@ -1,0 +1,94 @@
+index_title=Scheduled Cron Jobs
+index_user=User
+index_active=Active?
+index_command=Command
+index_none=There are no cron jobs on this system
+index_create=Create a new scheduled cron job
+index_allow=Control user access to cron jobs
+index_return=cron list
+
+edit_title=Edit Cron Job
+create_title=Create Cron Job
+edit_ecannot=You are not allowed to edit cron jobs for this user
+edit_details=Job Details
+edit_user=Execute cron job as
+edit_active=Active?
+edit_commands=Commands
+edit_command=MAC addresses
+edit_input=Input to command
+edit_when=When to execute
+edit_mins=Minute
+edit_hours=Hour
+edit_days=Days
+edit_months=Months
+edit_weekdays=Weekdays
+edit_all=All
+edit_selected=Selected ..
+edit_run=Run Now
+edit_return=cron job
+
+month_1=January
+month_2=February
+month_3=March
+month_4=April
+month_5=May
+month_6=June
+month_7=July
+month_8=August
+month_9=September
+month_10=October
+month_11=November
+month_12=December
+
+day_0=Sunday
+day_1=Monday
+day_2=Tuesday
+day_3=Wednesday
+day_4=Thursday
+day_5=Friday
+day_6=Saturday
+
+save_err=Failed to save cron job
+save_ecmd=You did not enter a command to execute
+save_euser=You must select a user
+save_euser2=User '$1' does not exist
+save_eallow=The user '$1' is not allowed to access cron
+save_ecannot=You are not allowed to create or edit cron jobs for '$1'
+save_enone=You did not choose any $1 to execute
+
+allow_title=Control Cron Access
+allow_desc=This form allows you to control which users can create and run cron jobs.
+allow_ecannot=You cannot control user access to cron
+allow_all1=Deny all users
+allow_all2=Deny all users except root
+allow_all3=Allow all users
+allow_allow=Allow only listed users
+allow_deny=Deny only listed users
+
+env_title=Cron Environment
+env_ecannot=You cannot edit the cron environment for this user
+env_desc=Cron Environment for $1
+env_name=Variable Name
+env_value=Value
+env_ename='$1' is not a valid variable name
+
+exec_title=Execute Cron Job
+exec_ecannot=You are not allowed to execute cron jobs for this user
+exec_cmd=Output from command $1 ..
+exec_none=No output generated
+
+acl_users=Can edit cron jobs for
+acl_all=All users
+acl_this=Current webmin user
+acl_only=Only users
+acl_except=All except users
+acl_control=Can control user access to cron?
+
+log_modify=Modified cron job for $1
+log_modify_l=Modified cron job "$2" for $1
+log_create=Created cron job for $1
+log_create_l=Created cron job "$2" for $1
+log_delete=Deleted cron job for $1
+log_exec=Executed cron job as $1
+log_exec_l=Execute cron job "$2" as $1
+log_allow=Changed user access to cron

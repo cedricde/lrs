@@ -1,0 +1,94 @@
+index_title=Cron Jobs Pianificati
+index_user=Utente
+index_active=Attivo?
+index_command=Comando
+index_none=Non ci sono cron jobs su questo sistema
+index_create=Crea un nuovo cron job pianificato
+index_allow=Controlla l'accesso utente ai cron jobs
+index_return=cron list
+
+edit_title=Modifica Cron Job
+create_title=Crea Cron Job
+edit_ecannot=Non hai i permessi per modificare i cron jobs per questo utente
+edit_details=Dettagli Job
+edit_user=Esegui il cron job come
+edit_active=Attivo?
+edit_commands=Comandi
+edit_command=Comando
+edit_input=Input al comando
+edit_when=Quando eseguire
+edit_mins=Minuti
+edit_hours=Ore
+edit_days=Giorni
+edit_months=Mesi
+edit_weekdays=Giorni della settimana
+edit_all=Tutti
+edit_selected=Selezionati..
+edit_run=Esegui Ora
+
+month_1=Gennaio
+month_2=Febbraio
+month_3=Marzo
+month_4=Aprile
+month_5=Maggio
+month_6=Giugno
+month_7=Luglio
+month_8=Agosto
+month_9=Settembre
+month_10=Ottobre
+month_11=Novembre
+month_12=Dicembre
+
+day_0=Domenica
+day_1=Luned&igrave;
+day_2=Marted&igrave;
+day_3=Mercoled&igrave;
+day_4=Gioved&igrave;
+day_5=Venerd&igrave;
+day_6=Sabato
+
+save_err=Salvataggio del cron job fallito
+save_ecmd=Non hai inserito un comando da eseguire
+save_euser=Devi selezionare un utente
+save_eallow=L'utente '$1' non ha i permessi per accedere a cron
+save_ecannot=Non hai i permessi per creare cron jobs per '$1'
+save_enone=Non hai scelto nessun $1 da eseguire
+
+allow_title=Controlla Accesso Cron
+allow_desc=Questa pagina ti permette di controllare quali utenti possono
+creare ed eseguire cron jobs.
+allow_ecannot=Non puoi controllare l'accesso utenti a cron
+allow_all1=Vieta tutti gli utenti
+allow_all2=Vieta tutti gli utenti eccetto root
+allow_all3=Permetti tutti gli utenti
+allow_allow=Permetti solo questi utenti
+allow_deny=Vieta solo questi utenti
+
+env_title=Ambiente Cron
+env_ecannot=Non puoi modificare l'ambiente cron per questo utente
+env_desc=Ambiente Cron per $1
+env_name=Nome Variabile
+env_value=Valore
+env_ename='$1' non &egrave; un nome variabile valido
+
+exec_title=Esegui Cron Job
+exec_ecannot=Non hai i permessi per eseguire i cron jobs di questo utente
+exec_cmd=Output dal comando $1 ..
+exec_none=Nessun output generato
+
+acl_users=Pu&ograve; modificare i cron job per
+acl_all=Tutti gli utenti
+acl_only=Solo gli utenti
+acl_except=Tutti eccetto gli utenti
+acl_control=Pu&ograve; controllare l'accesso utenti a cron?
+
+log_modify=Modificato cron job per $1
+log_modify_l=Modificato cron job "$2" per $1
+log_create=Creato cron job per $1
+log_create_l=Creato cron job "$2" per $1
+log_delete=Eliminato cron job per $1
+log_exec=Eseguito cron job come $1
+log_exec_l=Eseguito cron job "$2" come $1
+log_allow=Accesso utente a cron modificato
+
+

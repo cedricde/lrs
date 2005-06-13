@@ -2,7 +2,7 @@ Source: webmin-lbs
 Section: utils
 Priority: optional
 Build-Depends-Indep: debhelper (>= 4.0) 
-Maintainer: Linbox <info@linbox.com>
+Maintainer: Linbox Team <libre@linbox.com>
 Standards-Version: 3.6.1
 
 Package: webmin-lbs

@@ -25,5 +25,14 @@ $in{'cmd'} =~ /\S/ || &error($text{'create_ecmd'});
 # Create the job
 &create_atjob($in{'user'}, $date, "$config{'wake'} $in{'cmd'} >/dev/null 2>&1", $in{'dir'});
 &webmin_log("create", "job", $in{'user'}, \%in);
-&redirect("");
+
+# redirect
+my $redir = "";
+if ($in{'group'} ne "") {
+    $redir = "group=".$in{'group'}."&profile=".$in{'profile'};
+} else {
+    $redir = "mac=".urlize($in{'cmd'});
+}
+
+&redirect("index.cgi?$redir");
 

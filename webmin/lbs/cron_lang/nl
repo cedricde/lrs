@@ -1,0 +1,92 @@
+index_title=Geplande Cron Opdrachten
+index_user=Gebruiker
+index_active=Actief?
+index_command=Opdracht
+index_none=Er zijn geen cron opdrachten op dit systeem
+index_create=Nieuwe geplande cronopdracht aangemaakt
+index_allow=Beheer gebruikerstoegang tot cron opdrachten
+index_return=cron lijst
+
+edit_title=Bewerk Cron Opdracht
+create_title=Maak Cron Opdracht Aan
+edit_ecannot=U bent niet bevoegd om de cron opdrachten voor deze gebruiken
+edit_details=Opdracht Details
+edit_user=Voer cron opdracht uit als
+edit_active=Actief?
+edit_commands=Commando's
+edit_command=Commando
+edit_input=Invoer voor commando
+edit_when=Wanneer uitvoeren
+edit_mins=Minuten
+edit_hours=Uren
+edit_days=Dagen
+edit_months=Maanden
+edit_weekdays=Weekdagen
+edit_all=Alle
+edit_selected=Geselected ..
+edit_run=Voer Nu Uit
+
+month_1=januari
+month_2=februari
+month_3=maart
+month_4=april
+month_5=mei
+month_6=june
+month_7=juli
+month_8=augustus
+month_9=september
+month_10=oktober
+month_11=november
+month_12=december
+
+day_0=zondag
+day_1=maandag
+day_2=dinsdag
+day_3=woensdag
+day_4=donderdag
+day_5=vrijdag
+day_6=zaterdag
+
+save_err=Fout bij het opslaan van cron opdrachten
+save_ecmd=U heeft geen uit te voeren commando ingevuld
+save_euser=U moet een gebruiker selecteren
+save_euser2=Gebruiker '$1' bestaat niet
+save_eallow=De gebruiker '$1' is niet bevoegd om cron te benaderen
+save_ecannot=U bent niet bevoegd om cron opdrachten aan te maken of te bewerken voor '$1'
+save_enone=U heeft geen $1 gekozen om uit te voeren
+
+allow_title=Control Cron Toegang
+allow_desc=Dit formulier stelt u in staat om aan te geven welke gebruikers cron opdrachten aanmaken uitvoeren.
+allow_ecannot=U kunt niet de gebruikerstoegang tot crom beheren
+allow_all1=Weiger alle gebruikers
+allow_all2=Weiger alle gebruikers behalve root
+allow_all3=Accepteer alle gebruikers
+allow_allow=Accepteer alleen gebruikers in de lijst
+allow_deny=Weiger alleen de gebruikers in de lijst
+
+env_title=Cron Omgeving
+env_ecannot=U kunt niet de cron omgeving bewerken voor deze gebruiker
+env_desc=Cron Omgeving voor $1
+env_name=Variable Naam
+env_value=Waarde
+env_ename='$1' is geen geldige variabele naam
+
+exec_title=Voer Cron Opdracht Uit
+exec_ecannot=U bent niet bevoegd om cron opdrachten voor deze gebruiker uit te voeren
+exec_cmd=Uitvoer van commando $1 ..
+exec_none=Geen uitvoer gegenereerd
+
+acl_users=Kan cron opdrachten bewerken voor
+acl_all=Alle gebruikers
+acl_only=Alleen gebruikers
+acl_except=Alle behalve de gebruikers
+acl_control=Kan gebruikerstoegang tot cron beheren?
+
+log_modify=Gewijzigd cron opdracht voor $1
+log_modify_l=Gewijzigd cron opdracht "$2" voor $1
+log_create=Aangemaakt cron opdracht voor $1
+log_create_l=Aangemaakt cron opdracht "$2" voor$1
+log_delete=Verwijderd cron opdracht voor $1
+log_exec=Uitgevoerd cron opdracht als $1
+log_exec_l=Uitgevoerdoert cron opdracht uit "$2" als $1
+log_allow=Gewijzigd gebruikerstoegang naar cron
