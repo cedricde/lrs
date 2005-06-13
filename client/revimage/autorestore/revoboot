@@ -142,11 +142,12 @@ do_cdrom()
     cd /tmp
     rm -f menu
     /bin/atftp --tftp-timeout 1 -g -r $BASE/cfg/$MAC -l menu $SRV 69 2>/dev/null
+    wecho "Downloaded"
     # no menu => stop
-    [ ! -f menu ] && wecho "No menu available. Cannot continue." && exit 
+    [ ! -f menu -o -z "`cat menu`" ] && wecho "No menu available. Cannot continue." && sleep 3 && return
     parse_menu
     eval CMDLINE=\$LKERN_`cat /tmp/ret`
-    [ "$CMDLINE" ] || exit
+    [ "$CMDLINE" ] || return
 
     # fake /proc/cmdline 
     echo $CMDLINE | cut -f 2- -d " "> /etc/cmdline
@@ -159,7 +160,7 @@ do_cdrom()
 #
 # Env Set-up
 #
-cp -f /proc/cmdline /etc
+[ ! -f /etc/cmdline ] && cp -f /proc/cmdline /etc
 ETH=`cat /etc/eth`
 BASE="/tftpboot/revoboot"
 grep -q revodebug /etc/cmdline || checkip
