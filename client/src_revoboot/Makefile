@@ -33,10 +33,13 @@ CC=gcc-3.0
 
 CFLAGSZLIB=-I. -DMAX_WBITS=14 -DMAX_MEM_LEVEL=7 -DMY_ZCALLOC -DNO_ERRNO_H -O9 -mcpu=$(ARCH) -march=$(ARCH)
 
-revoboot.pxe:	$(OBJ) $(OBJZLIB) $(OBJNET)
+revoboot.pxe:	$(OBJ) $(OBJZLIB) $(OBJNET) adjust_length
 	$(CC) -o revoboot.pxe.exec -nostdlib -Wl,-N -Wl,-Ttext -Wl,7C00 $(OBJ) $(OBJZLIB) $(OBJNET)
 	objcopy -O binary revoboot.pxe.exec revoboot.pxe
 	./adjust_length
+
+adjust_length: adjust_length.c
+	$(CC) -o $@ $^
 
 rsync:
 	        rsync -e ssh -zrlpv --delete * jjm@172.20.0.123:/tftpboot/revo.pxe/src/
