@@ -104,9 +104,9 @@ sub print_search_results {
                 ${%$etherref}{$key}[1] =~ m|([^:]*):(.*)/([^/]*)|;
                 $template->assign('CONTENT', "<a href='index.cgi?profile=$1'>$1</a>");
                 $template->parse('resultslist.normalrow.normalcell');
-                $template->assign('CONTENT', "<a href='index.cgi?group=$2'>$2</a>");
+                $template->assign('CONTENT', "<a href='index.cgi?group=$2#$2'>$2</a>");
                 $template->parse('resultslist.normalrow.normalcell');
-                $template->assign('CONTENT', "<a href='index.cgi?mac=$key'>$3</a>");
+                $template->assign('CONTENT', "$3");
                 $template->parse('resultslist.normalrow.normalcell');
 
                 foreach my $bodycallback (@bodyfunctions) {

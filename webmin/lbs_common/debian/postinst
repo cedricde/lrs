@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 [ -f /etc/webmin/module.infos.cache ] && rm /etc/webmin/module.infos.cache
 
