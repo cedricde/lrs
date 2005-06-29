@@ -26,3 +26,4 @@
 /tftpboot/revoboot/imgbase/Util-MemTest/conf.txt
 /etc/lbs.conf
 /tftpboot/revoboot/imgbase/BASENUM
+/tftpboot/revoboot/imgskel/header.lst
