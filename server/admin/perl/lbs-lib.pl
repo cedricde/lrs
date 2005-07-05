@@ -1855,7 +1855,7 @@ my ($menu,$include,$newlink) ;
  }
 
  hdrSetVal(\%hdr, $menu, "def", "no") ;
- hdrSetVal(\%hdr, $menu, "visu", "no") ;
+ hdrSetVal(\%hdr, $menu, "visu", "yes") ;
  hdrSetVal(\%hdr, $menu, "image", $image) ;
  hdrSetVal(\%hdr, $menu, "include", $include) if (length($include)) ;
 
