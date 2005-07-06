@@ -25,3 +25,5 @@ lbl_Jack=Jaquette
 lbl_ListofAvailableImages=Liste des images disponibles
 lbl_ListofIsoImages=Liste des images ISO
 lbl_NotAvailable=Non disponible
+
+err_lvm=Désolé, impossible de créer un CD pour une image contenant des partitions LVM complexes.

@@ -188,6 +188,14 @@ if (!defined $in{'dir'}) {
 	my ($size,$dir)=split ' ',`du -k $in{'dir'}`;
 	my $cd=int($size/$config{'CDSize'})+1;
 
+	if (system("grep -q \"0 PATH/Lvm\" ".$in{'dir'}."/conf.txt") == 0) {
+	    print "<h2>".text('err_lvm')."</h2>";
+	    
+	    lbs_common::print_end_menu();
+	    footer( "", text('index') );
+	    exit;
+	}
+
 	$t->assign('CB', $cb);
 	$t->assign('LOCATION', $dir);
 	$t->assign('TITLE', $title);
@@ -223,7 +231,7 @@ if (!defined $in{'dir'}) {
 
 
 # end of tabs
-lbs_common::print_end_menu();		
+lbs_common::print_end_menu();
 
 # end of page
 footer( "", text('index') );

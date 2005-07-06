@@ -25,3 +25,5 @@ lbl_Jack=Jacket
 lbl_ListofAvailableImages=Liste of available images
 lbl_ListofIsoImages=ISO images list
 lbl_NotAvailable=Not Available
+
+err_lvm=Sorry, cannot create a CD from images containing complex LVM volumes.
