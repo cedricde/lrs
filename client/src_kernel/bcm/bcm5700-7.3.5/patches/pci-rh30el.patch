@@ -1,0 +1,148 @@
+diff -u --recursive usr/share/hwdata/pci.ids usr.patch/share/hwdata/pci.ids
+--- usr/share/hwdata/pci.ids	Tue Apr 20 15:18:07 2004
++++ usr.patch/share/hwdata/pci.ids	Fri Jun 11 15:23:37 2004
+@@ -5619,29 +5619,22 @@
+ 14e3  AMTELCO
+ 14e4  Broadcom Corporation
+ 	1644  NetXtreme BCM5700 Gigabit Ethernet
+-		1014 0277  Broadcom Vigil B5700 1000Base-T
+ 		1028 00d1  Broadcom BCM5700
+ 		1028 0106  Broadcom BCM5700
+ 		1028 0109  Broadcom BCM5700 1000Base-T
+-		1028 010a  Broadcom BCM5700 1000BaseTX
+ 		10b7 1000  3C996-T 1000Base-T
+ 		10b7 1001  3C996B-T 1000Base-T
+ 		10b7 1002  3C996C-T 1000Base-T
+ 		10b7 1003  3C997-T 1000Base-T Dual Port
+ 		10b7 1004  3C996-SX 1000Base-SX
+ 		10b7 1005  3C997-SX 1000Base-SX Dual Port
+-		10b7 1008  3C942 Gigabit LOM (31X31)
+ 		14e4 0002  NetXtreme 1000Base-SX
+ 		14e4 0003  NetXtreme 1000Base-SX
+ 		14e4 0004  NetXtreme 1000Base-T
+-		14e4 1028  NetXtreme 1000BaseTX
+ 		14e4 1644  BCM5700 1000Base-T
+ 	1645  NetXtreme BCM5701 Gigabit Ethernet
+ 		0e11 007c  NC7770 Gigabit Server Adapter (PCI-X, 10/100/1000-T)
+-		0e11 007d  NC6770 Gigabit Server Adapter (PCI-X, 1000-SX)
+ 		0e11 0085  NC7780 Gigabit Server Adapter (embedded, WOL)
+-		0e11 0099  NC7780 Gigabit Server Adapter (embedded, WOL)
+-		0e11 009a  NC7770 Gigabit Server Adapter (PCI-X, 10/100/1000-T)
+ 		0e11 00c1  NC6770 Gigabit Server Adapter (PCI-X, 1000-SX)
+ 		1028 0121  Broadcom BCM5701 1000Base-T
+ 		10a9 8010  SGI IO9 Gigabit Ethernet (Copper)
+@@ -5657,19 +5650,6 @@
+ 		14e4 0007  BCM5701 1000Base-SX
+ 		14e4 0008  BCM5701 1000Base-T
+ 		14e4 8008  BCM5701 1000Base-T
+-	1646  NetXtreme BCM5702 Gigabit Ethernet
+-		0e11 00bb  NC7760 1000BaseTX
+-		1028 0126  Broadcom BCM5702 1000BaseTX
+-		14e4 8009  BCM5702 1000BaseTX
+-	1647  NetXtreme BCM5703 Gigabit Ethernet
+-		0e11 0099  NC7780 1000BaseTX
+-		0e11 009a  NC7770 1000BaseTX
+-		10a9 8010  SGI IO9 Gigabit Ethernet (Copper)
+-		14e4 0009  BCM5703 1000BaseTX
+-		14e4 000a  BCM5703 1000BaseSX
+-		14e4 000b  BCM5703 1000BaseTX
+-		14e4 8009  BCM5703 1000BaseTX
+-		14e4 800a  BCM5703 1000BaseTX
+ 	1648  NetXtreme BCM5704 Gigabit Ethernet
+ 		0e11 00cf  NC7772 Gigabit Server Adapter (PCI-X, 10,100,1000-T)
+ 		0e11 00d0  NC7782 Gigabit Server Adapter (PCI-X, 10,100,1000-T)
+@@ -5679,10 +5659,25 @@
+ 		1166 1648  NetXtreme CIOB-E 1000Base-T
+ 	164d  NetXtreme BCM5702FE Gigabit Ethernet
+ 	1653  NetXtreme BCM5705 Gigabit Ethernet
++		0e11 00e3  NC7761 Gigabit Server Adapter
++	1654  NetXtreme BCM5705 Gigabit Ethernet
++		0e11 00e3  NC7761 Gigabit Server Adapter
++		103c 3100  NC1020 HP ProLiant Gigabit Server Adapter 32 PCI
++		103c 3226  NC 150T HP ProLiant PCI 4-port Gigabit Combo Switch Adapter
++	1658  NetXtreme BCM5720 Gigabit Ethernet PCI
++	1659  NetXtreme BCM5721 Gigabit Ethernet PCI Express
++		103c 7031  HP ProLiant NC320T PCI Express Gigabit Server Adapter
+ 	165d  NetXtreme BCM5705M Gigabit Ethernet
+-	1696  NetXtreme BCM5782 Gigabit Ethernet
+-		14e4 000d  NetXtreme BCM5782 1000Base-T
+-	169c  NetXtreme BCM5788 Gigabit Ethernet
++	165e  NetXtreme BCM5705M Gigabit Ethernet
++	166e  570x 10/100 Integrated Controller
++	1676  NetXtreme BCM5750 Gigabit Ethernet PCI
++	1677  NetXtreme BCM5751 Gigabit Ethernet PCI Express
++	167c  NetXtreme BCM5750M Gigabit Ethernet PCI
++	167d  NetXtreme BCM5751M Gigabit Ethernet PCI Express
++	167e  NetXtreme BCM5751F Fast Ethernet PCI Express
++	1696  NetXtreme Gigabit Ethernet for hp
++	169c  NetLink BCM5788 Gigabit Ethernet
++	169d  NetLink BCM5789 Gigabit Ethernet PCI Express
+ 	16a6  NetXtreme BCM5702 Gigabit Ethernet
+ 		0e11 00bb  NC7760 Gigabit Server Adapter (PCI-X, 10/100/1000-T)
+ 		1028 0126  BCM5702 1000Base-T
+@@ -5702,8 +5697,12 @@
+ 		14e4 000c  BCM5702 1000Base-T
+ 		14e4 8009  BCM5702 1000Base-T
+ 	16c7  NetXtreme BCM5703 Gigabit Ethernet
++		0e11 00ca  NC7771 Gigabit Server Adapter (PCI-X, 10,100,1000-T)
++		0e11 00cb  NC7781 Gigabit Server Adapter (PCI-X, 10,100,1000-T)
+ 		14e4 0009  NetXtreme BCM5703 1000Base-T
+ 		14e4 000a  NetXtreme BCM5703 1000Base-SX
++	170d  NetXtreme BCM5901 Fast Ethernet
++	170e  NetXtreme BCM5901 Fast Ethernet
+ 	4210  BCM4210 iLine10 HomePNA 2.0
+ 	4211  BCM4211 iLine10 HomePNA 2.0 + V.90 56k modem
+ 	4212  BCM4212 v.90 56k modem
+diff -u --recursive usr/share/hwdata/pcitable usr.patch/share/hwdata/pcitable
+--- usr/share/hwdata/pcitable	Tue Apr 20 15:18:26 2004
++++ usr.patch/share/hwdata/pcitable	Fri Jun 11 15:24:38 2004
+@@ -2686,21 +2686,34 @@
+ 0x14dc	0x0009	"unknown"	"Amplicon Liveline Ltd|PCI236"
+ 0x14dc	0x000a	"unknown"	"Amplicon Liveline Ltd|PCI272"
+ 0x14dc	0x000b	"unknown"	"Amplicon Liveline Ltd|PCI215"
+-0x14e4	0x1644	"tg3"	"Broadcom Corporation|NetXtreme BCM5700 Gigabit Ethernet"
+-0x14e4	0x1645	"tg3"	"Broadcom Corporation|NetXtreme BCM5701 Gigabit Ethernet"
+-0x14e4	0x1646	"tg3"	"Broadcom Corporation|NetXtreme BCM5702 Gigabit Ethernet"
+-0x14e4	0x1647	"tg3"	"Broadcom Corporation|NetXtreme BCM5703 Gigabit Ethernet"
+-0x14e4	0x1648	"tg3"	"Broadcom Corporation|NetXtreme BCM5704 Gigabit Ethernet"
+-0x14e4	0x164d	"tg3"	"Broadcom Corporation|NetXtreme BCM5702FE Gigabit Ethernet"
+-0x14e4	0x1653	"unknown"	"Broadcom Corporation|NetXtreme BCM5705 Gigabit Ethernet"
+-0x14e4	0x165d	"unknown"	"Broadcom Corporation|NetXtreme BCM5705M Gigabit Ethernet"
+-0x14e4	0x1696	"unknown"	"Broadcom Corporation|NetXtreme BCM5782 Gigabit Ethernet"
+-0x14e4	0x169c	"unknown"	"Broadcom Corporation|NetXtreme BCM5788 Gigabit Ethernet"
+-0x14e4	0x16a6	"tg3"	"Broadcom Corporation|NetXtreme BCM5702 Gigabit Ethernet"
+-0x14e4	0x16a7	"tg3"	"Broadcom Corporation|NetXtreme BCM5703 Gigabit Ethernet"
+-0x14e4	0x16a8	"tg3"	"Broadcom Corporation|NetXtreme BCM5704S Gigabit Ethernet"
+-0x14e4	0x16c6	"tg3"	"Broadcom Corporation|NetXtreme BCM5702 Gigabit Ethernet"
+-0x14e4	0x16c7	"tg3"	"Broadcom Corporation|NetXtreme BCM5703 Gigabit Ethernet"
++0x14e4	0x1644	"bcm5700"	"Broadcom Corporation|NetXtreme BCM5700 Gigabit Ethernet"
++0x14e4	0x1645	"bcm5700"	"Broadcom Corporation|NetXtreme BCM5701 Gigabit Ethernet"
++0x14e4	0x1646	"bcm5700"	"Broadcom Corporation|NetXtreme BCM5702 Gigabit Ethernet"
++0x14e4	0x1647	"bcm5700"	"Broadcom Corporation|NetXtreme BCM5703 Gigabit Ethernet"
++0x14e4	0x1648	"bcm5700"	"Broadcom Corporation|NetXtreme BCM5704 Gigabit Ethernet"
++0x14e4	0x164d	"bcm5700"	"Broadcom Corporation|NetXtreme BCM5702FE Gigabit Ethernet"
++0x14e4	0x1653	"bcm5700"	"Broadcom Corporation|NetXtreme BCM5705 Gigabit Ethernet"
++0x14e4	0x1654	"bcm5700"	"Broadcom Corporation|NetXtreme BCM5705 Gigabit Ethernet"
++0x14e4	0x1658	"bcm5700"	"Broadcom Corporation|NetXtreme BCM5720 Gigabit Ethernet"
++0x14e4	0x1659	"bcm5700"	"Broadcom Corporation|NetXtreme BCM5721 Gigabit Ethernet"
++0x14e4	0x165d	"bcm5700"	"Broadcom Corporation|NetXtreme BCM5705M Gigabit Ethernet"
++0x14e4	0x165e	"bcm5700"	"Broadcom Corporation|NetXtreme BCM5705M Gigabit Ethernet"
++0x14e4	0x166e	"bcm5700"	"Broadcom Corporation|NetXtreme BCM5705F Fast Ethernet"
++0x14e4	0x1676	"bcm5700"	"Broadcom Corporation|NetXtreme BCM5750 Gigabit Ethernet"
++0x14e4	0x1677	"bcm5700"	"Broadcom Corporation|NetXtreme BCM5751 Gigabit Ethernet"
++0x14e4	0x167c	"bcm5700"	"Broadcom Corporation|NetXtreme BCM5750M Gigabit Ethernet"
++0x14e4	0x167d	"bcm5700"	"Broadcom Corporation|NetXtreme BCM5751M Gigabit Ethernet"
++0x14e4	0x167e	"bcm5700"	"Broadcom Corporation|NetXtreme BCM5751F Fast Ethernet"
++0x14e4	0x1696	"bcm5700"	"Broadcom Corporation|NetXtreme BCM5782 Gigabit Ethernet for hp"
++0x14e4	0x169c	"bcm5700"	"Broadcom Corporation|NetLink BCM5788 Gigabit Ethernet"
++0x14e4	0x169d	"bcm5700"	"Broadcom Corporation|NetLink BCM5789 Gigabit Ethernet"
++0x14e4	0x16a6	"bcm5700"	"Broadcom Corporation|NetXtreme BCM5702 Gigabit Ethernet"
++0x14e4	0x16a7	"bcm5700"	"Broadcom Corporation|NetXtreme BCM5703 Gigabit Ethernet"
++0x14e4	0x16a8	"bcm5700"	"Broadcom Corporation|NetXtreme BCM5704S Gigabit Ethernet"
++0x14e4	0x16c6	"bcm5700"	"Broadcom Corporation|NetXtreme BCM5702 Gigabit Ethernet"
++0x14e4	0x16c7	"bcm5700"	"Broadcom Corporation|NetXtreme BCM5703 Gigabit Ethernet"
++0x14e4	0x170d	"bcm5700"	"Broadcom Corporation|NetXtreme BCM5901 Fast Ethernet"
++0x14e4	0x170e	"bcm5700"	"Broadcom Corporation|NetXtreme BCM5901 Fast Ethernet"
+ 0x14e4	0x4210	"unknown"	"Broadcom Corporation|BCM4210 iLine10 HomePNA 2.0"
+ 0x14e4	0x4211	"unknown"	"Broadcom Corporation|BCM4211 iLine10 HomePNA 2.0 + V.90 56k modem"
+ 0x14e4	0x4212	"unknown"	"Broadcom Corporation|BCM4212 v.90 56k modem"
