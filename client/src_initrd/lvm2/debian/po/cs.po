@@ -1,0 +1,58 @@
+#
+#    Translators, if you are not familiar with the PO format, gettext
+#    documentation is worth reading, especially sections dedicated to
+#    this format, e.g. by running:
+#         info -n '(gettext)PO Files'
+#         info -n '(gettext)Header Entry'
+#
+#    Some information specific to po-debconf are available at
+#            /usr/share/doc/po-debconf/README-trans
+#         or http://www.debian.org/intl/l10n/po-debconf/README-trans
+#
+#    Developers do not need to manually edit POT or PO files.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: lvm2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2004-07-05 03:03-0700\n"
+"PO-Revision-Date: 2004-08-13 17:39+0200\n"
+"Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
+"Language-Team: Czech <provoz@debian.cz>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-2\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: note
+#. Description
+#: ../templates:3
+msgid "Snapshot format changes"
+msgstr "Zmìna formátu snímkù"
+
+#. Type: note
+#. Description
+#: ../templates:3
+msgid ""
+"The internal format of snapshots has changed between LVM1 and LVM2. Any "
+"snapshots you have in LVM1 will be not be available to LVM2."
+msgstr ""
+"Mezi LVM verze 1 a 2 se zmìnil vnitøní formát snímkù. Snímky vytvoøené v "
+"LVM1 nebudou dostupné v LVM2."
+
+#. Type: note
+#. Description
+#: ../templates:3
+msgid ""
+"The installation procedure has detected that you have LVM1 snapshots on "
+"your system. Before you complete the upgrade to LVM2 it is recommended "
+"that you remove these snapshots and save their data if necessary."
+msgstr ""
+"Instalaèní procedura zjistila, ¾e máte ve svém systému snímky z LVM1. Ne¾ "
+"dokonèíte pøechod na LVM2, doporuèujeme tyto snímky odstranit a jejich "
+"pøípadná data zazálohovat."
+
+#. Type: note
+#. Description
+#: ../templates:3
+msgid "All other LVM data will be preserved in the upgrade."
+msgstr "V¹echna ostatní LVM data budou bìhem aktualizace zachována."

@@ -1,0 +1,31 @@
+#!/usr/bin/make -f
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/autotools.mk
+
+ifeq ($(DEB_ARCH),mips)
+	DEB_CONFIGURE_EXTRA_FLAGS := --disable-o_direct
+endif
+ifeq ($(DEB_ARCH),mipsel)
+	DEB_CONFIGURE_EXTRA_FLAGS := --disable-o_direct
+endif
+ifeq ($(DEB_ARCH),hppa)
+	DEB_CONFIGURE_EXTRA_FLAGS := --disable-o_direct
+endif
+ifeq ($(DEB_ARCH),arm)
+        DEB_CONFIGURE_EXTRA_FLAGS := --disable-o_direct
+endif
+
+CFLAGS += -I$(CURDIR)/debian/include/$(DEB_ARCH)
+
+DEB_CONFIGURE_PREFIX = /
+DEB_CONFIGURE_MANDIR = "\$${prefix}/usr/share/man"
+DEB_CONFIGURE_INFODIR = "\$${prefix}/usr/share/info"
+DEB_CONFIGURE_EXTRA_FLAGS += --with-confdir=/etc/lvm
+DEB_CONFIGURE_EXTRA_FLAGS += --with-clvmd=cman --with-cluster=shared
+DEB_AC_AUX_DIR := $(DEB_SRCDIR)/autoconf
+DEB_INSTALL_CHANGELOGS_ALL = WHATS_NEW
+DEB_INSTALL_DOCS_ALL =
+
+DEB_MAKE_INSTALL_TARGET = install prefix=$(DEB_DESTDIR) sbindir=$(DEB_DESTDIR)/lib/lvm-200 confdir=$(DEB_DESTDIR)/etc/lvm
+

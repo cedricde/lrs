@@ -1,0 +1,416 @@
+Version 2.01.04 - 9th February 2005
+===================================
+  Add fixed offset to imported pool minor numbers.
+  Update binary pathnames in clvmd_init_rhel4.
+  lvm2cmd.so should skip the check for open fds.
+  Remove unused -f from pvmove.
+  Gulm clvmd doesn't report "connection refused" errors.
+  clvmd does a basic config file sanity check at startup.
+  Fix potential thread shutdown race in clvmd.
+
+Version 2.01.03 - 1st February 2005
+===================================
+  More 64-bit display/report fixes.
+  More informative startup mesg if can't create /etc/lvm.
+  Fix snapshot device size bug (since 2.01.01).
+  clvmd announces startup and cluster connection in syslog.
+  Gulm clvmd doesn't hang trying to talk to a rebooted node.
+  Gulm clvmd doesn't print cman error on startup.
+
+Version 2.01.02 - 21st January 2005
+===================================
+  Update clvmd_init_rhel4: use lvm.static and don't load dlm.
+  Fix some size_t printing.
+  Fix 64 bit xlate consts.
+  Split out pool sptype_names to avoid unused const.
+  Always fail if random id generation fails.
+  Recognise gnbd devices.
+  Fix clvmd startup bug introduced in cman/gulm amalgamation.
+  Improve reporting of node-specific locking errors.
+
+Version 2.01.01 - 19th January 2005
+===================================
+  Fix clvmd lv_info_by_lvid open_count.
+  Store snapshot and origin sizes separately.
+  Update vgcreate man page.
+
+Version 2.01.00 - 17th January 2005
+===================================
+  Fix vgscan metadata auto-correction.
+  Only ask libdevmapper for open_count when we need it.
+  Adjust RHEL4 clvmd init script priority.
+  Enable building of CMAN & GULM versions of clvmd into a single binary
+
+Version 2.00.33 - 7th January 2005
+==================================
+  pvcreate wipes first 4 sectors unless given --zero n.
+  gulm clvmd now uses new ccsd key names.
+  gulm clvmd now doesn't ignore the first node in cluster.conf
+  Improve clvmd failure message if it's already running.
+  Allow user to kill clvmd during initialisation.
+  Fix off-by-one error in cluster_locking that could cause read hangs.
+
+Version 2.00.32 - 22nd December 2004
+====================================
+  Drop static/dl restriction for now.
+  Fix an error fprintf.
+  Fix vgdisplay -s. Breaks (undocumented) lvs/pvs/vgs -s instead for now.
+  Fix device reference counting on re-opens.
+  Ignore sysfs symlinks when DT_UNKNOWN.
+  Add clvmd init script for RHEL4.
+  Skip devices that are too small to be PVs.
+  Fix pvchange -x segfault with lvm2-format orphan.
+  Cope with empty msdos partition tables.
+  Add CONTRIBUTORS file.
+
+Version 2.00.31 - 12th December 2004
+====================================
+  Reopen RO file descriptors RW if necessary.
+
+Version 2.00.30 - 10th December 2004
+====================================
+  Additional device-handling debug messages.
+  Additional verbosity level -vvvv includes line numbers and backtraces.
+  Verbose messages now go to stderr not stdout.
+  Close any stray file descriptors before starting.
+  Refine partitionable checks for certain device types.
+  Allow devices/types to override built-ins.
+  Fix lvreduce man page .i->.I
+  Fix vgsplit man page title.
+  Fix clvmd man makefile.
+  Extend dev_open logging.
+  Make clvmd_fix_conf.sh UNDOable.
+
+Version 2.00.29 - 27th November 2004
+====================================
+  xlate compilation fix.
+
+Version 2.00.28 - 27th November 2004
+====================================
+  Fix partition table & md signature detection.
+  Minor configure/makefile tidy.
+  Export version.h from tools for clvmd.
+
+Version 2.00.27 - 24th November 2004
+====================================
+  Trap large memory allocation requests.
+  Fix to partition table detection code.
+  Improve filter debug mesgs.
+  Make clvmd_fix_conf.sh UNDOable
+
+Version 2.00.26 - 23rd November 2004
+====================================
+  Improve pool debugging stats.
+  Detect partition table signature.
+  pvcreate wipes md superblocks. (With --uuid or --restorefile it prompts.)
+  Separate out md superblock detection code.
+  Prevent snapshot origin resizing.
+  Improve a vgremove error message.
+  Update some man pages.
+  Allow y/n with -ae args (exclusive activation).
+  Fixes to lvcreate vgname parsing.
+  Fix dm_name string size calculation.
+  Improve clvmd error reporting during startup.
+  Make clvmd cope with large gaps in node numbers IDs.
+  Make clvmd initialisation cope better with debugging output.
+  Tidy clvmd socket callbacks so all work happens outside main loop.
+  clvmd -V now displays lvm version too.
+  Add optional gulm build for clvmd
+
+Version 2.00.25 - 29th September 2004
+=====================================
+  Fix return code from rm_link for vgmknodes.
+  Make clvmd LV hash table thread-safe.
+  Fix clvmd locking so it will lock out multiple users on the same node.
+  Fix clvmd VG locking to it can cope with multiple VG locks.
+  Remove spurious trailing dot in lvreduce man page.
+  Fix vgremove locking.
+
+Version 2.00.24 - 16th September 2004
+=====================================
+  Fix pool_empty so it really does empty the memory pool.
+  Rename old segtypes files to segtype.
+  Some fixes to memory debugging code.
+  Exclude internal commands formats & segtypes from install.
+
+Version 2.00.23 - 15th September 2004
+=====================================
+  Export dm name build & split functions.
+  Use O_NOATIME on devices if available.
+  Write log message when each segtype/format gets initialised.
+  New commands 'segtypes' and 'formats'.
+  Suppress pvmove abort message in test mode.
+  Improve pvcreate/remove device not found error message.
+  Allow pvmove to move data within the same PV.
+  Describe how pvmove works on man page.
+  Test for incompatible format/segtype combinations in lv_extend.
+  Fix lvchange example on man page.
+
+Version 2.00.22 - 3rd September 2004
+====================================
+  Fix /dev/vgname perms.
+  Restructure xlate.h.
+  Add clvmd man page.
+
+Version 2.00.21 - 19th August 2004
+==================================
+  Update cnxman-socket.h from cman.
+  Recognise iseries/vd devices.
+  Use 'make install_cluster' to install cluster extensions only.
+  Cope with DT_UNKNOWN in sysfs.
+  Fix extents_moved metadata size comment.
+  Remove duplicate line in pvremove help text.
+  Support variable mirror region size.
+  Support PE ranges in pvmove source PV.
+  Fixes to as-yet-unused LV segment splitting code.
+  Change alloc_areas to pe_ranges and allow suppression of availability checks.
+  Add dev_size column to pvs.
+  Add report columns for in-kernel device number.
+
+Version 2.00.20 - 3 July 2004
+=============================
+  More autoconf fixes.
+  Fix device number handling for 2.6 kernels.
+
+Version 2.00.19 - 29 June 2004
+==============================
+  Reduce severity of setlocale failure message.
+  Recognise argv[0] "initrd-lvm" (pld-linux).
+  Make -O2 configurable.
+  Added --disable-selinux to configure script.
+  LD_FLAGS->LDFLAGS & LD_DEPS->LDDEPS in configure script.
+  Add init_debug to clvmd.
+
+Version 2.00.18 - 24 June 2004
+==============================
+  Fix vgchange activation.
+  Add cluster support.
+
+Version 2.00.17 - 20 June 2004
+==============================
+  configure --enable-fsadm to try out fsadm.  fsadm is not tested yet.
+  Display all filtered devices, not just PVs, with pvs -a.
+  Fix sync_dir() when no / in filename
+  vgcfgbackup -f accepts template with %s for VG name.
+  Extend hash functions to handle non-null-terminated data.
+  Add local activation support.
+  Tidy relative paths in makefile includes.
+  fsadm support for fsck and resizing - needs testing.
+  Add read-only GFS pool support.
+  Add lvm2create_initrd script from http://poochiereds.net/svn/lvm2/
+  Fix rounding of large diplayed sizes.
+  Suppress decimal point when using units of sectors/bytes.
+  Additional kernel target checks before pvmove & snapshot creation.
+  Add i2o_block.
+
+Version 2.00.16 - 24 May 2004
+=============================
+  Set area_count within alloc_lv_segment.
+  Remove error labels from lvresize.
+  Fix a pvs error path.
+  xxchange -ae for exclusive activation.
+  Don't return non-zero status if there aren't any volume groups.
+  Add --alloc argument to tools.
+  Rename allocation policies to contiguous, normal, anywhere, inherit.
+  nextfree becomes normal; anywhere isn't implemented yet.
+  LV inherits allocation policy from VG. Defaults: LV - inherit; VG - normal
+  Additional status character added to vgs to indicate allocation policy.
+  Add reset_fn to external_locking.
+  Ensure presence of virtual targets before attempting activating.
+  Attempt to fix resizing of snapshot origins.
+  Restructure lvresize, bringing it closer to lvcreate.
+  A quick sanity check on vg_disk struct when read in.  More checks needed.
+  Only include visible LVs in active/open counts.
+  Add virtual segment types, zero and error.  A large sparse device can be
+constructed as a writeable snapshot of a large zero segment.
+  Add --type to lvcreate/resize.
+  Push lv_create & alloc policy up to tool level.
+  Fix pvdisplay return code.
+  Detect invalid LV names in arg lists.
+  Reporting uses line-at-a-time output.
+  lvm2 format sets unlimited_vols format flag.
+  Internal-only metadata flag support.
+  Basic checking for presence of device-mapper targets.
+  Separate out polldaemon.
+  Revise internal locking semantics.
+  Move find_pv_by_name to library.
+  Rename move->copy.
+  Add devices to segments report.
+  Begin separating out segment code. There's a lot of change here.
+  Compress any (obsolete) long LVM1 pvids encountered.
+  Support for tagged config files.
+  Don't abort operations if selinux present but disabled.
+  Fix typo in configure which left HAVE_LIBDL unset.
+
+Version 2.00.15 - 19 Apr 2004
+=============================
+  configure --with-owner= --with-group= to avoid -o and -g args to 'install'
+
+Version 2.00.14 - 16 Apr 2004
+=============================
+  Use 64-bit file functions by default.
+
+Version 2.00.13 - 16 Apr 2004
+=============================
+  Set devices/md_component_detection = 1 to ignore devices containing md
+  superblocks. [Luca Berra]
+  Ignore error setting selinux file context if fs doesn't support it.
+
+Version 2.00.12 - 14 Apr 2004
+=============================
+  Install a default lvm.conf into /etc/lvm if there isn't one already.
+  Allow different installation dir for lvm.static (configure --staticdir=)
+  Fix inverted selinux error check.
+  Recognise power2 in /proc/devices.
+  Fix counting in lvs_in_vg_opened. [It ignored devices open more than once.]
+
+Version 2.00.11 - 8 Apr 2004
+============================
+  Set fallback_to_lvm1 in lvm.conf (or configure --enable-lvm1_fallback)
+  to run lvm1 binaries if running a 2.4 kernel without device-mapper.
+
+Version 2.00.10 - 7 Apr 2004
+============================
+  More fixes for static build.
+  Add basic selinux support.
+  Fix sysfs detection.
+
+Version 2.00.09 - 31 Mar 2004
+=============================
+  Update copyright notices for Red Hat.
+  Fix vgmknodes to remove dud /dev/mapper entries. (libdevmapper update reqd).
+  Add LVM1-style colon output to vgdisplay.
+  lvchange --refresh to reload active LVs.
+  Add string display to memory leak dump.
+  Add locking flags & memlock option.
+  Add list_versions to library.
+  Ignore open hidden LVs when checking if deactivation is OK.
+  Suppress move percentage when device inactive.
+  Add lv_info_by_lvid.
+  Various tidy-ups to the build process.
+  Rebaseline internal verbose level.
+  Add --nolocking option for read operations if locking is failing.
+  Add option to compile into a library.
+  When compiled without libdevmapper, only print warning message once.
+  Fix lvreduce PV extent calculations.
+  Fix DESTDIR to work with configure path overrides.
+  Always use / as config file separator & rename internal config file variables.
+  Add support for tagging PV/VG/LVs and hosts.
+  Fix rare bug in recognition of long cmdline argument forms.
+  Add basic internationalisation infrastructure.
+  Don't recurse symlinked dirs such as /dev/fd on 2.6 kernels.
+  Update autoconf files.
+  Add sysfs block device filtering for 2.6 kernels.
+  Update refs for move to sources.redhat.com.
+
+Friday 14th November 2003
+=========================
+Some bug fixes & minor enhancements, including:
+  Backwards compatibility with LVM1 metadata improved.
+  Missing man pages written.
+  Tool error codes made more consistent.
+  vgmknodes written.
+  O_DIRECT can be turned off if it doesn't work in your kernel.
+  dumpconfig to display the active configuration file
+
+You need to update libdevmapper before using 'vgmknodes' or 'vgscan --mknodes'.
+If your root filesystem is on an LV, you should run one of those two
+commands to fix up the special files in /dev in your real root filesystem 
+after finishing with your initrd.  Also, remember you can use
+'vgchange --ignorelockingfailure' on your initrd if the tool fails because
+it can't write a lock file to a read-only filesystem.
+
+Wednesday 30th April 2003
+=========================
+A pvmove implementation is now available for the new metadata format.
+
+When running a command that allocates space (e.g. lvcreate), you can now
+restrict not only which disk(s) may be used but also the Physical Extents 
+on those disks.  e.g. lvcreate -L 10 vg1 /dev/hda6:1000-2000:3000-4000
+
+
+Monday 18th November 2002
+========================
+
+The new format of LVM metadata is ready for you to test!
+  We expect it to be more efficient and more robust than the original format.
+  It's more compact and supports transactional changes and replication.
+  Should things go wrong on a system, it's human-readable (and editable).
+
+Please report any problems you find to the mailing list, 
+linux-lvm@sistina.com.  The software has NOT yet been thoroughly
+tested and so quite possibly there'll still be some bugs in it.
+Be aware of the disclaimer in the COPYING file.
+
+While testing, we recommend turning logging on in the configuration file 
+to provide us with diagnostic information:
+  log {
+        file="/tmp/lvm2.log"
+	level=7
+	activation=1
+  }
+
+You should schedule regular backups of your configuration file and
+metadata backups and archives (normally kept under /etc/lvm).
+
+Please read docs/example.conf and "man lvm.conf" to find out more about 
+the configuration file.
+
+To convert an existing volume group called vg1 to the new format using
+the default settings, use "vgconvert -M2 vg1".  See "man vgconvert".
+
+-M (or --metadatatype in its long form) is a new flag to indicate which
+format of metadata the command should use for anything it creates.
+Currently, the valid types are "lvm1" and "lvm2" and they can be
+abbreviated to "1" and "2" respectively.  The default value for this
+flag can be changed in the global section in the config file.
+
+Backwards-compatible support for the original LVM1 metadata format is
+maintained, but it can be moved into a shared library or removed
+completely with configure's --with-lvm1 option.
+
+Under LVM2, the basic unit of metadata is the volume group.  Different
+volume groups can use different formats of metadata - vg1 could use
+the original LVM1 format while vg2 used the new format - but you can't
+mix formats within a volume group.  So to add a PV to an LVM2-format
+volume group you must run "pvcreate -M2" on it, followed by "vgextend".
+
+With LVM2-format metadata, lvextend will let you specify striping
+parameters.  So an LV could consist of two or more "segments" - the
+first segment could have 3 stripes while the second segment has just 2.
+
+LVM2 maintains a backup of the current metadata for each volume group
+in /etc/lvm/backup, and puts copies of previous versions in
+/etc/lvm/archive.  "vgcfgbackup" and "vgcfgrestore" can be used to
+create and restore from these files.  If you fully understand what 
+you're doing, metadata can be changed by editing a copy of a current
+backup file and using vgcfgrestore to reload it.
+
+Please read the pvcreate man page for more information on the new
+format for metadata.
+
+All tools that can change things have a --test flag which can be used
+to check the effect  of a set of cmdline args without really making the
+changes.
+
+
+What's not finished?
+====================
+The internal cache.  If you turn on debugging output you'll see lots of
+repeated messages, many of which will eventually get optimised out.
+
+--test sometimes causes a command to fail (e.g. vgconvert --test) even 
+though the real command would work: again, fixing this is waiting for 
+the work on the cache.
+
+Several of the tools do not yet contain the logic to handle full
+recovery: combinations of pvcreate and vgcfgrestore may sometimes be
+needed to restore metadata if a tool gets interrupted or crashes or
+finds something unexpected.  This applies particularly to tools that
+work on more than one volume group at once (e.g. vgsplit).
+
+Display output.  Some metadata information cannot yet be displayed.
+
+Recovery tools to salvage "lost" metadata directly from the disks:
+but we hope the new format will mean such tools are hardly ever needed!
+

@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# Check for LVM1 snapshots
+
+if [ "`/sbin/lvmiopversion`" -le 10 ]
+then
+  [ -x /sbin/lvscan ] && /sbin/lvscan 2>/dev/null | grep Snapshot 2>&1 > /dev/null
+  if [ "$?" = 0 ]
+  then
+
+    . /usr/share/debconf/confmodule
+ 
+    db_version 2.0
+    db_capb backup
+ 
+    db_title LVM2
+ 
+    db_input critical lvm2/snapshots || true
+    db_go
+ 
+    db_stop
+
+  fi
+fi

@@ -1,0 +1,166 @@
+#!/bin/bash
+#
+# chkconfig: 345 24 76
+# description: Starts and stops clvmd
+#
+#	       
+### BEGIN INIT INFO
+# Provides: 
+### END INIT INFO
+
+. /etc/init.d/functions
+
+LVDISPLAY="/usr/sbin/lvdisplay"
+VGCHANGE="/usr/sbin/vgchange"
+VGSCAN="/usr/sbin/vgscan"
+
+[ -f /etc/sysconfig/cluster ] && . /etc/sysconfig/cluster
+
+LOCK_FILE="/var/lock/subsys/clvmd"
+
+start()
+{
+	for rtrn in 0
+	do
+		if ! pidof clvmd > /dev/null 
+		then 
+			echo -n "Starting clvmd:"
+			clvmd > /dev/null 2>&1
+			rtrn=$?
+			if [ $rtrn -eq 0 ]
+			then
+				success
+				echo
+			else
+				failure
+				echo
+				break
+			fi
+		fi	
+		
+		# refresh cache
+		$VGSCAN  > /dev/null 2>&1
+		
+		if [ -n "$LVM_VGS" ]
+		then
+			for vg in $LVM_VGS
+			do
+				echo -n "Activating lvm $vg:"
+				if $VGCHANGE -ayl $vg > /dev/null 2>&1
+				then
+					success
+					echo
+				else
+					rtrn=$?
+					failure
+					echo
+				fi
+			done
+		else
+			echo -n "Activating lvms:"
+			if $VGCHANGE -ayl > /dev/null 2>&1
+			then
+				success
+				echo
+			else
+				rtrn=$?
+				failure
+				echo
+			fi
+		fi
+	done
+
+	return $rtrn
+}
+
+stop()
+{
+	for rtrn in 0
+	do
+		if [ -n "$LVM_VGS" ]
+		then
+			for vg in $LVM_VGS
+			do
+				echo -n "Deactivating lvm $vg:"
+				if $VGCHANGE -anl $vg > /dev/null 2>&1
+				then
+					success
+					echo
+				else
+					rtrn=$?
+					failure
+					echo
+				fi
+			done
+		else
+			echo -n "Deactivating lvms:"
+			if $VGCHANGE -anl > /dev/null 2>&1
+			then
+				success
+				echo
+			else
+				rtrn=$?
+				failure
+				echo
+			fi
+		fi
+
+		[ $rtrn -ne 0 ] && break
+
+		echo -n "Stopping clvm:"
+		pid=$(pidof clvmd)
+		if [ -n "$pid" ]
+		then
+			while kill $pid > /dev/null 2>&1
+			do
+				sleep 1
+			done
+		fi
+		if [ $rtrn -eq 0 ]
+		then
+			success
+			echo
+		else
+			failure
+			echo
+		fi
+	done
+	
+	return $rtrn
+}
+
+rtrn=1
+
+# See how we were called.
+case "$1" in
+  start)
+	start
+	rtrn=$?
+	[ $rtrn = 0 ] && touch $LOCK_FILE
+	;;
+
+  stop)
+	stop
+	rtrn=$?
+	[ $rtrn = 0 ] && rm -f $LOCK_FILE
+	;;
+
+  restart)
+	$0 stop
+	$0 start 
+	rtrn=$?
+	;;
+
+  status)
+	status clvmd
+	vols=$( $LVDISPLAY -C --nohead 2> /dev/null | awk '($3 ~ /....a./) {print $1}' )
+	echo active volumes: ${vols:-"(none)"}
+	rtrn=0
+	;;
+
+  *)
+	echo $"Usage: $0 {start|stop|restart|status}"
+	;;
+esac
+
+exit $rtrn

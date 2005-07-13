@@ -1,0 +1,3 @@
+debian/tmp/lib/liblvm2* lib/lvm2
+debian/tmp/lib/lvm-200/clvmd sbin
+debian/tmp/usr/share/man/man8/clvmd*

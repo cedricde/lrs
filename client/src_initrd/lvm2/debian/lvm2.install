@@ -1,0 +1,8 @@
+debian/tmp/etc/* etc
+debian/tmp/lib/lvm-200/lv* lib/lvm-200
+debian/tmp/lib/lvm-200/pv* lib/lvm-200
+debian/tmp/lib/lvm-200/vg* lib/lvm-200
+debian/tmp/usr/share/man/man8/lv* usr/share/man/man8
+debian/tmp/usr/share/man/man8/pv* usr/share/man/man8
+debian/tmp/usr/share/man/man8/vg* usr/share/man/man8
+debian/tmp/usr/share/man/man5/* usr/share/man/man5
