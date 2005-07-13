@@ -1,0 +1,30 @@
+Revision: devmapper--dilinger--1--patch-5
+Archive: dilinger@voxel.net--2004
+Creator: Andres Salomon <dilinger@voxel.net>
+Date: Mon May  3 02:10:07 EDT 2004
+Standard-date: 2004-05-03 06:10:07 GMT
+Modified-files: make.tmpl.in
+New-patches: dilinger@voxel.net--2004/devmapper--dilinger--1--patch-5
+Summary: LFS support; compile w/ _FILE_OFFSET_BITS=64
+Keywords: 
+
+* added files
+
+    {arch}/devmapper/devmapper--dilinger/devmapper--dilinger--1/dilinger@voxel.net--2004/patch-log/patch-5
+
+* modified files
+
+--- orig/make.tmpl.in
++++ mod/make.tmpl.in
+@@ -55,7 +55,7 @@
+ 
+ SUFFIXES = .c .d .o .so .a .po .pot .mo
+ 
+-CFLAGS += -fPIC -Wall -Wundef -Wshadow -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Winline
++CFLAGS += -fPIC -Wall -Wundef -Wshadow -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Winline -D_FILE_OFFSET_BITS=64
+ 
+ #CFLAGS += -W -Wconversion -Wpointer-arith -Wredundant-decls -Wbad-function-cast -Wcast-qual -Wmissing-noreturn
+ 
+
+
+

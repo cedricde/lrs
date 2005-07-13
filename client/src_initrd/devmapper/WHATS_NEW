@@ -1,0 +1,90 @@
+Version 1.01.00 - 17 Jan 2005
+=============================
+  Add dm_task_no_open_count() to skip getting open_count.
+
+Version 1.00.21 - 7 Jan 2005
+============================
+  Fix /proc/devices parsing.
+
+Version 1.00.20 - 6 Jan 2005
+============================
+  Attempt to fix /dev/mapper/control transparently if it's wrong.
+  Configuration-time option for setting uid/gid/mode for /dev/mapper nodes.
+  Update kernel patches for 2.4.27/2.4.28-pre-4 (includes minor fixes).
+  Add --noheadings columns option for colon-separated dmsetup output.
+  Support device referencing by uuid or major/minor.
+  Warn if kernel data didn't fit in buffer.
+  Fix a printf.
+
+Version 1.00.19 - 3 July 2004
+=============================
+  More autoconf fixes.
+  Fix a dmsetup newline.
+  Fix device number handling for 2.6 kernels.
+
+Version 1.00.18 - 20 Jun 2004
+=============================
+  Fix a uuid free in libdm-iface.
+  Fix a targets string size calc in driver.
+  Add -c to dmsetup for column-based output.
+  Add target message-passing ioctl.
+
+Version 1.00.17 - 17 Apr 2004
+=============================
+  configure --with-owner= --with-group= to avoid -o and -g args to 'install'
+  Fix library selinux linking.
+
+Version 1.00.16 - 16 Apr 2004
+=============================
+  Ignore error setting selinux file context if fs doesn't support it.
+
+Version 1.00.15 - 7 Apr 2004
+============================
+  Fix status overflow check in kernel patches.
+
+Version 1.00.14 - 6 Apr 2004
+============================
+  Fix static selinux build.
+
+Version 1.00.13 - 6 Apr 2004
+============================
+  Add some basic selinux support.
+
+Version 1.00.12 - 6 Apr 2004
+============================
+  Fix dmsetup.static install.
+
+Version 1.00.11 - 5 Apr 2004
+============================
+  configure --enable-static_link does static build in addition to dynamic.
+  Moved Makefile library targets definition into template.
+
+Version 1.00.10 - 2 Apr 2004
+============================
+  Fix DESTDIR handling.
+  Static build installs to dmsetup.static.
+  Basic support for internationalisation.
+  Minor Makefile tidy-ups/fixes.
+
+Version 1.00.09 - 31 Mar 2004
+=============================
+  Update copyright notices to Red Hat.
+  Move full mknodes functionality from dmsetup into libdevmapper.
+  Avoid sscanf %as for uClibc compatibility.
+  Cope if DM_LIST_VERSIONS is not defined.
+  Add DM_LIST_VERSIONS functionality to kernel patches.
+  Generate new kernel patches for 2.4.26-rc1.
+
+Version 1.00.08 - 27 Feb 2004
+=============================
+  Added 'dmsetup targets'.
+  Added event_nr support to 'dmsetup wait'.
+  Updated dmsetup man page.
+  Allow logging function to be reset to use internal one.
+  Bring log macros in line with LVM2 ones.
+  Added 'make install_static_lib' which installs libdevmapper.a.
+  Made configure/makefiles closer to LVM2 versions.
+  Fixed DESTDIR for make install/install_static_lib.
+  Updated README/INSTALL to reflect move to sources.redhat.com.
+  Updated autoconf files to 2003-06-17.
+

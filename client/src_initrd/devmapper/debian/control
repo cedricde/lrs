@@ -1,0 +1,80 @@
+Source: devmapper
+Section: admin
+Priority: optional
+Maintainer: Debian LVM Team <pkg-lvm-maintainers@lists.alioth.debian.org>
+Uploaders: Bastian Blank <waldi@debian.org>, Andres Salomon <dilinger@debian.org>
+Build-Depends: debhelper (>= 4.2), dh-kpatches (>= 0.99.28), autotools-dev
+Standards-Version: 3.6.1
+
+Package: libdevmapper-dev
+Section: libdevel
+Architecture: any
+Depends: libdevmapper1.01 (= ${Source-Version})
+Description: The Linux Kernel Device Mapper header files
+ The Linux Kernel Device Mapper is the LVM (Linux Logical Volume Management)
+ Team's implementation of a minimalistic kernel-space driver that handles
+ volume management, while keeping knowledge of the underlying device layout
+ in user-space.  This makes it useful for not only LVM, but EVMS, software
+ raid, and other drivers that create "virtual" block devices.
+ .
+ This package contains the (user-space) header files for accessing the
+ device-mapper; it allow usage of the device-mapper through a clean,
+ consistent interface (as opposed to through kernel ioctls).
+
+Package: libdevmapper1.01
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}
+Provides: libdevmapper
+Description: The Linux Kernel Device Mapper userspace library
+ The Linux Kernel Device Mapper is the LVM (Linux Logical Volume Management)
+ Team's implementation of a minimalistic kernel-space driver that handles
+ volume management, while keeping knowledge of the underlying device layout
+ in user-space.  This makes it useful for not only LVM, but EVMS, software
+ raid, and other drivers that create "virtual" block devices.
+ .
+ This package contains the (user-space) shared library for accessing the
+ device-mapper; it allows usage of the device-mapper through a clean,
+ consistent interface (as opposed to through kernel ioctls).
+
+Package: libdevmapper1.01-udeb
+XC-Package-Type: udeb
+Section: debian-installer
+Architecture: any
+Depends: ${shlibs:Depends}
+Provides: libdevmapper1.01
+Description: The Linux Kernel Device Mapper userspace library
+ This is a udeb, or a microdeb, for the debian-installer.
+ .
+ The Linux Kernel Device Mapper is the LVM (Linux Logical Volume Management)
+ Team's implementation of a minimalistic kernel-space driver that handles
+ volume management, while keeping knowledge of the underlying device layout
+ in user-space.  This makes it useful for not only LVM, but EVMS, software
+ raid, and other drivers that create "virtual" block devices.
+
+Package: dmsetup
+Section: admin
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: The Linux Kernel Device Mapper userspace library
+ The Linux Kernel Device Mapper is the LVM (Linux Logical Volume Management)
+ Team's implementation of a minimalistic kernel-space driver that handles
+ volume management, while keeping knowledge of the underlying device layout
+ in user-space.  This makes it useful for not only LVM, but EVMS, software
+ raid, and other drivers that create "virtual" block devices.
+ .
+ This package contains a utility for modifying device mappings.
+
+Package: dmsetup-udeb
+XC-Package-Type: udeb
+Section: debian-installer
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: The Linux Kernel Device Mapper userspace library
+ The Linux Kernel Device Mapper is the LVM (Linux Logical Volume Management)
+ Team's implementation of a minimalistic kernel-space driver that handles
+ volume management, while keeping knowledge of the underlying device layout
+ in user-space.  This makes it useful for not only LVM, but EVMS, software
+ raid, and other drivers that create "virtual" block devices.
+ .
+ This package contains a utility for modifying device mappings.

@@ -1,0 +1,19 @@
+device-mapper for Debian
+------------------------
+
+The libdevmapper1.01 package contains userspace libraries for things
+that use the kernel device-mapper (such as LVM2 and EVMS).  In order
+to be useful, kernel support for device-mapper should be enabled.
+
+Debian and all 2.6 kernels have device-mapper included, though only
+the more recent have all the features; 2.4.27+ or 2.6.8+ are recommended.
+If you are running a 2.4 kernel compiled from kernel.org sources you 
+will need to apply the device-mapper patches from the devmapper source
+tarball or from http://sources.redhat.com/dm/patches.html.
+
+Note that device-mapper (with LVM2) is a replacement for LVM.  With
+2.4 kernels, lvm-mod and dm-mod may be loaded simultaneously without
+any problems.  lvm-mod is not available in 2.6, only dm-mod.
+
+--
+Patrick Caulfield <patrick@debian.org>  Mon, 20 Sep 2004 08:01:42 +0100
