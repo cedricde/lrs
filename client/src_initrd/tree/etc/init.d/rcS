@@ -24,5 +24,4 @@ do
 			;;
 	esac
 done
-# run the files in /etc/rc.boot
-[ -d /etc/rc.boot ] && run-parts /etc/rc.boot
+
