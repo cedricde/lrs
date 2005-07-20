@@ -26,7 +26,7 @@ require "inifile.pl" ;
 #/////////////////////////////////////////////////////////////////////////////
 
 
-$_lbslibversion = "1.4.3" ;
+$_lbslibversion = "1.5.0" ;
 $_lbsdebug      = 0 ;
 $WOL_EXTENSION  = "wol";
 
@@ -501,6 +501,17 @@ sub etherSize
 sub etherGetMacs
 {
  return sort( keys %{$_[0]} ) ;
+}
+
+# @list etherGetMacsFilterName(\%einfo, $regexp)
+# Retourne la liste des adresses MAC des machines.
+# Se base sur la structure retournee par etherLoad().
+#
+sub etherGetMacsFilterName
+{
+ my $ref = $_[0];
+ my $re = $_[1];
+ return sort( grep ( $ref->{$_}[1] =~ /$re/ , keys(%$ref) ) ) ;
 }
 
 
