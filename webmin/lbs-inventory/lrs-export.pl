@@ -84,13 +84,6 @@ sub init() {
         %module_info = main::get_module_info($module_name);
         $module_root_directory = "$root_directory/$module_name";
 
-        # Check the Referer: header for nasty redirects
-        local @referers = split(/\s+/, $gconfig{'referers'});
-        local $referer_site;
-        if ($ENV{'HTTP_REFERER'} =~/^(http|https|ftp):\/\/([^:\/]+:[^@\/]+@)?([^\/:@]+)/) {
-                $referer_site = $3;
-                }
-                
         # read current's language file
         foreach my $o (("en", $gconfig{"lang"}, main::get_language())) {
                 my $langfile="$root_directory/$module_name/lang/$o";
@@ -121,7 +114,7 @@ sub mainlist_label() {
 sub mainlist_content($) {
 my $hashref=shift;
 
-        init();        
+        #init();        
         if (defined($hashref->{'mac'})) {
                 my $module_name="lbs-inventory";                                # FIXME: hard-coded
                 my $mac=$hashref->{'mac'};

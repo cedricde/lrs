@@ -1,5 +1,5 @@
-name=lbs-inventory
+-e name=lbs-inventory
 desc=LRS : Inventory
 desc_fr=LRS : Inventaire
 depends=1.030 lbs_common
-version=1.6.0
+version=1.6.1
