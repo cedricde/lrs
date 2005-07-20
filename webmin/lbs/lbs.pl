@@ -29,7 +29,7 @@ init_config();
 
 use vars qw($tb $cb @parttype %module_info %text %in);
 
-our $VERSION='$Rev$';
+our $VERSION='$Rev$ ';
 $VERSION =~ s/\$Rev: (\d+) \$/$module_info{version} (r.$1)/;
 
 our $POSTINST_PATH='images/templates';
@@ -55,10 +55,14 @@ sub parttype {
 # %bstat:  clefs=noms des images, vals=status (0,1 ou 2)
 sub images_base_usage {
 my $lbs_home = $lbs_common::lbsconf{"basedir"} ;
+my $etherfile = $lbs_home . "/etc/ether" ;
 my $img_base = $lbs_home."/imgbase";
 my ($busage,$btitle,$bdesc,$bstat,$imgdir) = @_ ;
 my (@lol, @lsdel, @lsused, @lsdesc, @lstitle,@sizes,@burn,@details) ;
-my %tabattr ; 
+my %tabattr ;
+
+my %einfo;
+etherLoad($etherfile, \%einfo) or error( lbsGetError() ) ;
 
 my $delicon;    							# « delete » icon
 my @images;
@@ -85,10 +89,13 @@ my @toprow = (
 			@uls = ( $text{"lab_none"} ) ;
 		} else {						# else we built an anchor list
 			$delicon = "cross.gif";
-			foreach my $i (@ls) {
-				$i = "<a href=\"bootmenu.cgi?name=".urlize($i) ."\" style=\"text-decoration:none\">$i</a>" ;
-				push @uls,$i ;
-			}
+			foreach my $i (@ls) 
+			  {
+			    my $sname = $i;
+			    $sname =~ s/.*\///;
+			    $i = "<a href=\"bootmenu.cgi?mac=".etherGetMacByName(\%einfo, $i)."\" style=\"text-decoration:none\">$sname</a>" ;
+			    push @uls,$i ;
+			  }
 		}
 	
 		push @lsused, "<small>" . join("<br>", @uls) . "</small>" ;# which we attach with som "<br>" between each

@@ -97,15 +97,22 @@ if ($lrsgznbd) { push @toprow, "View"; }
 	
 	foreach my $line (@$lines) {
 		$i++;
-		
 		if ($line =~ /\(hd.*?\) (\d+) (\d+)/) {
 		  # save partition size
 		  $lastsize = int(($2-$1)/2048);
 		}
 
-		if ($line =~ /partcopy \(hd(\d+),(\d+)\) (\d+) PATH\/(\w+)/) {      	# PARTCOPY line
-			push @desc, text("msg_conf_partcopy", $2+1, $1+1, parttype($type))." &nbsp ".$lastsize." MiB";
+		if ($line =~ /partcopy \(hd(\d+),-?(\d+)\) (\d+) PATH\/(\w+) ?(\S*)/) {      	# PARTCOPY line
+			my $disk = $1 + 1;
+			my $part = $2 + 1;
 			$file = $4;
+			if ($1 >= 3968) {
+				$part = "LVM";
+				$disk = "$5";
+				$disk =~ s/mapper\///;
+				$type = "LVM"
+			}
+			push @desc, text("msg_conf_partcopy", $part, $disk, parttype($type))." &nbsp ".$lastsize." MiB";
 		} elsif ($line =~ /ptabs \(hd([0-9]+)/) {       		# PTABS line
 			push @desc, text("msg_conf_ptabs", $1+1);
 		} else {        						# save partition type for later

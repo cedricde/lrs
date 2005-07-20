@@ -65,13 +65,6 @@ sub init() {
         %module_info = main::get_module_info($module_name);
         $module_root_directory = "$root_directory/$module_name";
 
-        # Check the Referer: header for nasty redirects
-        local @referers = split(/\s+/, $gconfig{'referers'});
-        local $referer_site;
-        if ($ENV{'HTTP_REFERER'} =~/^(http|https|ftp):\/\/([^:\/]+:[^@\/]+@)?([^\/:@]+)/) {
-                $referer_site = $3;
-                }
-                
         $ENV{"FOREIGN_MODULE_NAME"}=$oldforeign;}
 
 sub mainlist_content_callback() {
@@ -87,7 +80,6 @@ sub mainlist_status_callback() {
 }
 
 sub mainlist_label() {
-        init();
         return (
                 {'content' => "<div style='text-align: center'>"."WOL"."</div>", 'attribs' => 'width="50px"'}
                 );
@@ -95,11 +87,9 @@ sub mainlist_label() {
 
 sub mainlist_content($) {
 my $hashref=shift;
-
-        init();
         
         if (defined($hashref->{'mac'})) {
-                my $module_name="lbs";                                # FIXME: hard-coded
+                my $module_name="lbs";
                 my $mac=$hashref->{'mac'};
                 my $params="mac=".main::urlize($mac);
                 my $name="lbswol"."_".main::mac_remove_columns($mac)."_img";

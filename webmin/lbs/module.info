@@ -6,4 +6,4 @@ desc_fr=LRS : Sauvegarde Système
 category=other
 
 depends=0.94 lbs_common proc at
-version=2.5.2
+version=2.5.4

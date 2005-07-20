@@ -33,7 +33,7 @@
 sub init() {
         my $oldforeign=$ENV{"FOREIGN_MODULE_NAME"};
         $ENV{"FOREIGN_MODULE_NAME"}="lbs";
-#        main::init_config();
+        main::init_config();
 
         $config_directory = $ENV{'WEBMIN_CONFIG'};
 
@@ -81,13 +81,6 @@ sub init() {
         %module_info = main::get_module_info($module_name);
         $module_root_directory = "$root_directory/$module_name";
 
-        # Check the Referer: header for nasty redirects
-        local @referers = split(/\s+/, $gconfig{'referers'});
-        local $referer_site;
-        if ($ENV{'HTTP_REFERER'} =~/^(http|https|ftp):\/\/([^:\/]+:[^@\/]+@)?([^\/:@]+)/) {
-                $referer_site = $3;
-        }
-
         # read current's language file
         foreach my $o (("en", $gconfig{"lang"}, main::get_language())) {
                 my $langfile="$root_directory/$module_name/lang/$o";
@@ -111,7 +104,7 @@ sub mainlist_status_callback() {
 
 sub mainlist_label() {
 my $hashref=shift;
-        init();
+      init();
         if (lc($hashref->{'section'}) eq "search") {
                 return (
                         {'content' => "<div style='text-align: center'>".main::text('lab_macaddr')."</div>",    "attribs" => ""},
@@ -137,11 +130,9 @@ my $hashref=shift;
 
 sub mainlist_content($) {
 my $hashref=shift;
-
-        init();        
         
         if (lc($hashref->{'section'}) eq "search") {
-                my $module_name="lbs";                                          # FIXME: hard-coded
+                my $module_name="lbs";
                 my $mac=$hashref->{'mac'};
                 my $params="mac=".main::urlize($mac);
                 my $imgout="/$module_name/images/icon-menu.gif";
@@ -166,7 +157,7 @@ my $hashref=shift;
                         {'content' => $link}
                         );
         } elsif (defined($hashref->{'mac'})) {
-                my $module_name="lbs";                                          # FIXME: hard-coded
+                my $module_name="lbs";
                 my $TFTPBOOT=$config{'chemin_basedir'};
                 my $mac=$hashref->{'mac'};
 		my $macfile = main::toMacFileName($mac);      		        # it's file
@@ -178,14 +169,14 @@ my $hashref=shift;
                 # get the menu
                 my $cfgfile = "$TFTPBOOT/images/$macfile/header.lst";
                 my %hdr;
-                my $timestamp = "No default menu";
+                my $timestamp = ".";
 
                 if (main::hdrLoad( $cfgfile, \%hdr, 1)) {
                         my $defaultmenu;
                         foreach my $menuitem (main::hdrGetMenuNames(\%hdr)) {
                                 my $isdefault = ($hdr{'ini'}{'data'}{$menuitem}[1] eq "yes");
                                 my $bootimage = $hdr{'ini'}{'data'}{$menuitem}[5];
-                                $timestamp = "Default menu: $bootimage" if $isdefault; # hem, not clean isn't it
+                                $timestamp = "$bootimage" if $isdefault; # hem, not clean isn't it
                         }
                 }
                 
@@ -204,8 +195,7 @@ my $hashref=shift;
                                 />
                               </a>
                             </div>";
-                
-                
+
 		my $size=main::get_directory_size("$TFTPBOOT/images/$macfile");         # collect the size of the image
 		$size = int( $size >> 10 );
 		$size = "<div style=\"text-align: right;\">$size</div>";                                 # and Justify results
@@ -243,7 +233,7 @@ my $hashref=shift;
                 # get the menu
                 my $cfgfile = "$TFTPBOOT/imgprofiles/$profile/$group/header.lst";
                 my %hdr;
-                my $timestamp = "No default menu";
+                my $timestamp = ".";
 
                 
                 if (main::hdrLoad( $cfgfile, \%hdr, 1)) {
@@ -251,7 +241,7 @@ my $hashref=shift;
                         foreach my $menuitem (main::hdrGetMenuNames(\%hdr)) {
                                 my $isdefault = ($hdr{'ini'}{'data'}{$menuitem}[1] eq "yes");
                                 my $bootimage = $hdr{'ini'}{'data'}{$menuitem}[5];
-                                $timestamp = "Default menu: $bootimage<br />" if $isdefault; # hem, not clean isn't it
+                                $timestamp = "$bootimage<br />" if $isdefault; # hem, not clean isn't it
                         }
                 }
                 
@@ -273,11 +263,11 @@ my $hashref=shift;
                             </div>";
                 
                 
-		my $size=main::get_group_size($group, $profile);                                  # collect the size of the group
+		my $size=main::get_group_size($group, $profile, $hashref->{'ether'} );                                  # collect the size of the group
 		$size = int( $size >> 10 );
 		$size = "<div style=\"text-align: right;\">$size</div>";                                 # and Justify results
 
-                my $nb=main::get_group_numofimages($group, $profile);                             # collect the number of image
+                my $nb=main::get_group_numofimages($group, $profile, $hashref->{'ether'} );                             # collect the number of image
 		$nb   = "<div style=\"text-align: right;\">$nb</div>";   			        # and Justify results
                 
                 if (defined ($hashref->{'currentprofile'}) && ($hashref->{'currentprofile'} ne "") && ($hashref->{'currentprofile'} ne "all") && ($hashref->{'currentprofile'} ne "none")) {
@@ -308,14 +298,14 @@ my $hashref=shift;
                 # get the menu
                 my $cfgfile = "$TFTPBOOT/imgprofiles/$profile/header.lst";
                 my %hdr;
-                my $timestamp = "No default menu";
+                my $timestamp = ".";
 
                 if (main::hdrLoad( $cfgfile, \%hdr, 1)) {
                         my $defaultmenu;
                         foreach my $menuitem (main::hdrGetMenuNames(\%hdr)) {
                                 my $isdefault = ($hdr{'ini'}{'data'}{$menuitem}[1] eq "yes");
                                 my $bootimage = $hdr{'ini'}{'data'}{$menuitem}[5];
-                                $timestamp = "Default menu: $bootimage" if $isdefault; # hem, not clean isn't it
+                                $timestamp = "$bootimage" if $isdefault; # hem, not clean isn't it
                         }
                 }
                 

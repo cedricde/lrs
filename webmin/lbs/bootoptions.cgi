@@ -455,6 +455,8 @@ if ( exists( $in{'cancel'} ) ) {
         if ($mode eq "MONO") {
                 my $infofile = $lbs_home . "/log/" . toMacFileName( $in{'mac'} ) . ".ini" ;
                 my %ini;
+		
+		if (! -f $infofile) { system("touch $infofile"); }
                 iniLoad($infofile, \%ini);
 
                 my %excludes;
