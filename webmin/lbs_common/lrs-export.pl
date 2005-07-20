@@ -95,12 +95,10 @@ sub mainlist_status_callback() {
 }
 
 sub mainlist_label() {
-        init();
         return undef;
 }
 
 sub mainlist_content() {
-        init();        
         return undef;
 }
 

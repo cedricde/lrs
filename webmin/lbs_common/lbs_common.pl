@@ -504,6 +504,18 @@ my $oddorevenline=0;    # to distinguish odd and even lines
 return $out ;
 }
 
+# Deep copy
+sub deep_copy {
+      my $this = shift;
+      if (not ref $this) {
+	        $this;
+      } elsif (ref $this eq "ARRAY") {
+          [map deep_copy($_), @$this];
+      } elsif (ref $this eq "HASH") {
+        +{map { $_ => deep_copy($this->{$_}) } keys %$this};
+      } else { die "what type is $_?" }
+}					  
+
 # table's printing
 # param 1 : $paramsref: a ref on a hash containning a bunch of parameters
 # return : nothing #FIXME
@@ -542,7 +554,7 @@ sub print_machines_list {
         $template->assign('ADVSEARCH', main::text('lab_searchadv'));
         $template->parse('mainlist.searchform') if ($paramsref->{'searchform'});
 
-        my %ether;      						# ethernet addresses
+        my %ether;							# ethernet addresses
         my $einfo=\%ether;                                              # ref on ethernet addresses
 
         # MAC hash loading
@@ -551,6 +563,8 @@ sub print_machines_list {
         } else {                                                        # no LRS installe
 	        ocsLoad("$home/etc/ether" , \%ether);                   # ethernet adresses load, using OCS database
         }
+	
+	my $ethero = deep_copy(\%ether);	# backup
 	
         # nr. of displayed machines limited
 	if (defined $in{'max_displayed_clients'}) {      		
@@ -771,7 +785,7 @@ sub print_machines_list {
                                                 foreach my $bodycallback (@$bodycallbacksref) {
                                                         my $profile;
                                                         $profile = $in{'profile'} if ($in{'profile'} ne "none" and $in{'profile'} ne "all");
-                                                        foreach my $label (&$bodycallback({'currentprofile' => $in{'profile'}, 'group' => $group, 'profile' => $profile})) {
+                                                        foreach my $label (&$bodycallback({'currentprofile' => $in{'profile'}, 'group' => $group, 'profile' => $profile, 'ether' => $ethero } )) {
                                                                 if (defined($label) and $label) {
                                                                         my %localhash=%$label;                                                                        
                                                                         $template->assign('CONTENT', $localhash{'content'});
@@ -820,7 +834,7 @@ sub print_machines_list {
                         my @tmprow;
                         push @tmprow, $name_url;
                         foreach my $bodycallback (@$bodycallbacksref) {
-                                foreach my $label (&$bodycallback({'name' => $name, 'mac' => $mac, 'profile' => $ether{$mac}[2], 'currentprofile' => $in{'profile'}})) {
+                                foreach my $label (&$bodycallback({'name' => $name, 'mac' => $mac, 'profile' => $ether{$mac}[2], 'currentprofile' => $in{'profile'}, 'ether' => $ethero })) {
                                         if (defined($label) and $label) {
                                                 my %localhash=%$label;                                                                        
                                                 push @tmprow, $localhash{'content'};
@@ -836,7 +850,7 @@ sub print_machines_list {
                         $template->assign('FIRSTCELLARGS', "$nowrap $firstcellwidth");
                         $template->parse('mainlist.normalrow.firstcell');
                         foreach my $bodycallback (@$bodycallbacksref) {
-                                foreach my $label (&$bodycallback({'name' => $name, 'mac' => $mac, 'profile' => $ether{$mac}[2], 'currentprofile' => $in{'profile'}})) {
+                                foreach my $label (&$bodycallback({'name' => $name, 'mac' => $mac, 'profile' => $ether{$mac}[2], 'currentprofile' => $in{'profile'}, 'ether' => $ethero })) {
                                         if (defined($label) and $label) {
                                                 my %localhash=%$label;                                                                        
                                                 $template->assign('CONTENT', $localhash{'content'});
@@ -868,7 +882,7 @@ sub print_machines_list {
         if (lc($profile_key) ne "none" and lc($profile_key) ne "all") {
                 $template->assign('ACTIONONCURRENTPROF', text('lab_thisprofile', $profile_name));
                 foreach my $bodycallback (@$bodycallbacksref) {
-                        foreach my $label (&$bodycallback({'currentprofile' => $in{'profile'}, 'profile' => $in{'profile'}})) {
+                        foreach my $label (&$bodycallback({'currentprofile' => $in{'profile'}, 'profile' => $in{'profile'}, 'ether' => $ethero })) {
                                 if (defined($label) and $label) {
                                         my %localhash=%$label;                                                                        
                                         $template->assign('CONTENT', $localhash{'content'});
@@ -1116,6 +1130,8 @@ my $ducmd="/usr/bin/du -ks";
 	
         return if defined $fake;
 
+	return 0 if (! -d $directory);
+
         # cache created if doesn't exists
 	if (! -r $cachefile) {
 		system("$ducmd $directory > $cachefile");
@@ -1148,6 +1164,8 @@ my $ducmd="/usr/bin/du -k";
 my $nb=0;
 	
         return if defined $fake;
+
+	return 0 if (! -d $directory);
         
         # cache created if doesn't exists
 	if (! -r $cachefile) {
@@ -1176,58 +1194,61 @@ my $nb=0;
 
 #
 # get a directory's size, using du
+#
 sub get_group_size {
-my ($group, $profile, $fake )=@_;
-my $home=$lbsconf{'basedir'};
-my %ether;
-my $size=0;
+    my ($group, $profile, $etherref, $fake )=@_;
+    my $home=$lbsconf{'basedir'};
+    my %ether;
+    my $size=0;
 
-        return if $fake;
+    return if $fake;
 
-        etherLoad("$home/etc/ether" , \%ether);
-        normalize_machine_names(\%ether);
+    if (!$etherref) {
+	etherLoad("$home/etc/ether" , \%ether);
+	$etherref = \%ether;
+    }
 
-        foreach my $mac (keys %ether) {
-                
-                if ($profile) {
-                        $size += get_directory_size("$home/images/" . mac_remove_columns ($mac) )
-                                if (etherGetNameByMac(\%ether, $mac) =~ m|^$profile:$group/|);
-                } else {
-                        $size += get_directory_size("$home/images/" . mac_remove_columns ($mac) )
-                                if (etherGetNameByMac(\%ether, $mac) =~ m|^.*:$group/|);
-                }
-                        
-        }
+    normalize_machine_names($etherref);
 
-        return $size;
+    foreach my $mac (etherGetMacsFilterName($etherref, "^.*:?$group\/")) {
+	if ($profile) {
+	    $size += get_directory_size("$home/images/" . mac_remove_columns ($mac) )
+		if (etherGetNameByMac($etherref, $mac) =~ m|^$profile:$group/|);
+	} else {
+	    $size += get_directory_size("$home/images/" . mac_remove_columns ($mac) )
+	}
+    }
+    return $size;
 }
 
 #
 # get a directory's number of images, using du
+#
 sub get_group_numofimages {
-my ($group, $profile, $fake)=@_;
-my $home=$lbsconf{'basedir'};
-my %ether;
-my $count=0;
+    my ($group, $profile, $etherref, $fake)=@_;
+    my $home=$lbsconf{'basedir'};
+    my %ether;
+    my $count=0;
 
-        return if $fake;
+    return if $fake;
 
-        etherLoad("$home/etc/ether" , \%ether);
-        normalize_machine_names(\%ether);
-
-        foreach my $mac (keys %ether) {
-                
-                if ($profile) {
-                        $count += get_directory_numofimages("$home/images/" . mac_remove_columns ($mac) )
-                                if (etherGetNameByMac(\%ether, $mac) =~ m|^$profile:$group/|);
-                } else {
-                        $count += get_directory_numofimages("$home/images/" . mac_remove_columns ($mac) )
-                                if (etherGetNameByMac(\%ether, $mac) =~ m|^.*:$group/|);
-                }
-                        
-        }
-
-        return $count;
+    if (!$etherref) {
+	etherLoad("$home/etc/ether" , \%ether);
+	$etherref = \%ether;
+    }
+    
+    normalize_machine_names($etherref);
+    
+    foreach my $mac (etherGetMacsFilterName($etherref, "^.*:?$group\/")) {
+	if ($profile) {
+	    $count += get_directory_numofimages("$home/images/" . mac_remove_columns ($mac) )
+		if (etherGetNameByMac($etherref, $mac) =~ m|^$profile:$group/|);
+	} else {
+	    $count += get_directory_numofimages("$home/images/" . mac_remove_columns ($mac) )
+	}
+	
+    }
+    return $count;
 }
 
 
