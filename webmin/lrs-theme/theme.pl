@@ -84,21 +84,25 @@ my      $webprefix      = $gconfig{'webprefix'} || "";
 	}
 
 	if (@_ > 0) {
-		if ($gconfig{'sysinfo'} == 1) {
+		if (exists $gconfig{'sysinfo'}) {
+		    if ($gconfig{'sysinfo'} == 1) {
 			printf "\t<title>LRS Server / %s : %s on %s (%s %s)</title>\n",
 				$_[0], $remote_user, &get_system_hostname(),
 				$os_type, $os_version;
-		} elsif ($gconfig{'sysinfo'} == 4) {
+		    } elsif ($gconfig{'sysinfo'} == 4) {
 			printf "\t<title>LRS Server / %s on %s (%s %s)</title>\n",
 				$remote_user, &get_system_hostname(),
 				$os_type, $os_version;
-		} else {
+		    } else {
 			print "\t<title>LRS Server / $_[0]</title>\n";
+		    }
+		} else {
+		    print "\t<title>LRS Server / $_[0]</title>\n";		
 		}
 		
 		print $_[7] if ($_[7]);
 		
-		if ($gconfig{'sysinfo'} == 0 && $remote_user) {
+		if (exists $gconfig{'sysinfo'} && $gconfig{'sysinfo'} == 0 && $remote_user) {
 			print "\t<SCRIPT LANGUAGE=\"JavaScript\">\n";
 			printf "\t\tdefaultStatus=\"%s%s logged into %s %s on %s (%s %s)\";\n",
 				$ENV{'ANONYMOUS_USER'} ? "Anonymous user" : $remote_user,
@@ -171,7 +175,8 @@ my      $webprefix      = $gconfig{'webprefix'} || "";
 		
 		if (!$ENV{'SSL_USER'} && !$ENV{'LOCAL_USER'} &&
 		    !$ENV{'HTTP_WEBMIN_SERVERS'}) {
-			if ($gconfig{'nofeedbackcc'} != 2 &&
+			if (exists $gconfig{'nofeedbackcc'} && 
+			    $gconfig{'nofeedbackcc'} != 2 &&
 			    $gaccess{'feedback'}) {
 				print "\t\t\t\t<a href=\"$logout\">$text{'main_logout'}</a><br />\n";
 				}
