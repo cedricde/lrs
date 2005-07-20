@@ -83,13 +83,6 @@ sub init() {
         %module_info = main::get_module_info($module_name);
         $module_root_directory = "$root_directory/$module_name";
 
-        # Check the Referer: header for nasty redirects
-        local @referers = split(/\s+/, $gconfig{'referers'});
-        local $referer_site;
-        if ($ENV{'HTTP_REFERER'} =~/^(http|https|ftp):\/\/([^:\/]+:[^@\/]+@)?([^\/:@]+)/) {
-                $referer_site = $3;
-                }
-                
         # read current's language file
         foreach my $o (("en", $gconfig{"lang"}, main::get_language())) {
                 my $langfile="$root_directory/$module_name/lang/$o";
@@ -120,9 +113,8 @@ sub mainlist_label() {
 sub mainlist_content($) {
 my $hashref=shift;
 
-        init();        
         if (defined($hashref->{'mac'})) {
-                my $module_name="backuppc";                                # FIXME: hard-coded
+                my $module_name="backuppc";
                 my $mac=$hashref->{'mac'};
                 my $params="mac=".main::urlize($mac);
                 my $imgout="/$module_name/images/icon-menu.gif";
@@ -132,28 +124,31 @@ my $hashref=shift;
                 
                 my $backuppc_status="/var/lib/backuppc/log/status.pl";
                 my $timestamp="";
-                
+
                 if (-r $backuppc_status) {
-                        use vars qw'%Status';
-                        require $backuppc_status;
-                        my %ether;
-                        main::etherLoad("$main::config{'chemin_basedir'}/etc/ether" , \%ether);
-                        my $name=lc(main::etherGetNameByMac(\%ether, $mac));
-                        if ($Status{$name}) {
-                                my $state=$Status{$name}{'state'};
-                                my $time=$Status{$name}{'startTime'};
-                                my $lastpings=$Status{$name}{'deadCnt'};
-                                my $lasterror=$Status{$name}{'error'};
-                                my $lastsave=$Status{$name}{'aliveCnt'};
-                                my $lasttype=$Status{$name}{'type'} || "";
-                                
-                                $timestamp = "last probe (".main::timestamp2date($time)."):<br>";
-                                if ($lasterror) {
-                                        $timestamp .= "failure since '".$lasterror."'.";
-                                } else {
-                                        $timestamp .= "success for the save #$lastsave (type $lasttype)";
-                                }
-                        }
+		    use vars qw'%Status';
+		    require $backuppc_status;
+		    my $ether = $hashref->{'ether'};
+		    my $name = lc($hashref->{'name'});
+
+		    $name =~ s|[^/]*/||;
+		    if ($Status{$name}) {
+			my $state=$Status{$name}{'state'};
+			my $time=$Status{$name}{'startTime'};
+			my $lastpings=$Status{$name}{'deadCnt'};
+			my $lasterror=$Status{$name}{'error'};
+			my $lastsave=$Status{$name}{'aliveCnt'};
+			my $lasttype=$Status{$name}{'type'} || "";
+
+			$timestamp = "last probe (".main::timestamp2date($time)."):<br>";
+			if ($lasterror) {
+			    $timestamp .= "failure since '".$lasterror."'.";
+			} else {
+			    $timestamp .= "success for the save #$lastsave (type $lasttype)";
+			}
+			$timestamp =~ s|\n| |;
+			$timestamp =~ s|<.*?>| |;
+		    }
                 }
                 my $name="$module_name"."_".main::mac_remove_columns($mac)."_img";
                 $name =~ tr|-/|__|;
@@ -172,7 +167,7 @@ my $hashref=shift;
                                         alt=\"".main::text('lab_backup')."\" />
                               </a>
                             </div>";
-                
+
                 return ({'content' => $link});
         }
         return ({'content' => "&nbsp;"});
