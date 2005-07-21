@@ -48,14 +48,14 @@
 #define BB_GREP
 #define BB_GUNZIP
 #define BB_GZIP
-#define BB_HALT
+//#define BB_HALT
 #define BB_HEAD
 //#define BB_HOSTID
 //#define BB_HOSTNAME
 //#define BB_HUSH
 #define BB_ID
 #define BB_IFCONFIG
-#define BB_INIT
+//#define BB_INIT
 #define BB_INSMOD
 #define BB_KILL
 #define BB_KILLALL
@@ -75,7 +75,7 @@
 #define BB_MKDIR
 //#define BB_MKFIFO
 //#define BB_MKFS_MINIX
-//#define BB_MKNOD
+#define BB_MKNOD
 //#define BB_MKSWAP
 //#define BB_MKTEMP
 #define BB_MODPROBE
@@ -95,7 +95,7 @@
 #define BB_PWD
 #define BB_RDATE
 //#define BB_READLINK
-#define BB_REBOOT
+//#define BB_REBOOT
 //#define BB_RENICE
 #define BB_RESET
 #define BB_RM
@@ -330,7 +330,7 @@
 //#define BB_FEATURE_MINIX2
 //
 // Enable ifconfig status reporting output -- this feature adds 7k.
-//#define BB_FEATURE_IFCONFIG_STATUS
+#define BB_FEATURE_IFCONFIG_STATUS
 //
 // Enable ifconfig slip-specific options "keepalive" and "outfill"
 //#define BB_FEATURE_IFCONFIG_SLIP
