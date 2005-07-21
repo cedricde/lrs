@@ -169,8 +169,11 @@ void update_progress(int kb)
     sprintf(buf,"Bitrate        : %d KBps",bps);
     newtLabelSetText(bitrate,buf);
 
-    if (bps>0) remain=(todo-kb)/bps;
-          else remain=99*60*60+59*60+59;
+    //if (bps>0) remain=(todo-kb)/bps;
+    //      else remain=99*60*60+59*60+59;
+    if (diff > 10)  remain=(((double)todo/(double)kb)*(double)diff)-diff;
+    else remain=99*60*60+59*60+59;
+
     h=remain/3600;
     m=(remain/60)%60; 
     s=remain%60;
@@ -239,14 +242,15 @@ void ui_write_error(char *s, int l, int err, int fd)
     /* get current offset */
     offset = lseek64(fd, 0, SEEK_CUR);
 
-    newtCenteredWindow(60, 4, "HD Read Error");
+    newtCenteredWindow(60, 5, "HD Write Error");
     
     myForm = newtForm(NULL, NULL, 0);
     t1 = newtTextbox(1, 0, 55, 4, 0);
     
     snprintf(tmp, 255, "Hard Disk Write Error ! Bad or too small hard disk !\n"
-	"errno %d, file %s, line %d \n"
-	"bs=%d offset=%08lx%08lx ", err, s, l, bs, (long)((long long)offset>>32), (long)offset);
+	"errno %d (%s)\n"
+	"file %s, line %d \n"
+	"bs=%d offset=%08lx%08lx ", err, strerror(err), s, l, bs, (long)((long long)offset>>32), (long)offset);
     fprintf(stderr, "ERROR: %s\n", tmp);
 
     newtTextboxSetText(t1, tmp);

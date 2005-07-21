@@ -1,2 +1,2 @@
 autosave: autosave.c Makefile
-	gcc -O -Wall -s -o autosave autosave.c
+	gcc -Os -Wall -o autosave autosave.c

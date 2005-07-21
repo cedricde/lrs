@@ -196,12 +196,12 @@ compress_end (COMPRESS * c, FILE * out)
 
   deflateEnd (c->zptr);
   free (c->zptr);
-  {
-    FILE *flog;
-    flog = fopen ("/tmp/crc", "a+");
-    fprintf (flog, "%d:%lx", c->block, c->crc);
-    fclose (flog);
-  }
+//  {
+//    FILE *flog;
+//    flog = fopen ("/tmp/crc", "a+");
+//    fprintf (flog, "%d:%lx", c->block, c->crc);
+//    fclose (flog);
+//  }
   ret = c->cbytes;
   free (c);
 

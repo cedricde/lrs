@@ -30,12 +30,16 @@ logger "$RPCINFO"
 
 # check nfs
 echo
+echo
 sleep 1
 if echo "$RPCINFO"|grep -q nfs
 then
     echo "*** NFS seems to be ok on $SIP"
 else
-    echo "*** Warning : the NFS service does not seem to work on the LBS !"
+    echo "*** Warning : the NFS service does not seem to work on the LRS !"
+    echo "*** IP configuration :"
+    cat /etc/netinfo.log
+    sleep 10
 fi
 
 # Get NFS options

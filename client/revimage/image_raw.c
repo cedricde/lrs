@@ -53,7 +53,7 @@ allocated_sectors (PARAMS * p, char *dev)
   int i, fd, bytes;
   int size;
 
-  if ((fd = open (dev, O_RDONLY|O_DIRECT)) == -1) exit(1);
+  if ((fd = open (dev, O_RDONLY)) == -1) exit(1);
   
   if (ioctl(fd, BLKGETSIZE, &size) < 0) {
     /* it's a file not a block dev */
@@ -140,7 +140,7 @@ main (int argc, char *argv[])
   allocated_sectors(&params, argv[1]);
 
   init_newt (argv[1], argv[2], info1, info2, argv[0]);
-  fd = open (argv[1], O_RDONLY); //|O_DIRECT);
+  fd = open (argv[1], O_RDONLY); // |O_DIRECT);
   compress_vol (fd, argv[2], &params);
   close (fd);
   stats();

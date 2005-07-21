@@ -51,6 +51,7 @@
 
 #include "compress.h"
 #include "ui_newt.h"
+#include "lvm.h"
 
 typedef struct p {
     reiserfs_bitmap_t bm;
@@ -62,7 +63,7 @@ typedef struct p {
 } PARAMS;
 
 unsigned long info1, info2;
-unsigned long lvm_sect;
+unsigned long lvm_sect = 0;
 
 /* BEGIN CODE TAKE FROM reiserfsprogs 3.x */
 
@@ -269,7 +270,7 @@ void allocated_sectors(PARAMS * p)
 {
     unsigned long i, used = 0;
     unsigned long bitmap_lg;
-    int shift = 0, off = 0;
+    int off = 0;
 
     void setbit(unsigned char *base, unsigned long bit) {
 	unsigned char mask[8] =
@@ -300,7 +301,7 @@ void allocated_sectors(PARAMS * p)
     info1 = p->nb_sect + off;
     info2 = used + off;
 
-    if (p->nb_sect != lvm_sect) {
+    if (p->nb_sect != lvm_sect && lvm_sect != 0) {
       debug("Cannot backup this LVM/Reiserfs volume in optimized mode\n"
 	    "because data may span multiple volumes.\n");
       exit(1);
@@ -345,15 +346,14 @@ void compress_vol(int fi, unsigned char *nameprefix, PARAMS * p)
     fclose(index);
 }
 
+
 int main(int argc, char *argv[])
 {
     reiserfs_bitmap_t bm;
     reiserfs_filsys_t fs;
-    FILE *fi;
     PARAMS params;
     int err = 0;
-    unsigned long buf[128];
-    long offset, i;
+    long long offset;
     int fd;
 
     if (argc != 3) {
@@ -362,37 +362,7 @@ int main(int argc, char *argv[])
 	exit(1);
     }
     // check for LVM
-    fi = fopen(argv[1], "r");
-    if (fi == NULL) {
-	debug("Open failed\n");
-	exit(1);
-    }
-    fread(&buf[0], 128*4, 1, fi);
-
-    if (buf[0] != 0x00014d48) {
-	debug("Only LVM 10 supported (found signature: %08x)\n", buf[0]);
-	exit(2);
-    }
-    offset = buf[9] + buf[10];
-    debug("LVM: Real part offset: %08x\n", offset);
-
-    debug("LVM: VG name : '%32s'\n", &buf[11+32]);
-    debug("LVM: PV Num  : %ld\n", buf[108]);    
-    debug("LVM: PE Size : %ld\n", buf[113]/2);
-    debug("LVM: PE Total: %ld\n", buf[114]);
-    debug("LVM: PE Alloc: %ld\n", buf[115]);
-
-    lvm_sect = buf[113]*buf[115];
-    debug("LVM: Total sectors: %ld\n", lvm_sect);
-
-    // should we check that PE are in order ?
-    if (fseek(fi, buf[9], SEEK_SET) != 0) {
-      debug("Seek error\n");
-      exit(1);
-    }
-    //fread(&buf[0], 128*4, 1, fi);
-
-    fclose(fi);
+    lvm_check(argv[1], &offset);
 
     fs = myreiserfs_open(argv[1], O_RDONLY, &err, 0, offset);
     if ((!(fs)) || err) {

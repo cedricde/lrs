@@ -51,11 +51,10 @@ char *cvsid = "$Id$";
 //#include "autosave.h"
 #include "ui_newt.h"
 
-#define DEBUG(a)
-//#define TEST_PARTONLY 1
+#define DEBUG(a) 
 //#define TEST 1
-
-#define LOGTXT "/revosave/log.txt"
+//#define TEST_PARTONLY 1
+#define LOGTXT "/revoinfo/log.restore"
 
 #include "zlib.h"
 
@@ -83,8 +82,8 @@ char hostname[32] = "";
 
 /* do we have the bios HD map ? */
 int has_hdmap=0;
-char * hdmap[256];
-unsigned int exclude[256];
+char * hdmap[65536];
+unsigned int exclude[65536];
 int nonewt = 0;
 
 
@@ -714,7 +713,7 @@ void setdefault(char *v)
 void restoreimage(void)
 {
     FILE *f;
-    char buf[255], buf2[255];
+    char buf[255], buf2[255], lvm[255];
 
     if ((f = fopen("/revosave/conf.txt", "r")) == NULL) return;    
     while (!feof(f)) {
@@ -730,7 +729,7 @@ void restoreimage(void)
 	    DEBUG(printf("%d,%s\n", d1, buf2));
 	    // restore the files to the device
 #ifdef TEST
-	    restore_raw("/revosave/PTABS", buf2);
+	    //restore_raw("/revoinfo/PTABS", buf2);
 #else
 	    restore_raw(hdmap[d1], buf2);
 #endif
@@ -747,11 +746,24 @@ void restoreimage(void)
 	    DEBUG(printf("%d,%d,%d,%s\n", d1, d2, sect, buf2));
 	    // convert the BIOS hd number to a Linux device	    
 	    // and restore the files to the device
+	    if (d1 >= 3968 && d2 == -1) {
+	      // lvm: no hdmap necessary
+	      strncpy(lvm, "/dev/", 5);
+	      if (sscanf(buf, " partcopy (hd%*u,%*u) %*u PATH/%*s %s", &lvm[5]) != 1) {
+		myprintf("syntax error in conf.txt: %s\n", buf);
+		exit(1);
+	      }
+	      system("lvm vgscan >/dev/null 2>&1; lvm vgchange -ay >/dev/null 2>&1");
+	      DEBUG(printf("lvm : %s\n", lvm));
+	      restore(lvm, sect, buf2);
+	      
+	    } else {
 #ifdef TEST
-	    restore("/tftpboot/P1", sect, buf2);
+	      // restore("/revoinfo/P1", sect, buf2);
 #else
-	    restore(hdmap[d1], sect, buf2);
+	      restore(hdmap[d1], sect, buf2);
 #endif	    
+	    }
 	  }
 	} else if (!strcmp("setdefault", buf2)) {
 	  strtok(buf, " ");
@@ -880,6 +892,16 @@ int main(int argc, char *argv[])
   while (mysystem(command) != 0);
 #endif
 
+  // some logging
+  system ("rm -f " LOGTXT );
+  mysystem1 ("cat /etc/cmdline");
+  mysystem1 ("cat /proc/cmdline");
+  mysystem1 ("cat /proc/version");
+  mysystem1 ("cat /proc/partitions");
+  mysystem1 ("cat /proc/bus/pci/devices");
+  mysystem1 ("cat /proc/modules");    
+  mysystem1 ("cat /var/log/messages");
+
   // now we can use config files from the nfs server
   makehdmap();
 
@@ -893,6 +915,9 @@ int main(int argc, char *argv[])
   restoreimage();
   system("/bin/revosendlog 3");
   system("rm /revoinfo/progress.txt");
+
+  mysystem1 ("cat /var/log/messages");
+
   if (!nonewt) close_newt();
   return 0;
 }

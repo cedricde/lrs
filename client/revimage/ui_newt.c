@@ -158,7 +158,7 @@ void update_misc(void)
 
 //    if (bps>0) remain=(todo-done)/bps;
 //          else remain=99*60*60+59*60+59;
-    if (diff > 20)  remain=(((double)todo/(double)done)*(double)diff)-diff;
+    if (diff > 10)  remain=(((double)todo/(double)done)*(double)diff)-diff;
     else remain=99*60*60+59*60+59;    
     
     if (remain < 0) remain = 0;
@@ -213,6 +213,9 @@ void update_part(char *dev)
 
   if (stat(dev, &st) == 0) {
     g_partnum = (minor(st.st_rdev) & 15)-1;
+    if (major(st.st_rdev) == 254) {
+	g_partnum |= 0x100;
+    }
   } else {
     g_partnum = -1;
   }
@@ -229,7 +232,8 @@ void update_file(int perc)
     {
       char buf[256];
 
-      snprintf(buf, 255, "%d: %d%%", g_partnum, perc);
+      snprintf(buf, 255, "%s%d: %d%%", (g_partnum > 255) ? "Lvm " : "", 
+    		g_partnum & 255, perc);
       write(f, buf, strlen(buf));
       close(f);
     }
@@ -288,14 +292,15 @@ void ui_read_error(char *s, int l, int err, int fd)
     /* get current offset */
     offset = lseek64(fd, 0, SEEK_CUR);
 
-    newtCenteredWindow(60, 4, "HD Read Error");
+    newtCenteredWindow(60, 5, "HD Read Error");
     
     myForm = newtForm(NULL, NULL, 0);
     t1 = newtTextbox(1, 0, 55, 4, 0);
     
     snprintf(tmp, 255, "Hard Disk Read Error ! Bad hard disk or filesystem !\n"
-	"errno %d, file %s, line %d \n"
-	"bs=%d offset=%08lx%08lx ", err, s, l, bs, (long)((long long)offset>>32), (long)offset);
+	"errno %d (%s)\n"
+	" file %s, line %d \n"
+	"bs=%d offset=%08lx%08lx ", err, strerror(err), s, l, bs, (long)((long long)offset>>32), (long)offset);
     fprintf(stderr, "ERROR: %s\n", tmp);
 
     newtTextboxSetText(t1, tmp);

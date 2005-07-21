@@ -6,10 +6,10 @@ OBJ=compress.o ui_newt.o
 
 CFLAGS=-Wall -O2 -s -DLBLIMAGEVER=\"1.2\" -I./zlib-1.2.1 -I./e2fsprogs-1.22/lib/ 
 LIBS= -L./zlib-1.2.1/ -lz -lnewt 
-RFSOBJS=./reiserfsprogs/lib/libcore.a
+RFSLIBS=-L./reiserfsprogs/lib/ -lcore -lmisc
 
 all: $(OBJ) image_swap image_reiserfs image_lvmreiserfs \
- image_e2fs image_xfs image_jfs\
+ image_e2fs image_xfs image_jfs image_lvm\
  decompress decompress-test\
  image_error image_raw decompress-bitmap
 
@@ -31,6 +31,9 @@ image_xfs: image_xfs.o $(OBJ)
 image_jfs: image_jfs.o $(OBJ)
 	cc $(CFLAGS) -o $@ $^ $(LIBS) 
 
+image_lvm: image_lvm.o lvm.o $(OBJ)
+	cc $(CFLAGS) -o $@ $^ $(LIBS) 
+
 decompress: decompress.o $(OBJ)
 	cc $(CFLAGS) -o $@ $<  -lz
 
@@ -40,11 +43,11 @@ decompress-test: decompress-test.o $(OBJ)
 decompress-bitmap: decompress-bitmap.o $(OBJ)
 	cc $(CFLAGS) -o $@ $< -L./zlib-1.2.1 -lz
 
-image_reiserfs: image_reiserfs.o $(OBJ)
-	cc $(CFLAGS) -o $@ $(OBJ) $< $(LIBS) $(RFSOBJS) ./reiserfsprogs/lib/libmisc.a 
+image_reiserfs: image_reiserfs.o lvm.o $(OBJ)
+	cc $(CFLAGS) -o $@ $(OBJ) $< $(LIBS) $(RFSLIBS)
 
-image_lvmreiserfs: image_lvmreiserfs.o $(OBJ)
-	cc $(CFLAGS) -o $@ $(OBJ) $< $(LIBS) ./reiserfsprogs/lib/libcore.a ./reiserfsprogs/lib/libmisc.a
+image_lvmreiserfs: lvm.o image_lvmreiserfs.o $(OBJ)
+	cc $(CFLAGS) -o $@ $^ $(LIBS) $(RFSLIBS)
 
 image_error: image_error.o
 	cc $(CFLAGS) -s -o $@ $< $(LIBS) 
