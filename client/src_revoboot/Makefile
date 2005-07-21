@@ -2,6 +2,8 @@
 # $Id$
 #
 
+VER=$(shell grep VERSION config.h|tr -dc [0-9])
+
 OBJ=asm.o bios.o boot.o pci.o \
     char_io.o builtins.o \
     common.o stage2.o \
@@ -37,6 +39,7 @@ revoboot.pxe:	$(OBJ) $(OBJZLIB) $(OBJNET) adjust_length
 	$(CC) -o revoboot.pxe.exec -nostdlib -Wl,-N -Wl,-Ttext -Wl,7C00 $(OBJ) $(OBJZLIB) $(OBJNET)
 	objcopy -O binary revoboot.pxe.exec revoboot.pxe
 	./adjust_length
+	cp revoboot.pxe revoboot.pxe.$(VER)
 
 adjust_length: adjust_length.c
 	$(CC) -o $@ $^

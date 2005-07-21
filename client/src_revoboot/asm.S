@@ -1365,6 +1365,8 @@ xsmap:
  */
 
 ENTRY(gateA20)
+/*	jmp	gateA20_98 */
+	
 	pushl	%eax
 
 	call    gloop1
@@ -1405,6 +1407,32 @@ gloop2:
 gloop2ret:
 	ret
 
+	
+ENTRY(gateA20_98)
+	pushl   %eax
+
+	inb     $0x92, %al
+	andb    $0xfe, %al
+	testb   $2, %al
+	jz      goff
+
+	cmpl    $0, 0x8(%esp)
+	jnz     gret
+
+	andb    $0xfc, %al
+	outb    $0x92
+	jmp     gret
+
+goff:
+	cmpl    $0, 0x8(%esp)
+	jz      gret
+
+	orb     $2, %al
+	outb    $0x92
+
+gret:
+	popl    %eax
+	ret
 
 ENTRY(patch_code)	/* labels start with "pc_" */
 	.code16
