@@ -8080,7 +8080,7 @@ fi
 echo "$as_me:$LINENO: result: $ac_cv_lib_dl_dlopen" >&5
 echo "${ECHO_T}$ac_cv_lib_dl_dlopen" >&6
 if test $ac_cv_lib_dl_dlopen = yes; then
-  HAVE_LIBDL=yes
+  HAVE_LIBDL=no
 else
   HAVE_LIBDL=no
 fi

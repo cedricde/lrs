@@ -387,7 +387,7 @@ fi
 
 ################################################################################
 dnl -- Check for dlopen
-AC_CHECK_LIB(dl, dlopen, HAVE_LIBDL=yes, HAVE_LIBDL=no)
+AC_CHECK_LIB(dl, dlopen, HAVE_LIBDL=no, HAVE_LIBDL=no)
 
 if [[ "x$HAVE_LIBDL" = xyes ]]; then
 	CFLAGS="$CFLAGS -DHAVE_LIBDL"
