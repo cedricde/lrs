@@ -409,7 +409,7 @@ foreach $arr ("hours", "mins", "days", "months", "weekdays") {
 		$jj = $j+11;
 		if ($jj >= @$arr) { $jj = @$arr - 1; }
 		@sec = @$arr[$j .. $jj];
-		printf "<td valign=top><select size=12 name=$arr>\n",
+		printf "<td valign=top><select multiple size=12 name=$arr>\n",
 			@sec > 12 ? 12 : scalar(@sec);
 		foreach $v (@sec) {
 			if ($v =~ /^(.*)=(.*)$/) { $disp = $1; $code = $2; }
