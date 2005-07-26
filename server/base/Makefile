@@ -3,36 +3,43 @@
 #
 
 SRCDIR = ./revoboot
-DESTDIR = ../dist
-LBLDIR = ../dist
+DESTDIR = $(shell pwd)/../dist
+LRSCD = /tmp/lrscd
+SHELL = /bin/bash
+BUILD = $(shell cat BUILD)
+BUILDRB = $(shell grep VERSION ../../client/src_revoboot/config.h|tr -dc [0-9])
 
 TMPBASE = base.tgz
 REVOBOOT_FILES = $(shell find $(SRCDIR) -type f)
 TODAY = $(shell date '+%Y%m%d')
 
-VERSION=../dist/Version
-
-FILES=`cat $(VERSION) | awk '{print $$1}'`
-LINKS=`cat $(VERSION) | awk '{print $$2}'`
 BASE=../base/revoboot/bin
 
 all:	dist
 
-mini:
+mini: update_build
 	(cd revoboot/bin;tar -czvf ../../bin-miniupdate_$(TODAY).tgz initrd* bzI*)
 
 $(TMPBASE):	$(REVOBOOT_FILES)
 
-dist:	
-	# get the last kernel compile
+update_build:
 	rm -f $(BASE)/revoboot.pxe*
 	rm -f $(BASE)/initrd*
 	rm -f $(BASE)/bzImage*
 	rm -f $(BASE)/lbl.cdrom*
-	(cd $(LBLDIR);rm -f $(LINKS))
-	(cd $(LBLDIR);while read f l; do if test $$l; then ln -s $$f $$l; fi; done) < $(VERSION)
-	rdev $(LBLDIR)/bzImage.initrd /dev/ram0
-	(cd $(LBLDIR)/; tar -cf - $(FILES) $(LINKS) ) | (cd $(BASE) ; tar -xf -)
+	# get the last kernel compile
+	for i in ../../client/src_kernel/bzImage ../../client/src_initrd/initrd.gz ;do \
+	    [ ! -f $$i.$(BUILD) ] && cp $$i $$i.$(BUILD); \
+	    cp -f $$i.$(BUILD) $(BASE); \
+	done
+	cp -f ../../client/src_revoboot/revoboot.pxe.$(BUILDRB) $(BASE)
+	(cd $(BASE);\
+	ln -sf bzImage.$(BUILD) bzImage.initrd;\
+	ln -sf initrd.gz.$(BUILD) initrd.gz;\
+	ln -sf revoboot.pxe.$(BUILDRB) revoboot.pxe)
+	rdev $(BASE)/bzImage.initrd /dev/ram0
+
+dist: update_build
 	# latest utilities
 	./copy
 	#rsync -v --exclude .svn /home/weex/ftp/base/winutils/* revoboot/lib/util/winutils/
@@ -41,7 +48,7 @@ dist:
 	chown nobody revoboot/images/data
 	tar cvzf $(TMPBASE) --exclude ./revoboot/debian --exclude CVS --exclude .svn $(SRCDIR)
 	cp $(TMPBASE)  $(DESTDIR)/base_$(TODAY).tgz
-	(cd revoboot;tar -czvf ../$(DESTDIR)/bin-update_$(TODAY).tgz --exclude .svn --exclude BASENUM --exclude CVS bin lib images/data images/templates imgbase)
+	(cd revoboot;tar -czvf $(DESTDIR)/base-update_$(TODAY).tgz --exclude .svn --exclude BASENUM --exclude CVS bin lib images/data images/templates imgbase)
 	rm $(TMPBASE)
 
 deb:
