@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# $Id$
+# $Id: wake 2219 2005-04-12 14:12:14Z root $
 #
 # Linbox Rescue Server
 # Copyright (C) 2005  Linbox FAS
@@ -36,7 +36,7 @@ if [ ! -d "$BASEDIR" ]; then
 fi
 
 
-PATH=$PATH:.:$BASEDIR/bin
+PATH=$BASEDIR/bin:$PATH:.
 
 usage()
 {
@@ -62,8 +62,14 @@ while getopts b:h? opt; do
     esac
 done
 
+
+# send 
 for m in $@
 do
+# notify the menu builder that a WOL was attempted
+  sm=`echo $m|tr -d :`
+  touch $BASEDIR/images/$sm/wol
+
   echo "Wake $m (IP=$IP)"
   for i in 1 2
   do
