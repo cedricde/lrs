@@ -99,9 +99,9 @@ if (not exists $in{'mac'}) {
                 
                 `perl -i -ne "print unless m/^$machine_name\s+/i" $BACKUPPCCONFDIR/hosts`;
                 
-                foreach my $file (@toremove) {
-                        unlink $file;
-                }
+                #foreach my $file (@toremove) {
+                #        unlink $file;
+                #}
                 
 		$mesg = text("msg_delete_ok",$name,$mac);
 		lbs_common::print_header( $text{'tit_delete'}, "index", $VERSION);

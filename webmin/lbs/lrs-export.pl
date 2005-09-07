@@ -33,6 +33,7 @@
 sub init() {
         my $oldforeign=$ENV{"FOREIGN_MODULE_NAME"};
         $ENV{"FOREIGN_MODULE_NAME"}="lbs";
+	$ENV{"FOREIGN_ROOT_DIRECTORY"}=$ENV{"SERVER_ROOT"};
         main::init_config();
 
         $config_directory = $ENV{'WEBMIN_CONFIG'};
