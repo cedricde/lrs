@@ -18,7 +18,7 @@ do
     else
         echo "*** $ETH: not yet configured ($SEC) ***"
 	SEC=$(($SEC+1))
-	if [ $SEC -gt 30 ]; then
+	if [ $SEC -gt 45 ]; then
 	    whiptail --title "Fatal Error" --backtitle "Linbox Rescue Server" --yesno "I cannot configure the NIC
 
 Possible causes:

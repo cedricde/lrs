@@ -51,7 +51,7 @@ char *cvsid = "$Id$";
 //#include "autosave.h"
 #include "ui_newt.h"
 
-#define DEBUG(a) 
+#define DEBUG(a)
 //#define TEST 1
 //#define TEST_PARTONLY 1
 #define LOGTXT "/revoinfo/log.restore"
@@ -330,38 +330,11 @@ fill (int fd, int bytes, int dir)
   /* fills are not larger than 90MB so an 'int'should be enough */
   int err = 0;
 
-  /* the code below was used if writing to a file, now we only write to a device */
-#if 0  
-  if (eof (fd))
+  if (lseek64 (fd, bytes, dir) < 0)
     {
- 
-      while (bytes > 512)
-	{
-	  if (write (fd, zero, 512) != 512)
-	    {
-	      if (!err)
-		{
-		  err = 1;
-		  fprintf (stderr, "Error FILL : write 512!=512\n");
-		}
-	    }
-	  bytes -= 512;
-	}
-      if (write (fd, zero, bytes) != bytes)
-	{
-	  fprintf (stderr, "Error FILL : %d bytes write...\n", bytes);
-	  err = 1;
-	}
+      ui_write_error(__FILE__, __LINE__, errno, fd);
+      err = 1;
     }
-  else
-    {
-#endif
-      if (lseek64 (fd, bytes, dir) < 0)
-	{
-	  ui_write_error(__FILE__, __LINE__, errno, fd);
-	  err = 1;
-	}
-      /* } */
 }
 
 
@@ -374,16 +347,21 @@ flushToDisk (unsigned char *buff, unsigned char *bit, PARAMS * cp, int lg)
   unsigned char *ptr = buff;
   unsigned char mask[] = { 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80 };
   int indx = cp->bitindex;
+  
 
 // printf("Enter : bitindex -> %d\n",indx);
   while (lg > 0)
     {
+      __u64 s = 0;
       while (!(bit[indx >> 3] & mask[indx & 7]))
 	{
 	  indx++;
 	  cp->offset += 512;
-	  if (cp->fo)
-	    fill (cp->fo, 512, SEEK_CUR);
+	  s += 512;
+	}
+      if (( s != 0) && (lseek64 (cp->fo, s, SEEK_CUR) < 0))
+	{
+	  ui_write_error(__FILE__, __LINE__, errno, cp->fo);
 	}
 //      printf("Write @offset : %lld\t",cp->offset);
 //      {int i; for(i=0;i<15;i++) printf("%02x ",ptr[i]); printf("\n");}
@@ -420,6 +398,9 @@ void restore(char *device, unsigned int sect, char *fname)
   currentparams.offset = 512*(__u64)sect;
   currentparams.bitindex = 0;
   memset (zero, 0, 512);
+
+  // log
+  myprintf("restore: %s, offset %d sectors, %s\n", device, sect, fname);
 
   // open the output device
   fo = open(device, O_WRONLY | O_LARGEFILE );
@@ -591,6 +572,7 @@ void restore(char *device, unsigned int sect, char *fname)
 	  done += zptr.total_in/1024;
 	  if ((fmax != -1) && (filenum >= fmax)) break;
     }
+  close(fo);
 }
 
 /*
@@ -714,6 +696,7 @@ void restoreimage(void)
 {
     FILE *f;
     char buf[255], buf2[255], lvm[255];
+    int vgscan = 0;
 
     if ((f = fopen("/revosave/conf.txt", "r")) == NULL) return;    
     while (!feof(f)) {
@@ -753,7 +736,10 @@ void restoreimage(void)
 		myprintf("syntax error in conf.txt: %s\n", buf);
 		exit(1);
 	      }
-	      system("lvm vgscan >/dev/null 2>&1; lvm vgchange -ay >/dev/null 2>&1");
+	      if (vgscan == 0) {
+		system("lvm vgscan >/dev/null 2>&1; lvm vgchange -ay >/dev/null 2>&1");
+		vgscan = 1;
+	      }
 	      DEBUG(printf("lvm : %s\n", lvm));
 	      restore(lvm, sect, buf2);
 	      
