@@ -1,0 +1,13 @@
+#!/bin/sh
+# Packaging d'un module webmin.
+# Usage: mkmodule <basename du repert du module> <tarball sans extension>
+#
+
+PKGNAME=$1
+
+TARBALL=$2.wbm
+
+tar --exclude old --exclude debian --exclude CVS --exclude .svn -cvzf $TARBALL "$PKGNAME"
+
+echo
+echo "Package: $TARBALL"
