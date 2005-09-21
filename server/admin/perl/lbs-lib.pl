@@ -1385,6 +1385,7 @@ sub makeUserMenu
     my $revorestore = iniGetVal(\%conf, "-", "restore_type");
     my $revowait = iniGetVal(\%conf, "-", "mtftp_wait");
     my $grub_splashimage = iniGetVal(\%conf, "-", "grub_splashimage");
+    my $grub_keymap = iniGetVal(\%conf, "-", "grub_keymap");
  
     #
     my $eth = "0";
@@ -1477,6 +1478,9 @@ initrd (nd)$home/bin/initrd.gz
 
     $menuheader = hdrConcatMenuItems(\%hdr, "header") ;
     $menuheader =~ s/DEFNUM/$defaultpos/ ;
+    if ($grub_keymap ne "") {
+      $menuheader .= "\nkbd$grub_keymap\n";
+    }
     if ($grub_splashimage ne "") {
       $menuheader .= "\nsplashimage (nd)$grub_splashimage\n";
     }
