@@ -31,5 +31,8 @@ NUMFILES=`ls /tmpfs|grep -c ^`
 if [ $NUMFILES -gt 0 -a $DU -lt 3000 ]; then
     WAIT=1
 fi
+if [ $NUMFILES -gt 0 -a $DU -lt 30 ]; then
+    exit 0
+fi
 
 sleep $WAIT

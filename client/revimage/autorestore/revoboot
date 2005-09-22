@@ -196,6 +196,9 @@ get_warn_message
 # Restore => mount a tmpfs
 grep -q revorestore /etc/cmdline && mount -t tmpfs -o size=96M tmpfs /tmpfs
 
+# compression level
+grep -q revonocomp /etc/cmdline && echo 0 >/etc/complevel
+
 # Debug ?
 grep -q revodebug /etc/cmdline && exit 0
 

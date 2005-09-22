@@ -408,7 +408,7 @@ void restore(char *device, unsigned int sect, char *fname)
   DEBUG(printf ("Seeking to : %lld\n", currentparams.offset));
   i = lseek64 (currentparams.fo, currentparams.offset, SEEK_SET);
   if (i != currentparams.offset) {
-    fprintf (stderr, "Seek error : %lld\n", i);
+    ui_write_error(__FILE__, __LINE__, errno, currentparams.fo);
   }
 
   // open the data directory
@@ -554,13 +554,13 @@ void restore(char *device, unsigned int sect, char *fname)
 	    {
 	      if (bitmaplg * 8 > currentparams.bitindex)
 		{
-		  //printf ("Remaining bitmap : %d\n",
-		  //	  bitmaplg * 8 - currentparams.bitindex);
 		  currentparams.offset +=
 		    (__u64)512 * (bitmaplg * 8 - currentparams.bitindex);
 		  if (currentparams.fo)
 		    {
-		      fill (currentparams.fo,
+		      /* no error check for the last fill */
+		      /* bounds will be checked by the following write */
+		      lseek64 (currentparams.fo, 
 		    	    (__u64)512 * (bitmaplg * 8 - currentparams.bitindex),
 		    	    SEEK_CUR);
 		    }
