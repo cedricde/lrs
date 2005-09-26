@@ -7,9 +7,10 @@ line1=Options de restauration,11
 restore_type=Restauration: type,1,0-TFTP au boot,1-NFS,2-MTFTP
 mtftp_wait=Restauration MTFTP: temps d'attente maxi (en sec),3,0
 
-line2=Logo au boot,11
+line2=Boot,11
 grub_splashimage=Chemin complet du fichier XPM affiché au boot,0
 warning_message=Message affiché pendant la sauvegarde et restauration,9,68,5,\n
+grub_keymap=Type de clavier (vide/fr),0
 
 line3=Divers,11
 wake=Executable pour reveiller les PCs,0

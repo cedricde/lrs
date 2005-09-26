@@ -119,7 +119,7 @@ sub save_bootmenu_options {
 
 	# KERNEL options
 	my $opts = "";
-	for my $opt ("revonocompress", "revoallraw", "revodebug")
+	for my $opt ("revonocom", "revoraw", "revonospc", "revodebug")
 	  {
 	    if ( defined($in{"kernel_".$opt}) && $in{"kernel_".$opt} eq "on" ) {
 	      $opts .= "$opt ";
@@ -555,8 +555,8 @@ if ( exists( $in{'cancel'} ) ) {
 
 	# KERNEL OPTS
 	my $kopts = hdrGetVal( \%hdr, 'header', 'kernelopts');
-	#for my $opt ("revonocompress", "revoallraw", "revodebug")
-	for my $opt ("revodebug")
+	#for my $opt ("revonocomp", "revoraw", "revodebug")
+	for my $opt ("revonospc" ,"revodebug")
 	  {
 	    my $checked = "";
 	    
