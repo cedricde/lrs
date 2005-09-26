@@ -60,20 +60,12 @@ if (not exists $in{'mac'}) {
 	
 	if (not deleteEntry($lbs_home, $mac)) { # attempt to delete the image in the LRS
 		error( lbsGetError() ) ;
-	} else {                                # succeeded, now do some cleaning elsewhere
-                
-                # first cleaning: ocsinventory
-                my $OCSDIR="/var/lib/ocsinventory";     # FIXME: hardcoded
-                my $netfile="$OCSDIR/Network/".lbs_common::mac_remove_columns($mac);
-                my $machine_name;
-                open NETFILE, $netfile;
-                while (<NETFILE>) {
-                        if (m/^([^;]+)/) {
-                                $machine_name="$1";
-                                last;
-                        }
-                }
-                close NETFILE;
+	} else {
+	  	# succeeded, now do some cleaning elsewhere
+
+	  	my $machine_name = $name;
+		my $OCSDIR="/var/lib/ocsinventory";     # FIXME: hardcoded
+		my $netfile="$OCSDIR/Network/".lbs_common::mac_remove_columns($mac);
                 # build file-to-remove list
                 my @toremove;
                 push @toremove, $netfile;
@@ -82,31 +74,29 @@ if (not exists $in{'mac'}) {
                                 push @toremove, "$OCSDIR/$dir/$machine_name.$ext" if (-e "$OCSDIR/$dir/$machine_name.$ext");
                         }
                 }
-                
+
                 # second cleaning: backuppc
                 my $BACKUPPCCONFDIR="/etc/backuppc";            # FIXME: hardcoded
                 my $BACKUPPCFILESDIR="/var/lib/backuppc/pc";    # FIXME: hardcoded
 
                 my $tmpname=$machine_name;
                 push @toremove, "/etc/backuppc/$tmpname.pl"  if (-e "/etc/backuppc/$tmpname.pl");
-#                `rm -fr $BACKUPPCFILESDIR/$tmpname`;
                 $tmpname=lc($tmpname);
                 push @toremove, "/etc/backuppc/$tmpname.pl"  if (-e "/etc/backuppc/$tmpname.pl");
-#                `rm -fr $BACKUPPCFILESDIR/$tmpname`;
                 $tmpname=uc($tmpname);
                 push @toremove, "/etc/backuppc/$tmpname.pl"  if (-e "/etc/backuppc/$tmpname.pl");
-#                `rm -fr $BACKUPPCFILESDIR/$tmpname`;
-                
-                `perl -i -ne "print unless m/^$machine_name\s+/i" $BACKUPPCCONFDIR/hosts`;
-                
+
+                `perl -i -ne "print unless m/^$machine_name\\s+[0-9]/i" $BACKUPPCCONFDIR/hosts`;
+		
+		# do not remove the backuppc configuration file
                 #foreach my $file (@toremove) {
                 #        unlink $file;
                 #}
-                
+
 		$mesg = text("msg_delete_ok",$name,$mac);
 		lbs_common::print_header( $text{'tit_delete'}, "index", $VERSION);
         	lbs_common::print_html_tabs(['system_backup', "delete_machine"]);
-                
+
 		print "<h2>$mesg</h2>\n" ;
 
 		menuEnd();
