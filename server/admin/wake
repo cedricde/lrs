@@ -47,8 +47,14 @@ options:
 EOF
 }
 
-
+# default broadcast addr
 IP=255.255.255.255
+
+# get a broadcast list from the webmin configuration
+IPB=`grep wake_ip /etc/webmin/lbs/config|cut -d '=' -f 2|tr , ' '`
+if [ "$IPB" ]; then
+    IP="$IPB"
+fi
 
 while getopts b:h? opt; do
     case "$opt" in
@@ -64,9 +70,11 @@ done
 
 
 # send 
-for m in $@
+for ipb in $IP
 do
-# notify the menu builder that a WOL was attempted
+ for m in $@
+ do
+ # notify the menu builder that a WOL was attempted
   sm=`echo $m|tr -d :`
   touch $BASEDIR/images/$sm/wol
 
@@ -75,15 +83,16 @@ do
   do
     echo "Burst $i..."
     wol -v $m
-    wol -v $m -i $IP
+    wol -v $m -i $ipb
     wol -v $m -p 80
-    wol -v $m -i $IP -p 80
+    wol -v $m -i $ipb -p 80
     wol -v $m -p 8080
-    wol -v $m -i $IP -p 8080
+    wol -v $m -i $ipb -p 8080
     wol -v $m -p 1234
-    wol -v $m -i $IP -p 1234
+    wol -v $m -i $ipb -p 1234
     wol -v $m -p 32767
-    wol -v $m -i $IP -p 32767
+    wol -v $m -i $ipb -p 32767
   done
   sleep 1
+ done
 done
