@@ -1,6 +1,6 @@
 /******************************************************************************/
 /*                                                                            */
-/* Broadcom BCM5700 Linux Network Driver, Copyright (c) 2000 - 2003 Broadcom  */
+/* Broadcom BCM5700 Linux Network Driver, Copyright (c) 2000 - 2004 Broadcom  */
 /* Corporation.                                                               */
 /* All rights reserved.                                                       */
 /*                                                                            */
@@ -419,7 +419,9 @@ LM_STATUS LM_HaltCpu(PLM_DEVICE_BLOCK pDevice,LM_UINT32 cpu_number);
 LM_UINT32 ComputeCrc32(LM_UINT8 *pBuffer, LM_UINT32 BufferSize);
 LM_STATUS LM_SwitchClocks(PLM_DEVICE_BLOCK pDevice);
 
-
+void LM_5714_FamForceFiber( PLM_DEVICE_BLOCK pDevice);
+void LM_5714_FamGoFiberAutoNeg( PLM_DEVICE_BLOCK pDevice);
+void LM_5714_FamFiberCheckLink( PLM_DEVICE_BLOCK pDevice);
 
 /******************************************************************************/
 /* These are the OS specific functions called by LMAC. */

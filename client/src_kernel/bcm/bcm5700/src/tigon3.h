@@ -1,6 +1,6 @@
 /******************************************************************************/
 /*                                                                            */
-/* Broadcom BCM5700 Linux Network Driver, Copyright (c) 2000 - 2003 Broadcom  */
+/* Broadcom BCM5700 Linux Network Driver, Copyright (c) 2000 - 2005 Broadcom  */
 /* Corporation.                                                               */
 /* All rights reserved.                                                       */
 /*                                                                            */
@@ -85,6 +85,11 @@
 #define T3_NIC_WOL_LIMIT_10                 BIT_10
 #define T3_NIC_MINI_PCI                     BIT_12
 #define T3_NIC_FIBER_WOL_CAPABLE            BIT_14
+#define T3_NIC_BOTH_PORT_100MB_WOL_CAPABLE  BIT_15
+#define T3_NIC_GPIO2_NOT_AVAILABLE          BIT_20
+
+#define T3_NIC_DATA_VER                     0x0b5c
+#define T3_NIC_DATA_VER_SHIFT               16
 
 #define T3_NIC_DATA_PHY_ID_ADDR            0x0b74
 #define T3_NIC_PHY_ID1_MASK                0xffff0000
@@ -130,6 +135,8 @@
 #define T3_SHASTA_EXT_LED_SHARED_TRAFFIC_LINK_MODE       BIT_15
 #define T3_SHASTA_EXT_LED_MAC_MODE          BIT_16
 #define T3_SHASTA_EXT_LED_WIRELESS_COMBO_MODE       (BIT_15 | BIT_16)
+#define T3_NIC_CFG_CAPACITIVE_COUPLING            BIT_17
+#define T3_NIC_CFG_PRESERVE_PREEMPHASIS           BIT_18
 
 /******************************************************************************/
 /* Hardware constants. */
@@ -263,6 +270,7 @@
 
 /* MBUF pool. */
 #define T3_NIC_MBUF_POOL_ADDR               0x8000
+#define T3_NIC_MBUF_POOL_SIZE32             0x8000
 #define T3_NIC_MBUF_POOL_SIZE96             0x18000
 #define T3_NIC_MBUF_POOL_SIZE64             0x10000
 
@@ -323,6 +331,9 @@ typedef struct T3_FWIMG_INFO
 /******************************************************************************/
 /* Tigon3 PCI Registers. */
 /******************************************************************************/
+/* MSI ENABLE bit is located at this offset */
+#define T3_PCI_MSI_ENABLE                   0x58
+
 #define T3_PCI_ID_BCM5700                   0x164414e4
 #define T3_PCI_ID_BCM5701                   0x164514e4
 #define T3_PCI_ID_BCM5702                   0x164614e4
@@ -337,6 +348,12 @@ typedef struct T3_FWIMG_INFO
 #define T3_PCI_ID_BCM5901                   0x170D14e4
 #define T3_PCI_ID_BCM5901A2                 0x170E14e4
 #define T3_PCI_ID_BCM5751F                  0x167E14e4
+
+#define T3_PCI_ID_BCM5753                   0x16f714e4
+#define T3_PCI_ID_BCM5753M                  0x16fd14e4
+#define T3_PCI_ID_BCM5753F                  0x16fe14e4
+#define T3_PCI_ID_BCM5781                   0x16dd14e4
+
 
 #define T3_PCI_VENDOR_ID(x)                 ((x) & 0xffff)
 #define T3_PCI_DEVICE_ID(x)                 ((x) >> 16)
@@ -373,6 +390,13 @@ typedef struct T3_FWIMG_INFO
 #define T3_CHIP_ID_5750_A0                  0x4000
 #define T3_CHIP_ID_5750_A1                  0x4001
 #define T3_CHIP_ID_5750_A3                  0x4003
+#define T3_CHIP_ID_5750_B0                  0x4010
+#define T3_CHIP_ID_5750_C0                  0x4200
+
+#define T3_CHIP_ID_5714_A0                  0x5000
+#define T3_CHIP_ID_5752_A0                  0x6000
+#define T3_CHIP_ID_5714                     0x8000
+
 
 /* Chip Id. */
 #define T3_ASIC_REV(_ChipRevId)             ((_ChipRevId) >> 12)
@@ -382,6 +406,35 @@ typedef struct T3_FWIMG_INFO
 #define T3_ASIC_REV_5704                    0x02
 #define T3_ASIC_REV_5705                    0x03
 #define T3_ASIC_REV_5750                    0x04
+#define T3_ASIC_REV_5714_A0                 0x05 /*5714,5715*/
+#define T3_ASIC_REV_5752                    0x06
+#define T3_ASIC_REV_5780                    0x08 /* 5780 previously htle */
+
+
+#define T3_ASIC_IS_5705_BEYOND(_ChipRevId)                    \
+   ((T3_ASIC_REV(_ChipRevId) == T3_ASIC_REV_5705)       || \
+    (T3_ASIC_REV(_ChipRevId) == T3_ASIC_REV_5750)       || \
+    (T3_ASIC_REV(_ChipRevId) == T3_ASIC_REV_5780)       || \
+    (T3_ASIC_REV(_ChipRevId) == T3_ASIC_REV_5752))
+ 
+#define T3_ASIC_IS_575X_PLUS(_ChipRevId)                      \
+   ((T3_ASIC_REV(_ChipRevId) == T3_ASIC_REV_5750)       || \
+    (T3_ASIC_REV(_ChipRevId) == T3_ASIC_REV_5780)       || \
+    (T3_ASIC_REV(_ChipRevId) == T3_ASIC_REV_5752))
+
+#define T3_ASIC_5714_FAMILY(_ChipRevId)                    \
+    (T3_ASIC_REV(_ChipRevId) == T3_ASIC_REV_5780)  
+
+
+#define T3_ASIC_IS_JUMBO_CAPABLE(_ChipRevId)		\
+    ((T3_ASIC_REV(_ChipRevId) == T3_ASIC_REV_5700)	|| \
+    (T3_ASIC_REV(_ChipRevId) == T3_ASIC_REV_5701)	|| \
+    (T3_ASIC_REV(_ChipRevId) == T3_ASIC_REV_5703)	|| \
+    (T3_ASIC_REV(_ChipRevId) == T3_ASIC_REV_5780)       || \
+    (T3_ASIC_REV(_ChipRevId) == T3_ASIC_REV_5704))	
+
+#define T3_ASIC_5752(_ChipRevId)  \
+    (T3_ASIC_REV(_ChipRevId) == T3_ASIC_REV_5752)
 
 #define T3_ASIC_5705_OR_5750(_ChipRevId)              \
     ((T3_ASIC_REV(_ChipRevId) == T3_ASIC_REV_5705) || \
@@ -396,6 +449,9 @@ typedef struct T3_FWIMG_INFO
 #define T3_CHIP_REV_5703_AX                 0x10
 #define T3_CHIP_REV_5704_AX                 0x20
 #define T3_CHIP_REV_5704_BX                 0x21
+
+#define T3_CHIP_REV_5750_AX                 0x40
+#define T3_CHIP_REV_5750_BX                 0x41
 
 /* Metal revision. */
 #define T3_METAL_REV(_ChipRevId)            ((_ChipRevId) & 0xff)
@@ -555,6 +611,15 @@ typedef struct T3_FWIMG_INFO
 #define PHY_AN_AD_100BASETX_FULL                    BIT_8
 #define PHY_AN_AD_PROTOCOL_802_3_CSMA_CD            0x01
 
+/* Defines for 5714 family fiber on the 546x phy*/
+
+#define PHY_AN_AD_1000XFULL            		0x20
+#define PHY_AN_AD_1000XHALF             	0x40
+#define PHY_AN_AD_1000XPAUSE            	0x80
+#define PHY_AN_AD_1000XPSE_ASYM         	0x100
+#define PHY_AN_AD_1000XREM_FAULT_OFFLINE        0x2000
+#define PHY_AN_AD_1000XREM_FAULT_AN_ERROR       0x3000
+
 #define PHY_AN_AD_ALL_SPEEDS (PHY_AN_AD_10BASET_HALF | PHY_AN_AD_10BASET_FULL |\
     PHY_AN_AD_100BASETX_HALF | PHY_AN_AD_100BASETX_FULL)
 
@@ -587,6 +652,10 @@ typedef struct T3_FWIMG_INFO
 #define PHY_BCM5705_PHY_ID                          0x600081a0
 #define PHY_BCM5750_PHY_ID                          0x60008180
 #define PHY_BCM8002_PHY_ID                          0x60010140
+#define PHY_BCM5714_PHY_ID                          0x60008340
+#define PHY_BCM5715_PHY_ID                          0x60008350
+#define PHY_BCM5752_PHY_ID                          0x60008100
+
 
 #define PHY_BCM5401_B0_REV                          0x1
 #define PHY_BCM5401_B2_REV                          0x3
@@ -607,7 +676,10 @@ typedef struct T3_FWIMG_INFO
                             (((x) & PHY_ID_MASK) != PHY_BCM5704_PHY_ID) && \
                             (((x) & PHY_ID_MASK) != PHY_BCM5705_PHY_ID) && \
                             (((x) & PHY_ID_MASK) != PHY_BCM5750_PHY_ID) && \
-                            (((x) & PHY_ID_MASK) != PHY_BCM8002_PHY_ID))
+                            (((x) & PHY_ID_MASK) != PHY_BCM8002_PHY_ID) && \
+                            (((x) & PHY_ID_MASK) != PHY_BCM5714_PHY_ID) && \
+                            (((x) & PHY_ID_MASK) != PHY_BCM5715_PHY_ID) && \
+                            (((x) & PHY_ID_MASK) != PHY_BCM5752_PHY_ID))
 
 
 
@@ -1303,6 +1375,11 @@ typedef struct {
     T3_8BIT_REGISTER PciXCapabilities;
     T3_8BIT_REGISTER PmCapabilityPtr;
     T3_16BIT_REGISTER PciXCommand;
+    #define PXC_MAX_READ_BYTE_COUNT_MASK		(BIT_3 | BIT_2)
+    #define PXC_MAX_READ_BYTE_COUNT_512			(0)
+    #define PXC_MAX_READ_BYTE_COUNT_1024		(BIT_2)
+    #define PXC_MAX_READ_BYTE_COUNT_2048		(BIT_3)
+    #define PXC_MAX_READ_BYTE_COUNT_4096		(BIT_3 | BIT_2)
 
     T3_32BIT_REGISTER PciXStatus;
 
@@ -1364,6 +1441,20 @@ typedef struct {
     #define DMA_CTRL_WRITE_BOUNDARY_128_PCIE        0x30000000
     #define DMA_CTRL_WRITE_BOUNDARY_DISABLE_PCIE    0x70000000
     #define DMA_CTRL_READ_CMD                       0x06000000
+
+    /* bits 21:19 */
+    #define DMA_CTRL_WRITE_PCIE_H20MARK_128         0x00180000 
+    #define DMA_CTRL_WRITE_PCIE_H20MARK_256         0x00380000
+
+    #define DMA_CTRL_PCIX_READ_WATERMARK_MASK       (BIT_18 | BIT_17 | BIT_16)
+    #define DMA_CTRL_PCIX_READ_WATERMARK_64         (0)
+    #define DMA_CTRL_PCIX_READ_WATERMARK_128        (BIT_16)
+    #define DMA_CTRL_PCIX_READ_WATERMARK_256        (BIT_17)
+    #define DMA_CTRL_PCIX_READ_WATERMARK_384        (BIT_17 | BIT_16)
+    #define DMA_CTRL_PCIX_READ_WATERMARK_512        (BIT_18)
+    #define DMA_CTRL_PCIX_READ_WATERMARK_1024       (BIT_18 | BIT_16)
+    #define DMA_CTRL_PCIX_READ_WATERMARK_1536X      (BIT_18 | BIT_17)
+    #define DMA_CTRL_PCIX_READ_WATERMARK_1536       (BIT_18 | BIT_17 | BIT_16)
 
     #define DMA_CTRL_WRITE_BOUNDARY_MASK            (BIT_11 | BIT_12 | BIT_13)
     #define DMA_CTRL_WRITE_BOUNDARY_DISABLE         0
@@ -1435,13 +1526,23 @@ typedef struct {
     T3_64BIT_REGISTER RcvRetRingConIdx;
     T3_64BIT_REGISTER SndProdIdx;
 
-    T3_32BIT_REGISTER Unused5[2];
+    T3_32BIT_REGISTER Unused5[2];			/* 0xb0-0xb7 */
 
-    T3_32BIT_REGISTER DualMacCtrl;
+    T3_32BIT_REGISTER DualMacCtrl;			/* 0xb8 */
     #define T3_DUAL_MAC_CH_CTRL_MASK     (BIT_1 | BIT_0)
     #define T3_DUAL_MAC_ID               BIT_2
 
-    LM_UINT8 Unused6[68];
+    T3_32BIT_REGISTER MacMessageExchangeOutput;		/*  0xbc  */
+    T3_32BIT_REGISTER MacMessageExchangeInput;		/*  0xc0  */
+
+    T3_32BIT_REGISTER FunctionEventMask;		/*  0xc4  */
+
+    T3_32BIT_REGISTER Unused6[4];			/*  0xc8-0xd7  */
+
+    T3_32BIT_REGISTER DeviceCtrl;			/*  0xd8  */
+    #define MAX_PAYLOAD_SIZE_MASK			0x0e0
+
+    LM_UINT8 Unused7[36];
 
 } T3_PCI_CONFIGURATION, *PT3_PCI_CONFIGURATION;
 
@@ -2568,6 +2669,11 @@ typedef struct {
     #define GRC_MISC_LOCAL_CTRL_CLEAR_INT               BIT_1
     #define GRC_MISC_LOCAL_CTRL_SET_INT                 BIT_2
     #define GRC_MISC_LOCAL_CTRL_INT_ON_ATTN             BIT_3
+
+    #define GRC_MISC_LOCAL_CTRL_GPIO_INPUT3		BIT_5
+    #define GRC_MISC_LOCAL_CTRL_GPIO_OE3		BIT_6
+    #define GRC_MISC_LOCAL_CTRL_GPIO_OUTPUT3		BIT_7
+
     #define GRC_MISC_LOCAL_CTRL_GPIO_INPUT0             BIT_8
     #define GRC_MISC_LOCAL_CTRL_GPIO_INPUT1             BIT_9
     #define GRC_MISC_LOCAL_CTRL_GPIO_INPUT2             BIT_10
@@ -2647,6 +2753,10 @@ typedef struct
     #define NVRAM_CMD_ERASE                             BIT_6
     #define NVRAM_CMD_FIRST                             BIT_7
     #define NVRAM_CMD_LAST                              BIT_8
+    #define NVRAM_CMD_WRITE_ENABLE                           BIT_16
+    #define NVRAM_CMD_WRITE_DISABLE                          BIT_17
+    #define NVRAM_CMD_EN_WR_SR                             BIT_18
+    #define NVRAM_CMD_DO_WR_SR                             BIT_19
 
     T3_32BIT_REGISTER Status;
     T3_32BIT_REGISTER WriteData;
@@ -2662,7 +2772,17 @@ typedef struct
     #define FLASH_SSRAM_BUFFERED_MODE                  BIT_1
     #define FLASH_PASS_THRU_MODE                        BIT_2
     #define FLASH_BIT_BANG_MODE                         BIT_3
+    #define FLASH_STATUS_BITS_MASK            (BIT_4 | BIT_5 | BIT_6)
+    #define FLASH_SIZE                                  BIT_25
     #define FLASH_COMPAT_BYPASS                         BIT_31
+    #define FLASH_VENDOR_MASK                  (BIT_25 | BIT_24 | BIT_1 | BIT_0)
+    #define FLASH_VENDOR_ATMEL_EEPROM                        BIT_25
+    #define FLASH_VENDOR_ATMEL_FLASH_BUFFERED       (BIT_25 | BIT_1 | BIT_0)
+    #define FLASH_VENDOR_ATMEL_FLASH_UNBUFFERED          (BIT_1 | BIT_0)
+    #define FLASH_VENDOR_ST                        (BIT_25 | BIT_24 | BIT_0)
+    #define FLASH_VENDOR_SAIFUN                     (BIT_24 | BIT_1 | BIT_0)
+    #define FLASH_VENDOR_SST_SMALL                           BIT_0
+    #define FLASH_VENDOR_SST_LARGE                      (BIT_25 | BIT_0)
 
     #define BUFFERED_FLASH (FLASH_INTERFACE_ENABLE | FLASH_SSRAM_BUFFERED_MODE)
 
@@ -2672,8 +2792,54 @@ typedef struct
     #define BUFFERED_FLASH_PAGE_SIZE        264
     #define BUFFERED_FLASH_PHY_PAGE_SIZE    512
 
+    /* Bleh!  Definitions for Baxter. */
+    #define FLASH_PART_5750_TYPEMASK \
+            (BIT_25 | BIT_24 | BIT_1 | BIT_0)
+
+    #define FLASH_PART_5752_TYPEMASK \
+            (BIT_25 | BIT_24 | BIT_23 | BIT_22 | BIT_1 | BIT_0)
+
+    #define FLASH_PART_5752_EEPROM_ATMEL_64K        BIT_NONE
+    #define FLASH_PART_5752_EEPROM_ATMEL_376K       BIT_25
+    #define FLASH_PART_5752_FLASH_ATMEL_AT45DB041   (BIT_25 | BIT_1 | BIT_0)
+    #define FLASH_PART_5752_FLASH_ATMEL_AT25F512             (BIT_1 | BIT_0)
+    #define FLASH_PART_5752_FLASH_SST_45VF010       (BIT_25 |         BIT_0)
+    #define FLASH_PART_5752_FLASH_SST_25F512                         (BIT_0)
+    #define FLASH_PART_5752_FLASH_ST_M25P10A           (BIT_25 | BIT_24 | BIT_0)
+    #define FLASH_PART_5752_FLASH_ST_M25P05A                  (BIT_24 | BIT_0)
+    #define FLASH_PART_5752_FLASH_SAIFUN_SA25F010            (BIT_22)
+    #define FLASH_PART_5752_FLASH_SAIFUN_SA25F020          (BIT_22 | BIT_1)
+    #define FLASH_PART_5752_FLASH_SAIFUN_SA25F040          (BIT_22 | BIT_0)
+    #define FLASH_PART_5752_FLASH_SST_25VF010              (BIT_24 | BIT_22)
+    #define FLASH_PART_5752_FLASH_SST_25VF020          (BIT_24 | BIT_22 | BIT_1)
+    #define FLASH_PART_5752_FLASH_SST_25VF040          (BIT_24 | BIT_22 | BIT_0)
+    #define FLASH_PART_5752_FLASH_ST_M45PE10           (BIT_25 | BIT_22)
+    #define FLASH_PART_5752_FLASH_ST_M45PE20           (BIT_25 | BIT_22 | BIT_1)
+    #define FLASH_PART_5752_FLASH_ST_M45PE40           (BIT_25 | BIT_22 | BIT_0)
+
+    #define FLASH_PART_5752_PAGEMASK \
+            (BIT_30 | BIT_29 | BIT_28)
+
+    #define FLASH_PART_5752_PAGE_SIZE_256B         BIT_NONE
+    #define FLASH_PART_5752_PAGE_SIZE_512B         BIT_28
+    #define FLASH_PART_5752_PAGE_SIZE_1K           BIT_29
+    #define FLASH_PART_5752_PAGE_SIZE_2K          (BIT_29 | BIT_28)
+    #define FLASH_PART_5752_PAGE_SIZE_4K           BIT_30
+    #define FLASH_PART_5752_PAGE_SIZE_264B        (BIT_30 | BIT_28)
+
+
     T3_32BIT_REGISTER Config2;
+    #define NVRAM_COMMAND_MASK                             0x000000ff
+    #define NVRAM_STATUS_COMMAND(x)                        ((x) << 16)
+    #define NVRAM_ERASE_COMMAND(x)                             (x)
+
     T3_32BIT_REGISTER Config3;
+    #define NVRAM_COMMAND_MASK                             0x000000ff
+    #define NVRAM_READ_COMMAND(x)                          ((x) << 24)
+    #define NVRAM_WRITE_UNBUFFERED_COMMAND(x)              ((x) << 8)
+    #define NVRAM_WRITE_BUFFERED_COMMAND(x)                ((x) << 16)
+    #define NVRAM_RESET_COMMAND(x)                             (x)
+
     T3_32BIT_REGISTER SwArb;
     #define SW_ARB_REQ_SET0                             BIT_0
     #define SW_ARB_REQ_SET1                             BIT_1
@@ -2695,9 +2861,19 @@ typedef struct
     T3_32BIT_REGISTER NvmAccess;
     #define ACCESS_EN                                   BIT_0
     #define ACCESS_WR_EN                                BIT_1
+    #define NVRAM_ACCESS_ENABLE                         BIT_0
+    #define NVRAM_ACCESS_WRITE_ENABLE                   BIT_1
+
+    T3_32BIT_REGISTER Write1;
+    #define NVRAM_WRITE1_WRENA_CMD(x)         (x)
+    #define NVRAM_WRITE1_WRDIS_CMD(x)       ((x) << 8)
+
+    T3_32BIT_REGISTER WatchTimer;
+
+    T3_32BIT_REGISTER Config4;
 
     /* Unused space. */
-    LM_UINT8 Unused[984];
+    LM_UINT8 Unused[972];
 } T3_NVRAM, *PT3_NVRAM;
 
 
@@ -2858,6 +3034,64 @@ typedef struct
     LM_UINT32 PhyId;
     LM_UINT32 Serdes;   /* 0 = copper PHY, 1 = Serdes */
 } LM_ADAPTER_INFO, *PLM_ADAPTER_INFO;
+
+
+/******************************************************************************/
+/* Flash info. */
+/******************************************************************************/
+
+typedef struct {
+    LM_UINT8  jedecnum;
+    LM_UINT8  romtype;
+    #define ROM_TYPE_EEPROM  0x1
+    #define ROM_TYPE_FLASH   0x2
+    LM_BOOL   buffered;
+
+    LM_UINT32 chipsize;
+    LM_UINT32 pagesize;
+} FLASHINFO;
+
+
+#define JEDEC_ATMEL    0x1f
+#define JEDEC_ST       0x20
+#define JEDEC_SAIFUN   0x4f
+#define JEDEC_SST      0xbf
+
+#define ATMEL_AT24C64_CHIP_SIZE                   (64 * 1024)
+#define ATMEL_AT24C64_PAGE_SIZE                     (32)
+#define ATMEL_AT24C64_PAGE_MASK        (ATMEL_AT24C64_PAGE_SIZE - 1)
+
+#define ATMEL_AT24C512_CHIP_SIZE                 (512 * 1024)
+#define ATMEL_AT24C512_PAGE_SIZE                    (128)
+#define ATMEL_AT24C512_PAGE_MASK        (ATMEL_AT24C512_PAGE_SIZE - 1)
+
+#define ATMEL_AT45DB0X1B_PAGE_POS                        9
+#define ATMEL_AT45DB0X1B_PAGE_SIZE                      264
+#define ATMEL_AT45DB0X1B_PAGE_MASK                      0x1ff
+#define ATMEL_AT45DB0X1B_BUFFER_WRITE_CMD               0x83
+
+/* Currently unsupported flash type */
+#define ATMEL_AT25F512_PAGE_SIZE                        256
+#define ATMEL_AT25F512_PAGE_MASK        (ATMEL_AT25F512_PAGE_SIZE - 1)
+
+#define ST_M45PEX0_PAGE_SIZE                            256
+#define ST_M45PEX0_PAGE_MASK                (ST_M45PEX0_PAGE_SIZE - 1)
+#define ST_M45PEX0_READ_STATUS_CMD                      0x05
+#define ST_M45PEX0_PAGE_ERASE_CMD                       0xDB
+#define ST_M45PEX0_PAGE_PRGM_CMD                        0x0A
+#define ST_M45PEX0_WRENA_CMD                            0x06
+#define ST_M45PEX0_WRDIS_CMD                            0x04
+
+#define SAIFUN_SA25F0XX_PAGE_SIZE                       256
+#define SAIFUN_SA25F0XX_PAGE_MASK         (SAIFUN_SA25F0XX_PAGE_SIZE - 1)
+#define SAIFUN_SA25F0XX_READ_STATUS_CMD                 0x05
+#define SAIFUN_SA25F0XX_PAGE_ERASE_CMD                  0x81
+#define SAIFUN_SA25F0XX_PAGE_WRITE_CMD                  0x02
+#define SAIFUN_SA25F0XX_WRENA_CMD                       0x06
+
+/* Currently unsupported flash type */
+#define SST_25VF0X0_PAGE_SIZE                           4098
+#define SST_25VF0X0_PAGE_MASK                (SST_25VF0X0_PAGE_SIZE - 1)
 
 
 /******************************************************************************/
@@ -3036,6 +3270,14 @@ typedef struct _LM_DEVICE_BLOCK {
     #define FLASH_DETECTED_FLAG        0x200000
 
     #define DISABLE_D3HOT_FLAG         0x400000
+
+    /* 5753 should not output gpio2 */
+    #define GPIO2_DONOT_OUTPUT         0x800000
+
+    #define USING_MSI_FLAG             0x1000000 
+    #define JUMBO_CAPABLE_FLAG         0x2000000 
+    #define PROTECTED_NVRAM_FLAG       0x4000000
+    #define T3_HAS_TWO_CPUS            0x8000000
 
     /* Rx info */
     LM_UINT32 RxStdDescCnt;
@@ -3234,6 +3476,9 @@ typedef struct _LM_DEVICE_BLOCK {
     #define PHY_5705_5750_FIX                           0x40
     #define PHY_NO_GIGABIT                              0x80
     #define PHY_CAPACITIVE_COUPLING                     0x100
+    #define PHY_IS_FIBER                                0x200
+    #define PHY_FIBER_FALLBACK                          0x400
+
 
     LM_UINT32 RestoreOnWakeUp;
     LM_LINE_SPEED WakeUpRequestedLineSpeed;
@@ -3296,6 +3541,7 @@ typedef struct _LM_DEVICE_BLOCK {
     #define TBI_POLLING_INTR_FLAG      0x2
     #define TBI_PURE_POLLING_FLAG      0x4
     #define TBI_POLLING_FLAGS   (TBI_POLLING_INTR_FLAG | TBI_PURE_POLLING_FLAG)
+    #define TBI_DO_PREEMPHASIS         0x8
 
     LM_UINT32 IgnoreTbiLinkChange;
 #endif
@@ -3304,8 +3550,11 @@ typedef struct _LM_DEVICE_BLOCK {
 #endif
     char PartNo[24];
     char BootCodeVer[16];
+    char IPMICodeVer[24];
     char BusSpeedStr[24];
 
+    FLASHINFO flashinfo;
+    LM_UINT8  flashbuffer[256];
 } LM_DEVICE_BLOCK;
 
 

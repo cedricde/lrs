@@ -1,11 +1,11 @@
-.\" Copyright (c) 2000-2004 Broadcom Corporation
+.\" Copyright (c) 2000-2005 Broadcom Corporation
 .\" This is free documentation; you can redistribute it and/or
 .\" modify it under the terms of the GNU General Public License as
 .\" published by the Free Software Foundation.
 .\"
-.\" bcm5700.4,v 5.8 
+.\" bcm5700.4,v 5.9 
 .\"
-.TH BCM5700 4 "06/23/04" "Broadcom Corporation"
+.TH BCM5700 4 "08/01/05" "Broadcom Corporation"
 .\"
 .\" NAME part
 .\"
@@ -74,7 +74,7 @@ bcm5700 \- Broadcom NetXtreme BCM5700 series Gigabit Ethernet device driver
 is the low-level device driver for the Broadcom
 .B NetXtreme BCM5700
 series PCI/PCI-X and PCI Express Gigabit Ethernet NIC. The driver has
-been tested on most 2.4.x and 2.6.x kernels up to 2.4.26 and 2.6.7 for
+been tested on most 2.4.x and 2.6.x kernels up to 2.4.27 and 2.6.8 for
 i386, ia64, and x86_64 systems.
 It should also work on other big-endian and little-endian CPU platforms,
 but only very limited testing has been done and minor modifications to the
@@ -83,7 +83,7 @@ Makefile and source files may be required.
 The driver supports up to 16 NICs and allocates the next available ethernet
 device (eth0..eth#) for each NIC found. The driver is available as a loadable
 module or can be compiled into the kernel. The loadable module binary
-\fBbcm5700.o\fP is installed in the following path:
+\fBbcm5700.o\fP or \fBbcm5700.ko\fP is installed in the following path:
 .PP
 2.2.x kernels:
 .RS
@@ -95,7 +95,7 @@ module or can be compiled into the kernel. The loadable module binary
 /lib/modules/<kernel_version>/kernel/drivers/net/bcm5700.o
 .RE
 .PP
-2.4.x kernels with bcm5700 driver patched in (e.g. Red Hat 7.1, 7.2, 7.3):
+2.4.x kernels with bcm5700 as an addon driver (e.g. Red Hat 7.3, 2.1AS):
 .RS
 /lib/modules/<kernel_version>/kernel/drivers/net/bcm/bcm5700.o
 .PP
@@ -104,9 +104,19 @@ or
 /lib/modules/<kernel_version>/kernel/drivers/addon/bcm5700/bcm5700.o
 .RE
 .PP
+2.6.x kernels:
+.RS
+/lib/modules/<kernel_version>/kernel/drivers/net/bcm5700.ko
+.RE
+.PP
+2.6.x kernels with bcm5700 as an addon driver (e.g. SusE 9 SLES):
+.RS
+/lib/modules/<kernel_version>/kernel/drivers/net/bcm/bcm5700.ko
+.RE
+.PP
 
-Note: If loading the driver on Red Hat 7.3 or other newer
-kernels and patches, it may be necessary to unload the tg3 driver first if
+Note: If loading the driver on Red Hat 7.3, 2.1AS or other newer kernels
+with the tg3 driver, it may be necessary to unload the tg3 driver first if
 it is loaded. While tg3 is a fully functioning driver written by Red Hat et al,
 Broadcom recommends users to use the bcm5700 driver written and tested by
 Broadcom. Use ifconfig to bring down all eth# interfaces used by tg3
@@ -479,7 +489,7 @@ The following are the most common sample messages that may be logged in the file
 /var/log/messages. Use dmesg -n <level> to control the level at which messages
 will appear on the console. Most systems are set to level 6 by default.
 .PP
-.B Broadcom Gigabit Ethernet Driver bcm5700 with Broadcom NIC Extension (NICE) ver. 7.3.5 (06/23/04)
+.B Broadcom Gigabit Ethernet Driver bcm5700 with Broadcom NIC Extension (NICE) ver. 7.4.4 (10/04/04)
 .RS
 Driver signon
 .RE

@@ -1,6 +1,6 @@
 /******************************************************************************/
 /*                                                                            */
-/* Broadcom BCM5700 Linux Network Driver, Copyright (c) 2000 - 2003 Broadcom  */
+/* Broadcom BCM5700 Linux Network Driver, Copyright (c) 2000 - 2004 Broadcom  */
 /* Corporation.                                                               */
 /* All rights reserved.                                                       */
 /*                                                                            */
@@ -20,6 +20,7 @@
 static struct proc_dir_entry *bcm5700_procfs_dir;
 
 extern char bcm5700_driver[], bcm5700_version[];
+extern int bcm5700_open(struct net_device *dev);
 
 extern uint64_t bcm5700_crc_count(PUM_DEVICE_BLOCK pUmDevice);
 extern uint64_t bcm5700_rx_err_count(PUM_DEVICE_BLOCK pUmDevice);
@@ -31,6 +32,27 @@ static char *on_str = "on";
 static char *off_str = "off";
 static char *up_str = "up";
 static char *down_str = "down";
+
+int bcm5700_proc_create_dev(struct net_device *dev);
+int bcm5700_proc_remove_dev(struct net_device *dev);
+
+static int bcm5700_netdev_event(struct notifier_block * this, unsigned long event, void * ptr)
+{
+	struct net_device * event_dev = (struct net_device *)ptr;
+
+	if (event == NETDEV_CHANGENAME) {
+		if (event_dev->open == bcm5700_open) {
+			bcm5700_proc_remove_dev(event_dev);
+			bcm5700_proc_create_dev(event_dev);
+		}
+	}
+
+	return NOTIFY_DONE;
+}
+
+static struct notifier_block bcm5700_netdev_notifier = {
+	.notifier_call = bcm5700_netdev_event
+};
 
 static struct proc_dir_entry *
 proc_getdir(char *name, struct proc_dir_entry *proc_dir)
@@ -70,6 +92,14 @@ bcm5700_proc_create(void)
 		printk(KERN_DEBUG "Could not create procfs nicinfo directory %s\n", NICINFO_PROC_DIR);
 		return -1;
 	}
+	register_netdevice_notifier(&bcm5700_netdev_notifier);
+	return 0;
+}
+
+int
+bcm5700_proc_remove_notifier(void)
+{
+	unregister_netdevice_notifier(&bcm5700_netdev_notifier);
 	return 0;
 }
 
@@ -84,6 +114,13 @@ b57_get_speed_adv(PUM_DEVICE_BLOCK pUmDevice, char *str)
 	}
 	if (pDevice->TbiFlags & ENABLE_TBI_FLAG) {
 		strcpy(str, "1000full");
+		return;
+	}
+	if (pDevice->PhyFlags & PHY_IS_FIBER) {
+		if (pDevice->RequestedDuplexMode != LM_DUPLEX_MODE_HALF)
+			strcpy(str, "1000full");
+		else
+			strcpy(str, "1000half");
 		return;
 	}
 	str[0] = 0;
@@ -167,6 +204,8 @@ bcm5700_read_pfs(char *page, char **start, off_t off, int count,
 	len += sprintf(page+len, "Driver_Name\t\t\t%s\n", bcm5700_driver);
 	len += sprintf(page+len, "Driver_Version\t\t\t%s\n", bcm5700_version);
 	len += sprintf(page+len, "Bootcode_Version\t\t%s\n", pDevice->BootCodeVer);
+	if( pDevice->IPMICodeVer[0] != 0 )
+		len += sprintf(page+len, "ASF_IPMI_Version\t\t%s\n", pDevice->IPMICodeVer);
 	len += sprintf(page+len, "PCI_Vendor\t\t\t0x%04x\n", pDevice->PciVendorId);
 	len += sprintf(page+len, "PCI_Device_ID\t\t\t0x%04x\n",
 		pDevice->PciDeviceId);
@@ -178,7 +217,8 @@ bcm5700_read_pfs(char *page, char **start, off_t off, int count,
 		pDevice->PciRevId);
 	len += sprintf(page+len, "PCI_Slot\t\t\t%d\n",
 		PCI_SLOT(pUmDevice->pdev->devfn));
-	if (T3_ASIC_REV(pDevice->ChipRevId) == T3_ASIC_REV_5704) {
+	if (T3_ASIC_REV(pDevice->ChipRevId) == T3_ASIC_REV_5704)
+        {
 		len += sprintf(page+len, "PCI_Function\t\t\t%d\n",
 			pDevice->FunctNum);
 	}
@@ -406,38 +446,7 @@ bcm5700_read_pfs(char *page, char **start, off_t off, int count,
 		pUmDevice->rx_good_chksum_count);
 	len += sprintf(page+len, "Rx_Bad_Chksum_Packets\t\t%u\n",
 		pUmDevice->rx_bad_chksum_count);
-	if (!(pDevice->TbiFlags & ENABLE_TBI_FLAG)) {
-		LM_UINT32 value32;
-		unsigned long flags;
 
-		BCM5700_PHY_LOCK(pUmDevice, flags);
-        	LM_ReadPhy(pDevice, 0, &value32);
-		len += sprintf(page+len, "\nPhy_Register_0x00\t\t0x%x\n", value32);
-        	LM_ReadPhy(pDevice, 1, &value32);
-		len += sprintf(page+len, "Phy_Register_0x01\t\t0x%x\n", value32);
-        	LM_ReadPhy(pDevice, 2, &value32);
-		len += sprintf(page+len, "Phy_Register_0x02\t\t0x%x\n", value32);
-        	LM_ReadPhy(pDevice, 3, &value32);
-		len += sprintf(page+len, "Phy_Register_0x03\t\t0x%x\n", value32);
-        	LM_ReadPhy(pDevice, 4, &value32);
-		len += sprintf(page+len, "Phy_Register_0x04\t\t0x%x\n", value32);
-        	LM_ReadPhy(pDevice, 5, &value32);
-		len += sprintf(page+len, "Phy_Register_0x05\t\t0x%x\n", value32);
-        	LM_ReadPhy(pDevice, 9, &value32);
-		len += sprintf(page+len, "Phy_Register_0x09\t\t0x%x\n", value32);
-        	LM_ReadPhy(pDevice, 0xa, &value32);
-		len += sprintf(page+len, "Phy_Register_0x0A\t\t0x%x\n", value32);
-        	LM_ReadPhy(pDevice, 0xf, &value32);
-		len += sprintf(page+len, "Phy_Register_0x0F\t\t0x%x\n", value32);
-        	LM_ReadPhy(pDevice, 0x10, &value32);
-		len += sprintf(page+len, "Phy_Register_0x10\t\t0x%x\n", value32);
-        	LM_ReadPhy(pDevice, 0x19, &value32);
-		len += sprintf(page+len, "Phy_Register_0x19\t\t0x%x\n", value32);
-        	LM_WritePhy(pDevice, 0x18, 0x0007);
-        	LM_ReadPhy(pDevice, 0x18, &value32);
-		len += sprintf(page+len, "Phy_Register_0x18_00\t\t0x%x\n", value32);
-		BCM5700_PHY_UNLOCK(pUmDevice, flags);
-	}
 #endif
 
 	*eof = 1;

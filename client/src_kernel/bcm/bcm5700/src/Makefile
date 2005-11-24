@@ -16,11 +16,15 @@ endif
 
 LINUX=/usr/src/linux
 
+ifneq ($(shell grep netdump_mode $(LINUX)/include/linux/kernel.h > /dev/null 2>&1 && echo rh),)
+  NETDUMP_CFLAG = -DRED_HAT_LINUX_KERNEL
+else
+  NETDUMP_CFLAG =
+endif
 
 # check if 2.4 kernel or 2.5+ kernel
 BCM_KVER:=$(shell uname -r | cut -c1-3 | sed 's/2\.[56]/2\.6/')
 BCM_KVER=2.6
-
 ifeq ($(BCM_KVER), 2.6)
 # Makefile for 2.5+ kernel
 
@@ -32,7 +36,7 @@ obj-m += bcm5700.o
 
 bcm5700-objs    := b57um.o b57proc.o tigon3.o autoneg.o 5701rls.o tcp_seg.o b57diag.o
 
-EXTRA_CFLAGS = -DDBG=0 -DT3_JUMBO_RCV_RCB_ENTRY_COUNT=256 -DNICE_SUPPORT -DPCIX_TARGET_WORKAROUND=1 -DINCLUDE_TBI_SUPPORT -DINCLUDE_5701_AX_FIX=1
+EXTRA_CFLAGS = -DDBG=0 -DT3_JUMBO_RCV_RCB_ENTRY_COUNT=256 -DNICE_SUPPORT -DPCIX_TARGET_WORKAROUND=1 -DINCLUDE_TBI_SUPPORT -DINCLUDE_5701_AX_FIX=1 $(NETDUMP_CFLAG)
 
 else
 
@@ -61,7 +65,8 @@ else
 endif
 
 LD = ld
-CFLAGS=-DMODULE -D__KERNEL__ -DDBG=0 -DT3_JUMBO_RCV_RCB_ENTRY_COUNT=256 -DNICE_SUPPORT -DPCIX_TARGET_WORKAROUND=1 -DINCLUDE_TBI_SUPPORT -DINCLUDE_5701_AX_FIX=1 -Wall -Wstrict-prototypes -I$(LINUX)/include -I/usr/src/linux-2.6.10/include/asm-i386/mach-default/
+CFLAGS=-DMODULE -D__KERNEL__ -DDBG=0 -DT3_JUMBO_RCV_RCB_ENTRY_COUNT=256 -DNICE_SUPPORT -DPCIX_TARGET_WORKAROUND=1 -DINCLUDE_TBI_SUPPORT -DINCLUDE_5701_AX_FIX=1 $(NETDUMP_CFLAG) -Wall -Wstrict-prototypes -I$(LINUX)/include 
+#-I$(LINUX)/include/asm-i386/mach-default/
 
 ifeq ($(wildcard ~/rpmdir),)
   rpmdir = /usr/src/redhat
@@ -82,17 +87,21 @@ endif
 ifeq ($(ARCH),ppc64)
   ifneq ($(shell ls /opt/cross/bin/powerpc64-linux-gcc > /dev/null 2>&1 && echo ppcgcc),)
     CC=/opt/cross/bin/powerpc64-linux-gcc
+  else
+    CFLAGS+=-m64 
   endif
 
   ifneq ($(shell ls /opt/cross/bin/powerpc64-linux-ld > /dev/null 2>&1 && echo ppcld),)
     LD=/opt/cross/bin/powerpc64-linux-ld
+  else
+    LD=ld -m elf64ppc --oformat elf64-powerpc -r -o
   endif
 
-  CFLAGS+=-fno-strict-aliasing -fno-common -fomit-frame-pointer -msoft-float -pipe -mminimal-toc -fno-builtin
+  CFLAGS+=-fno-strict-aliasing -fno-common -fomit-frame-pointer -msoft-float -pipe -mminimal-toc -fno-builtin 
 endif
 
 ifdef DBG
-  CFLAGS += -DTIGON3_DEBUG=1
+  CFLAGS += -DTIGON3_DEBUG=2
 endif
 
 ifdef SMALL

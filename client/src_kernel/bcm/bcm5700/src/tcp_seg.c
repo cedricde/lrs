@@ -1,6 +1,6 @@
 /******************************************************************************/
 /*                                                                            */
-/* Broadcom BCM5700 Linux Network Driver, Copyright (c) 2002 - 2003 Broadcom  */
+/* Broadcom BCM5700 Linux Network Driver, Copyright (c) 2002 - 2004 Broadcom  */
 /* Corporation.                                                               */
 /* All rights reserved.                                                       */
 /*                                                                            */
@@ -51,7 +51,7 @@ LM_STATUS LM_LoadStkOffLdFirmware(PLM_DEVICE_BLOCK pDevice)
   T3_FWIMG_INFO FwImgInfo;
   LM_UINT32 Cpu;
 
-  if (T3_ASIC_REV(pDevice->ChipRevId) == T3_ASIC_REV_5750)
+  if (T3_ASIC_IS_575X_PLUS(pDevice->ChipRevId))
   {
       return LM_STATUS_SUCCESS;
   }

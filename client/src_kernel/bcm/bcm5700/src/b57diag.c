@@ -13,6 +13,11 @@
 /******************************************************************************/
 
 #include "mm.h"
+
+#ifdef NICE_SUPPORT
+#include "nicext.h"
+#endif
+
 #ifdef ETHTOOL_TEST
 
 typedef struct reg_entry
@@ -405,7 +410,7 @@ b57_test_registers(UM_DEVICE_BLOCK *pUmDevice)
 		{ 0xffff, 0x0000, 0x00000000, 0x00000000 },
 	};
 
-	if (T3_ASIC_5705_OR_5750(pDevice->ChipRevId)) {
+    if (T3_ASIC_IS_5705_BEYOND(pDevice->ChipRevId)){
 		bcm5705 = 1;
 	}
 	else {
@@ -523,7 +528,7 @@ b57_test_memory(UM_DEVICE_BLOCK *pUmDevice)
 		{ 0xffffffff, 0x00000}
 	};
 
-	if (T3_ASIC_5705_OR_5750(pDevice->ChipRevId)) {
+    if (T3_ASIC_IS_5705_BEYOND(pDevice->ChipRevId)){
 		mem_tbl = mem_tbl_5705;
 	}
 	else {
@@ -600,17 +605,27 @@ b57_test_link(UM_DEVICE_BLOCK *pUmDevice)
 	return 0;
 }
 
+#endif
+
+#if defined(ETHTOOL_TEST) || defined(NICE_SUPPORT)
+
+#if (LINUX_VERSION_CODE < 0x020605)
+#define pci_dma_sync_single_for_cpu pci_dma_sync_single
+#endif
+
 /* Returns 1 on success, 0 on failure */
 int
-b57_test_loopback(UM_DEVICE_BLOCK *pUmDevice)
+b57_test_loopback(UM_DEVICE_BLOCK *pUmDevice, int testtype, int linespeed)
 {
 	LM_DEVICE_BLOCK *pDevice = &pUmDevice->lm_dev;
 	struct sk_buff *skb, *rx_skb;
 	unsigned char *packet;
 	dma_addr_t map;
+	LM_UINT32 value32;
 	LM_UINT32 send_idx, rx_start_idx, rx_idx;
 	int num_pkts, pkt_size, i, ret;
 	LM_PACKET *pPacket;
+	UM_PACKET *pUmPacket;
 	T3_SND_BD *pSendBd;
 	T3_RCV_BD *pRcvBd;
 
@@ -618,14 +633,39 @@ b57_test_loopback(UM_DEVICE_BLOCK *pUmDevice)
 	if (!pUmDevice->opened)
 		return ret;
 	LM_ResetAdapter(pDevice);
-	LM_EnableMacLoopBack(pDevice);
+	LM_HaltCpu(pDevice,T3_RX_CPU_ID | T3_TX_CPU_ID);
+	switch (testtype) {
+		case NICE_LOOPBACK_TESTTYPE_MAC:
+			LM_EnableMacLoopBack(pDevice);
+			break;
+		case NICE_LOOPBACK_TESTTYPE_PHY:
+			LM_EnablePhyLoopBack(pDevice);
+			break;
+		case NICE_LOOPBACK_TESTTYPE_EXT:
+			LM_EnableExtLoopBack(pDevice, linespeed);
+
+			/* Wait 4 seconds for link to come up. */
+			for (i = 0; i < 4; i++) {
+				LM_ReadPhy(pDevice, PHY_STATUS_REG, &value32);
+				LM_ReadPhy(pDevice, PHY_STATUS_REG, &value32);
+				if (value32 & PHY_STATUS_LINK_PASS) {
+					LM_SetupPhy(pDevice);
+					break;
+				}
+				MM_Sleep(pDevice,1000);
+			}
+			if (!(value32 & PHY_STATUS_LINK_PASS))
+				return ret;
+	}
 	pkt_size = 1514;
 	skb = dev_alloc_skb(pkt_size);
 	packet = skb_put(skb, pkt_size);
 	memcpy(packet, pDevice->NodeAddress, 6);
 	memset(packet + 6, 0x0, 8);
+
 	for (i = 14; i < pkt_size; i++)
 		packet[i] = (unsigned char) (i & 0xff);
+
 	map = pci_map_single(pUmDevice->pdev, skb->data, pkt_size,
 		PCI_DMA_TODEVICE);
 
@@ -644,46 +684,56 @@ b57_test_loopback(UM_DEVICE_BLOCK *pUmDevice)
 		MM_SetT3Addr(&HostAddr, map);
 		MM_MEMWRITEL(&(pSendBd->HostAddr.High), HostAddr.High);
 		MM_MEMWRITEL(&(pSendBd->HostAddr.Low), HostAddr.Low);
-                MM_MEMWRITEL(&(pSendBd->u1.Len_Flags), 
-                	(pkt_size << 16) | SND_BD_FLAG_END);
+		MM_MEMWRITEL(&(pSendBd->u1.Len_Flags),
+		             (pkt_size << 16) | SND_BD_FLAG_END);
 		send_idx++;
 		num_pkts++;
-	        MB_REG_WR(pDevice, Mailbox.SendNicProdIdx[0].Low, send_idx);
+		MB_REG_WR(pDevice, Mailbox.SendNicProdIdx[0].Low, send_idx);
 		if (T3_CHIP_REV(pDevice->ChipRevId) == T3_CHIP_REV_5700_BX) {
-	        	MB_REG_WR(pDevice, Mailbox.SendNicProdIdx[0].Low,
+			MB_REG_WR(pDevice, Mailbox.SendNicProdIdx[0].Low,
 				send_idx);
 		}
-	        MB_REG_RD(pDevice, Mailbox.SendNicProdIdx[0].Low);
+		MB_REG_RD(pDevice, Mailbox.SendNicProdIdx[0].Low);
 	}
 	else {
 		MM_SetT3Addr(&pSendBd->HostAddr, map);
                 pSendBd->u1.Len_Flags = (pkt_size << 16) | SND_BD_FLAG_END;
-        	MM_WMB();
+		MM_WMB();
 		send_idx++;
 		num_pkts++;
 	        MB_REG_WR(pDevice, Mailbox.SendHostProdIdx[0].Low, send_idx);
 		if (T3_CHIP_REV(pDevice->ChipRevId) == T3_CHIP_REV_5700_BX) {
-	        	MB_REG_WR(pDevice, Mailbox.SendHostProdIdx[0].Low,
+			MB_REG_WR(pDevice, Mailbox.SendHostProdIdx[0].Low,
 				send_idx);
 		}
 	        MB_REG_RD(pDevice, Mailbox.SendHostProdIdx[0].Low);
 	}
+
 	MM_Wait(100);
+
 	REG_WR(pDevice, HostCoalesce.Mode,
 		pDevice->CoalesceMode | HOST_COALESCE_ENABLE |
 			HOST_COALESCE_NOW);
-	MM_Wait(10);
+
+	MM_Sleep(pDevice, 1000);
+
+	pci_unmap_single(pUmDevice->pdev, map, pkt_size, PCI_DMA_TODEVICE);
 	dev_kfree_skb_irq(skb);
+
 	if (pDevice->pStatusBlkVirt->Idx[0].SendConIdx != send_idx) {
 		goto loopback_test_done;
 	}
+
 	rx_idx = pDevice->pStatusBlkVirt->Idx[0].RcvProdIdx;
 	if (rx_idx != rx_start_idx + num_pkts) {
 		goto loopback_test_done;
 	}
+
 	pRcvBd = &pDevice->pRcvRetBdVirt[rx_start_idx];
 	pPacket = (PLM_PACKET) (MM_UINT_PTR(pDevice->pPacketDescBase) +
 		MM_UINT_PTR(pRcvBd->Opaque));
+
+	pUmPacket = (UM_PACKET *) pPacket;
 
 	if (pRcvBd->ErrorFlag &&
 		pRcvBd->ErrorFlag != RCV_BD_ERR_ODD_NIBBLED_RCVD_MII) {
@@ -692,15 +742,33 @@ b57_test_loopback(UM_DEVICE_BLOCK *pUmDevice)
 	if ((pRcvBd->Len - 4) != pkt_size) {
 		goto loopback_test_done;
 	}
-	rx_skb = ((UM_PACKET *) pPacket)->skbuff;
+	rx_skb = pUmPacket->skbuff;
+
+	pci_dma_sync_single_for_cpu(pUmDevice->pdev,
+		pci_unmap_addr(pUmPacket, map[0]),
+		pPacket->u.Rx.RxBufferSize,
+		PCI_DMA_FROMDEVICE);
+
 	for (i = 14; i < pkt_size; i++) {
-		if (*(skb->data + i) != (unsigned char) (i & 0xff))
+		if (*(rx_skb->data + i) != (unsigned char) (i & 0xff)) {
 			goto loopback_test_done;
+		}
 	}
 	ret = 1;
-	
+
 loopback_test_done:
-	LM_DisableMacLoopBack(pDevice);
+	switch (testtype) {
+		case NICE_LOOPBACK_TESTTYPE_MAC:
+			LM_DisableMacLoopBack(pDevice);
+			break;
+		case NICE_LOOPBACK_TESTTYPE_PHY:
+			LM_DisablePhyLoopBack(pDevice);
+			break;
+		case NICE_LOOPBACK_TESTTYPE_EXT:
+			LM_DisableExtLoopBack(pDevice);
+			break;
+	}
 	return ret;
 }
 #endif
+

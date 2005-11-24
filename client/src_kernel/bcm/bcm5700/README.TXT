@@ -1,13 +1,14 @@
+
                            Installation Notes
                        Broadcom BCM5700 Linux Driver
-                              Version 7.3.5
-                                06/23/2004
+                              Version 8.2.18
+                                08/01/2005
 
                           Broadcom Corporation
                           16215 Alton Parkway,
                           Irvine, CA 92619-7013
 
-                Copyright (c) 2000-2003 Broadcom Corporation
+                Copyright (c) 2000-2005 Broadcom Corporation
                            All rights reserved
 
 
@@ -37,9 +38,9 @@ Limitations
 ===========
 
 The current version of the driver has been tested on the latest Red Hat, SuSE,
-and United Linux distributions, as well as other similar Linux distributions
-for i386, ia64, and x86_64 CPU architectures using 2.4.x and 2.6.x kernels. The
-driver has been tested up to kernel version 2.4.26 and 2.6.7.
+and other Linux distributions for i386, ia64, and x86_64 CPU architectures 
+using 2.4.x and 2.6.x kernels. The driver has been tested up to kernel
+version 2.4.31 and 2.6.12.
 
 The driver should work on other little endian or big endian CPU architectures,
 but only very limited testing has been done on some of these machines. The
@@ -55,8 +56,9 @@ Packaging
 The driver is released in two packaging formats: source RPM and compressed tar
 formats. The file names for the two packages are bcm5700-<version>.src.rpm and
 bcm5700-<version>.tar.gz respectively. Identical source files to build the
-driver are included in both packages. The tar file contains additional
-utilities such as patches and driver diskette images for network installation.
+driver are included in both packages. bcm_sup-<version> is a seperate tar file 
+that contains additional utilities such as patches and driver diskette images 
+for network installation.
 
 
 Installing Source RPM Package
@@ -106,17 +108,19 @@ or
 
     /lib/modules/<kernel_version>/kernel/drivers/addon/bcm5700/bcm5700.o
 
-2.6.0 kernels:
+2.6.x kernels:
 
     /lib/modules/<kernel_version>/kernel/drivers/net/bcm5700.ko
 
+2.6.x kernels with bcm5700 as an addon driver (e.g. SuSE 9 SLES):
+
+    /lib/modules/<kernel_version>/kernel/drivers/net/bcm/bcm5700.ko
+
 4. Load the driver:
 
-   insmod bcm5700
-or
    modprobe bcm5700
 
-If loading the driver on Red Hat 7.3, 2.1 AS or other newer kernels with the
+If loading the driver on Red Hat 3 update 4, 2.1 AS or other newer kernels with the
 tg3 driver, refer to the "Removing tg3 Driver" in DISTRIB.TXT before loading
 the driver.
 
@@ -145,7 +149,7 @@ DISTRIB.TXT for additional installation notes for various Linux distributions.
 or
    insmod bcm5700.ko (on 2.6.x kernels)
 
-If loading the driver on Red Hat 7.3, 2.1 AS or other newer kernels with the
+If loading the driver on Red Hat 3 update 4, 2.1 AS or other newer kernels with the
 tg3 driver, refer to the "Removing tg3 Driver" in DISTRIB.TXT before loading
 the driver.
 
@@ -163,20 +167,22 @@ Patching Driver Into Kernel (Optional)
 ======================================
 
 Patch files are included for patching the driver into some of the latest
-2.4.x kernel source trees. This step is optional and should only be done
+2.4.x and 2.6.x kernel source trees. This step is optional and can be done
 by users familiar with configuring and building the kernel. The patch
 will modify the orginal kernel's source code.
 
-Follow the following steps to patch the driver into kernel:
+The following steps may allow you to patch the driver into a kernel:
 
 1. Select the patch file that matches your kernel and apply the patch:
 
    patch -p1 -d <kernel_src_root> < bcm5700-<version>-2.4.<x>.patch
+   patch -p1 -d <kernel_src_root> < bcm5700-<version>-2.6.<x>.patch
 
 where <version> is the version of the bcm5700 driver and 2.4.<x> is the
-version of the kernel to patch (e.g. 2.4.10).
+version of the kernel to patch (e.g. 2.4.31).
 
 Note: <kernel_src_root> is usually /usr/src/linux or /usr/src/linux-2.4.<x>
+Note: <kernel_src_root> is usually /usr/src/linux or /usr/src/linux-2.6.<x>
 
 2. Configure the kernel to include the bcm5700 driver. It can be found
 under Network Device Support ---> Ethernet (1000 Mbit) ---> Broadcom BCM5700
@@ -447,11 +453,11 @@ tx_max_coalesce_frames
 
 stats_coalesce_ticks
 
-    Configures the number of 1 usec ticks between periodic statistics block
-    DMAs. The valid range is from 100 to 3600000000, and default is 1000000
+    Configures the number of 1 usec ticks between periodic statistics updates 
+    (DMAs). The valid range is from 100 to 3600000000, and default is 1000000
     (1 sec.). 0 is also valid and is used to disable statistics updates.
     This parameter is not used and will be set to default if adaptive_coalesce
-    is set to 1.
+    is set to 1. Please note that the valid range may vary by kernel version.
 
 enable_wol
 
@@ -469,6 +475,16 @@ enable_tso
 
     0    TSO disabled
     1    TSO enabled (default)
+
+disable_msi
+
+    Enables or disables message signal interrupts (MSI) when using kernels that
+    support it. This parameter is only defined on newer kernels that support
+    MSI. The valid values are:
+
+    1    MSI disabled
+    0    MSI enabled (default)
+    Note: Only applies to the latest devices.
 
 vlan_tag_mode
 
@@ -513,7 +529,7 @@ The following are the most common sample messages that may be logged in the file
 will appear on the console. Most systems are set to level 6 by default.
 
 Broadcom Gigabit Ethernet Driver bcm5700 with Broadcom NIC Extension (NICE)
-ver. 7.3.5 (06/23/04)
+ver. 8.2.18 (08/01/05)
 
     Driver signon
 
@@ -541,5 +557,4 @@ Statistics
 
 Detailed statistics and configuration information can be viewed in the file
 /proc/net/nicinfo/eth#.info.
-
 

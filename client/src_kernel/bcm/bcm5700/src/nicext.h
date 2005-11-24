@@ -1,22 +1,22 @@
 /****************************************************************************
- * Copyright(c) 2000-2003 Broadcom Corporation. All rights reserved.
+ * Copyright(c) 2000-2004 Broadcom Corporation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation.          
+ * the Free Software Foundation.
  *
  * Name:        nicext.h
  *
- * Description: Broadcom Network Interface Card Extension (NICE) is an 
- *              extension to Linux NET device kernel mode drivers. 
- *              NICE is designed to provide additional functionalities, 
- *              such as receive packet intercept. To support Broadcom NICE, 
- *              the network device driver can be modified by adding an 
- *              device ioctl handler and by indicating receiving packets 
- *              to the NICE receive handler. Broadcom NICE will only be 
- *              enabled by a NICE-aware intermediate driver, such as 
- *              Broadcom Advanced Server Program Driver (BASP). When NICE 
- *              is not enabled, the modified network device drivers 
+ * Description: Broadcom Network Interface Card Extension (NICE) is an
+ *              extension to Linux NET device kernel mode drivers.
+ *              NICE is designed to provide additional functionalities,
+ *              such as receive packet intercept. To support Broadcom NICE,
+ *              the network device driver can be modified by adding an
+ *              device ioctl handler and by indicating receiving packets
+ *              to the NICE receive handler. Broadcom NICE will only be
+ *              enabled by a NICE-aware intermediate driver, such as
+ *              Broadcom Advanced Server Program Driver (BASP). When NICE
+ *              is not enabled, the modified network device drivers
  *              functions exactly as other non-NICE aware drivers.
  *
  * Author:      Frankie Fan
@@ -30,10 +30,10 @@
 /*
  * ioctl for NICE
  */
-#define SIOCNICE                   	SIOCDEVPRIVATE+7
+#define SIOCNICE                    SIOCDEVPRIVATE+7
 
 /*
- * SIOCNICE: 
+ * SIOCNICE:
  *
  * The following structure needs to be less than IFNAMSIZ (16 bytes) because
  * we're overloading ifreq.ifr_ifru.
@@ -45,7 +45,7 @@
 struct nice_req
 {
     __u32 cmd;
-    
+
     union
     {
 #ifdef __KERNEL__
@@ -112,7 +112,7 @@ struct nice_req
         /* cmd = NICE_CMD_KFREE_PHYS */
         /* These commands allow the diagnostics app. to allocate and free */
         /* PCI consistent memory for DMA tests */
-        struct
+       struct
         {
             unsigned int nrqus7_size; /* size(bytes) to allocate, not used    */
                                       /* when cmd is NICE_CMD_KFREE_PHYS.     */
@@ -125,7 +125,7 @@ struct nice_req
                                       /* buffer in user space.                */
                                       /* mmap() only works on x86.            */
         } nrqu_nrqus7;
-        
+
         /* cmd = NICE_CMD_SET_WRITE_PROTECT */
         struct
         {
@@ -139,8 +139,30 @@ struct nice_req
             unsigned int nrqus9_size;/* size (in bytes)                      */
                                      /* (0x6c0 for the whole block)          */
         } nrqu_nrqus9;
-        
-    } nrq_nrqu;
+
+        /* cmd = NICE_CMD_LOOPBACK_TEST */
+        struct
+        {
+            unsigned char nrqus10_looptype;
+            unsigned char nrqus10_loopspeed;
+        } nrqu_nrqus10;
+
+         /* cmd = NICE_CMD_KMAP_PHYS/KUNMAP_PHYS */
+        struct
+        {
+            int nrqus11_rw;	      /* direction                            */
+	    void *nrqus11_uaddr;      /* ptr to mem allocated in user space   */
+                                      /* when cmd is NICE_CMD_KFREE_PHYS.     */
+            __u32 nrqus11_phys_addr_lo;/* CPU physical address allocated or    */
+            __u32 nrqus11_phys_addr_hi;/* to be freed.                         */
+                                      /* PCI physical address is contained in */
+                                      /* the 1st 64 bit of the allocated      */
+                                      /* buffer. Use open("/dev/mem")/lseek() */
+                                      /* and read()/write() to a access       */
+                                      /* buffer in user space.                */
+                                      /* mmap() only works on x86.            */
+        } nrqu_nrqus11;
+   } nrq_nrqu;
 };
 
 #define nrq_rx           nrq_nrqu.nrqu_nrqus1.nrqus1_rx
@@ -155,18 +177,38 @@ struct nice_req
 #define nrq_offset       nrq_nrqu.nrqu_nrqus5.nrqus5_offset
 #define nrq_data         nrq_nrqu.nrqu_nrqus5.nrqus5_data
 #define nrq_intr_test_result  nrq_nrqu.nrqu_nrqus6.nrqus6_intr_test_result
+
 #define nrq_size         nrq_nrqu.nrqu_nrqus7.nrqus7_size
 #define nrq_phys_addr_lo nrq_nrqu.nrqu_nrqus7.nrqus7_phys_addr_lo
 #define nrq_phys_addr_hi nrq_nrqu.nrqu_nrqus7.nrqus7_phys_addr_hi
+
+#define nrq_rw           nrq_nrqu.nrqu_nrqus11.nrqus11_rw
+#define nrq_puaddr	 nrq_nrqu.nrqu_nrqus11.nrqus11_uaddr
+#define nrq_phys_add_lo nrq_nrqu.nrqu_nrqus11.nrqus11_phys_addr_lo
+#define nrq_phys_add_hi nrq_nrqu.nrqu_nrqus11.nrqus11_phys_addr_hi
+
 #define nrq_write_protect nrq_nrqu.nrqu_nrqus8.nrqus8_data
 #define nrq_stats_useraddr nrq_nrqu.nrqu_nrqus9.nrqus9_useraddr
 #define nrq_stats_size    nrq_nrqu.nrqu_nrqus9.nrqus9_size
+
+#define nrq_looptype    nrq_nrqu.nrqu_nrqus10.nrqus10_looptype
+#define nrq_loopspeed   nrq_nrqu.nrqu_nrqus10.nrqus10_loopspeed
 
 /*
  * magic constants
  */
 #define NICE_REQUESTOR_MAGIC            0x4543494E // NICE in ascii
 #define NICE_DEVICE_MAGIC               0x4E494345 // ECIN in ascii
+
+#define NICE_LOOPBACK_TESTTYPE_MAC      0x1
+#define NICE_LOOPBACK_TESTTYPE_PHY      0x2
+#define NICE_LOOPBACK_TESTTYPE_EXT      0x4
+
+#define NICE_LOOPBACK_TEST_SPEEDMASK    0x3
+#define NICE_LOOPBACK_TEST_10MBPS       0x1
+#define NICE_LOOPBACK_TEST_100MBPS      0x2
+#define NICE_LOOPBACK_TEST_1000MBPS     0x3
+
 
 /*
  * command field
@@ -199,7 +241,7 @@ typedef enum {
     NICE_CMD_CFG_WRITE32           = 0x00000019,
     NICE_CMD_CFG_WRITE16           = 0x0000001a,
     NICE_CMD_CFG_WRITE8            = 0x0000001b,
-                                   
+
     NICE_CMD_REG_READ_DIRECT       = 0x0000001e,
     NICE_CMD_REG_WRITE_DIRECT      = 0x0000001f,
     NICE_CMD_RESET                 = 0x00000020,
@@ -207,8 +249,11 @@ typedef enum {
     NICE_CMD_KFREE_PHYS            = 0x00000022,
     NICE_CMD_GET_STATS_BLOCK       = 0x00000023,
     NICE_CMD_CLR_STATS_BLOCK       = 0x00000024,
+    NICE_CMD_LOOPBACK_TEST         = 0x00000025,
+    NICE_CMD_KMAP_PHYS    	   = 0x00000026,
+    NICE_CMD_KUNMAP_PHYS           = 0x00000027,
     NICE_CMD_MAX
-} nice_cmds;                           
+} nice_cmds;
 
-#endif  // _nicext_h_ 
+#endif  // _nicext_h_
 

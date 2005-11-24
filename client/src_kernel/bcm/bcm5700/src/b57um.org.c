@@ -12,8 +12,8 @@
 
 
 char bcm5700_driver[] = "bcm5700";
-char bcm5700_version[] = "8.2.18";
-char bcm5700_date[] = "(08/01/05)";
+char bcm5700_version[] = "8.2.12";
+char bcm5700_date[] = "(07/19/05)";
 
 #define B57UM
 #include "mm.h"
@@ -478,7 +478,7 @@ static int tigon3_debug = 0;
 #endif
 
 
-int bcm5700_open(struct net_device *dev);
+STATIC int bcm5700_open(struct net_device *dev);
 STATIC void bcm5700_timer(unsigned long data);
 STATIC void bcm5700_stats_timer(unsigned long data);
 STATIC void bcm5700_reset(struct net_device *dev);
@@ -642,6 +642,8 @@ typedef enum {
 	NC320T,
 	NC320I,
 	NC325I,
+	NC324I,
+	NC326I,
 	BCM5704CIOBE,
 	BCM5704,
 	BCM5704S,
@@ -665,8 +667,12 @@ typedef enum {
 	BCM5781,
 	BCM5752,
 	BCM5752M,
+	BCM5714,
+	BCM5714S,
 	BCM5780,
 	BCM5780S,
+	BCM5715,
+	BCM5715S
 } board_t;
 
 
@@ -719,6 +725,8 @@ static struct {
 	{ "HP ProLiant NC 320T PCI Express Gigabit Server Adapter" },
 	{ "HP ProLiant NC 320i PCI Express Gigabit Server Adapter" },
 	{ "HP NC325i Integrated Dual Port PCI Express Gigabit Server Adapter" },
+	{ "HP NC324i Integrated Dual Port PCI Express Gigabit Server Adapter" },
+	{ "HP NC326i Integrated Dual Port PCI Express Gigabit Server Adapter" },
 	{ "Broadcom BCM5704 CIOB-E 1000Base-T" },
 	{ "Broadcom BCM5704 1000Base-T" },
 	{ "Broadcom BCM5704 1000Base-SX" },
@@ -742,8 +750,12 @@ static struct {
 	{ "Broadcom BCM5781 NetLink 1000Base-T PCI Express" },
 	{ "Broadcom BCM5752 1000Base-T PCI Express" },
 	{ "Broadcom BCM5752M 1000Base-T PCI Express" },
-	{ "Broadcom BCM5780 1000Base-T " },
-	{ "Broadcom BCM5780S 1000Base-SX " },
+	{ "Broadcom BCM5714 1000Base-T PCI Express" },
+	{ "Broadcom BCM5714S 1000Base-SX PCI Express" },
+	{ "Broadcom BCM5780 1000Base-T PCI Express" },
+	{ "Broadcom BCM5780S 1000Base-SX PCI Express" },
+	{ "Broadcom BCM5715 1000Base-T PCI Express" },
+	{ "Broadcom BCM5715S 1000Base-SX PCI Express" },
 	{ 0 }
 	};
 
@@ -838,6 +850,10 @@ static struct pci_device_id bcm5700_pci_tbl[] __devinitdata = {
 	{0x14e4, 0x1659, 0x103c, 0x7032, 0, 0, NC320T },
 	{0x14e4, 0x166a, 0x103c, 0x7035, 0, 0, NC325I },
 	{0x14e4, 0x166b, 0x103c, 0x7036, 0, 0, NC325I },
+	{0x14e4, 0x1668, 0x103c, 0x7039, 0, 0, NC324I },
+	{0x14e4, 0x1669, 0x103c, 0x703a, 0, 0, NC324I },
+	{0x14e4, 0x1678, 0x103c, 0x703e, 0, 0, NC326I },
+	{0x14e4, 0x1679, 0x103c, 0x703c, 0, 0, NC326I },
 	{0x14e4, 0x1659, PCI_ANY_ID, PCI_ANY_ID, 0, 0, BCM5721 },
 	{0x14e4, 0x16f7, PCI_ANY_ID, PCI_ANY_ID, 0, 0, BCM5753 },
 	{0x14e4, 0x16fd, PCI_ANY_ID, PCI_ANY_ID, 0, 0, BCM5753M },
@@ -845,8 +861,12 @@ static struct pci_device_id bcm5700_pci_tbl[] __devinitdata = {
 	{0x14e4, 0x16dd, PCI_ANY_ID, PCI_ANY_ID, 0, 0, BCM5781 },
 	{0x14e4, 0x1600, PCI_ANY_ID, PCI_ANY_ID, 0, 0, BCM5752 },
 	{0x14e4, 0x1601, PCI_ANY_ID, PCI_ANY_ID, 0, 0, BCM5752M },
+	{0x14e4, 0x1668, PCI_ANY_ID, PCI_ANY_ID, 0, 0, BCM5714 },
+	{0x14e4, 0x1669, PCI_ANY_ID, PCI_ANY_ID, 0, 0, BCM5714S },
 	{0x14e4, 0x166a, PCI_ANY_ID, PCI_ANY_ID, 0, 0, BCM5780 },
 	{0x14e4, 0x166b, PCI_ANY_ID, PCI_ANY_ID, 0, 0, BCM5780S },
+	{0x14e4, 0x1678, PCI_ANY_ID, PCI_ANY_ID, 0, 0, BCM5715 },
+	{0x14e4, 0x1679, PCI_ANY_ID, PCI_ANY_ID, 0, 0, BCM5715S },
 	{0,}
 	};
 
@@ -856,28 +876,22 @@ MODULE_DEVICE_TABLE(pci, bcm5700_pci_tbl);
 extern int bcm5700_proc_create(void);
 extern int bcm5700_proc_create_dev(struct net_device *dev);
 extern int bcm5700_proc_remove_dev(struct net_device *dev);
-extern int bcm5700_proc_remove_notifier(void);
-#endif
 
-#if (LINUX_VERSION_CODE >= 0x2060a)
+static int bcm5700_netdev_event(struct notifier_block * this, unsigned long event, void * ptr)
+{
+	struct net_device * event_dev = (struct net_device *)ptr;
 
-	static struct pci_device_id pci_ICHtable[] = {
-		{ PCI_DEVICE(PCI_VENDOR_ID_INTEL,
-			PCI_DEVICE_ID_INTEL_82801AA_8) },
-		{ PCI_DEVICE(PCI_VENDOR_ID_INTEL,
-			PCI_DEVICE_ID_INTEL_82801AB_8) },
-		{ PCI_DEVICE(PCI_VENDOR_ID_INTEL,
-			PCI_DEVICE_ID_INTEL_82801BA_6) },
-		{ PCI_DEVICE(PCI_VENDOR_ID_INTEL,
-			PCI_DEVICE_ID_INTEL_82801BA_11) },
-		{ }
-	};
+	if (event == NETDEV_CHANGENAME) {
+		bcm5700_proc_remove_dev(event_dev);
+		bcm5700_proc_create_dev(event_dev);
+	}
 
-	static struct pci_device_id pci_AMD762id[]={
-		{ PCI_DEVICE(PCI_VENDOR_ID_AMD,
-			PCI_DEVICE_ID_AMD_FE_GATE_700C) },
-		{ }
-	};
+	return NOTIFY_DONE;
+}
+
+static struct notifier_block bcm5700_netdev_notifier = {
+	.notifier_call = bcm5700_netdev_event
+};
 #endif
 
 static int __devinit bcm5700_init_board(struct pci_dev *pdev,
@@ -962,6 +976,24 @@ static int __devinit bcm5700_init_board(struct pci_dev *pdev,
 #endif
 
 #if (LINUX_VERSION_CODE >= 0x2060a)
+
+	static struct pci_device_id pci_ICHtable[] = {
+		{ PCI_DEVICE(PCI_VENDOR_ID_INTEL,
+			PCI_DEVICE_ID_INTEL_82801AA_8) },
+		{ PCI_DEVICE(PCI_VENDOR_ID_INTEL,
+			PCI_DEVICE_ID_INTEL_82801AB_8) },
+		{ PCI_DEVICE(PCI_VENDOR_ID_INTEL,
+			PCI_DEVICE_ID_INTEL_82801BA_6) },
+		{ PCI_DEVICE(PCI_VENDOR_ID_INTEL,
+			PCI_DEVICE_ID_INTEL_82801BA_11) },
+		{ }
+	};
+
+	static struct pci_device_id pci_AMD762id[]={
+		{ PCI_DEVICE(PCI_VENDOR_ID_AMD,
+			PCI_DEVICE_ID_AMD_FE_GATE_700C) },
+		{ }
+	};
 
 	if(pci_dev_present(pci_ICHtable)){
 		pDevice->Flags |= UNDI_FIX_FLAG;
@@ -1339,7 +1371,7 @@ bcm5700_remove_one (struct pci_dev *pdev)
 
 int b57_test_intr(UM_DEVICE_BLOCK *pUmDevice);
 
-int
+STATIC int
 bcm5700_open(struct net_device *dev)
 {
 	PUM_DEVICE_BLOCK pUmDevice = (PUM_DEVICE_BLOCK)dev->priv;
@@ -1927,7 +1959,7 @@ bcm5700_start_xmit(struct sk_buff *skb, struct net_device *dev)
 	vlan_tag_t *vlan_tag;
 #endif
 #ifdef BCM_TSO
-	LM_UINT32 mss = 0 ;
+	LM_UINT32 mss;
 	uint16_t ip_tcp_len, tcp_opt_len, tcp_seg_flags;
 #endif
 
@@ -2018,15 +2050,6 @@ bcm5700_start_xmit(struct sk_buff *skb, struct net_device *dev)
 	if ((mss = (LM_UINT32) skb_shinfo(skb)->tso_size) &&
 		(skb->len > pDevice->TxMtu)) {
 
-#if (LINUX_VERSION_CODE >= 0x02060c)
-
-		if (skb_header_cloned(skb) && 
-			pskb_expand_head(skb, 0, 0, GFP_ATOMIC)) {
-
-			dev_kfree_skb(skb);
-			return 0;
-		}			
-#endif
 		pUmDevice->tso_pkt_count++;
 
 		pPacket->Flags |= SND_BD_FLAG_CPU_PRE_DMA |
@@ -2078,8 +2101,6 @@ bcm5700_start_xmit(struct sk_buff *skb, struct net_device *dev)
 	netif_wake_queue(dev);
 #endif
 	dev->trans_start = jiffies;
-
-
 	return 0;
 }
 
@@ -2403,7 +2424,7 @@ bcm5700_freemem(struct net_device *dev)
 
 	for (i = 0; i < pUmDevice->mem_list_num; i++) {
 		if (pUmDevice->mem_size_list[i] == 0) {
-			kfree(pUmDevice->mem_list[i]);
+			vfree(pUmDevice->mem_list[i]);
 		}
 		else {
 			pci_free_consistent(pUmDevice->pdev,
@@ -4332,6 +4353,10 @@ bcm5700_probe(struct net_device *dev)
 #ifdef MODULE
 int init_module(void)
 {
+#ifdef BCM_PROC_FS
+	register_netdevice_notifier(&bcm5700_netdev_notifier);
+#endif
+
 	return bcm5700_probe(NULL);
 }
 
@@ -4341,8 +4366,9 @@ void cleanup_module(void)
 	PUM_DEVICE_BLOCK pUmDevice;
 
 #ifdef BCM_PROC_FS
-	bcm5700_proc_remove_notifier();
+	unregister_netdevice_notifier(&bcm5700_netdev_notifier);
 #endif
+
 	/* No need to check MOD_IN_USE, as sys_delete_module() checks. */
 	while (root_tigon3_dev) {
 		pUmDevice = (PUM_DEVICE_BLOCK)root_tigon3_dev->priv;
@@ -4436,6 +4462,9 @@ static struct pci_driver bcm5700_pci_driver = {
 
 static int __init bcm5700_init_module (void)
 {
+#ifdef BCM_PROC_FS
+	register_netdevice_notifier(&bcm5700_netdev_notifier);
+#endif
 	return pci_module_init(&bcm5700_pci_driver);
 }
 
@@ -4443,7 +4472,7 @@ static int __init bcm5700_init_module (void)
 static void __exit bcm5700_cleanup_module (void)
 {
 #ifdef BCM_PROC_FS
-	bcm5700_proc_remove_notifier();
+	unregister_netdevice_notifier(&bcm5700_netdev_notifier);
 #endif
 	pci_unregister_driver(&bcm5700_pci_driver);
 }
@@ -4553,7 +4582,7 @@ MM_AllocateMemory(PLM_DEVICE_BLOCK pDevice, LM_UINT32 BlockSize,
 		goto MM_Alloc_error;
 	}
 
-	pvirt = kmalloc(BlockSize,GFP_ATOMIC);
+	pvirt = vmalloc(BlockSize);
 	if (!pvirt) {
 		goto MM_Alloc_error;
 	}
@@ -4561,7 +4590,7 @@ MM_AllocateMemory(PLM_DEVICE_BLOCK pDevice, LM_UINT32 BlockSize,
 	pUmDevice->dma_list[pUmDevice->mem_list_num] = 0;
 	pUmDevice->mem_size_list[pUmDevice->mem_list_num++] = 0;
 	/* mem_size_list[i] == 0 indicates that the memory should be freed */
-	/* using kfree */
+	/* using vfree */
 	memset(pvirt, 0, BlockSize);
 	*pMemoryBlockVirt = pvirt;
 	return LM_STATUS_SUCCESS;

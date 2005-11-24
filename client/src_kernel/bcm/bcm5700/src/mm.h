@@ -1,6 +1,6 @@
 /******************************************************************************/
 /*                                                                            */
-/* Broadcom BCM5700 Linux Network Driver, Copyright (c) 2000 - 2003 Broadcom  */
+/* Broadcom BCM5700 Linux Network Driver, Copyright (c) 2000 - 2004 Broadcom  */
 /* Corporation.                                                               */
 /* All rights reserved.                                                       */
 /*                                                                            */
@@ -18,19 +18,32 @@
 #define __SMP__
 #endif
 #if defined(CONFIG_MODVERSIONS) && defined(MODULE) && ! defined(MODVERSIONS)
+#ifndef BCM_SMALL_DRV
 #define MODVERSIONS
+#endif
 #endif
 
 #ifndef B57UM
 #define __NO_VERSION__
 #endif
 #include <linux/version.h>
+
 #ifdef MODULE
+
 #if defined(MODVERSIONS) && (LINUX_VERSION_CODE < 0x020500)
+#ifndef BCM_SMALL_DRV
 #include <linux/modversions.h>
 #endif
+#endif
+
+#if (LINUX_VERSION_CODE < 0x020605)
 #include <linux/module.h>
 #else
+#include <linux/moduleparam.h>
+#endif
+
+#else
+
 #define MOD_INC_USE_COUNT
 #define MOD_DEC_USE_COUNT
 #define SET_MODULE_OWNER(dev)
@@ -110,8 +123,6 @@ struct ethtool_eeprom {
 #define BCM_WOL 1
 #define BCM_TASKLET 1
 
-#define INCLUDE_5750_A0_FIX 1
-
 #if HAVE_NETIF_RECEIVE_SKB
 #define BCM_NAPI_RXPOLL 1
 #undef BCM_TASKLET
@@ -161,9 +172,16 @@ typedef atomic_t MM_ATOMIC_T;
 #define MM_ATOMIC_DEC(ptr) atomic_dec(ptr)
 #define MM_ATOMIC_SUB(ptr, val) atomic_sub(val, ptr)
 
+
+#ifndef mmiowb
+#define mmiowb()
+#endif
+
+
 #define MM_MB() mb()
 #define MM_WMB() wmb()
 #define MM_RMB() rmb()
+#define MM_MMIOWB() mmiowb()
 
 #include "lm.h"
 #include "queue.h"
@@ -316,12 +334,12 @@ typedef struct _UM_DEVICE_BLOCK {
 	int delayed_link_ind; /* Delay link status during initial load */
 	int adapter_just_inited; /* the first few seconds after init. */
 	int timer_interval;
+	int statstimer_interval;
 	int adaptive_expiry;
 	int crc_counter_expiry;
 	int poll_tbi_interval;
 	int poll_tbi_expiry;
 	int asf_heartbeat;
-	int stats_interval;
 	int tx_full;
 	int tx_queued;
 	int line_speed;		/* in Mbps, 0 if link is down */
@@ -332,6 +350,7 @@ typedef struct _UM_DEVICE_BLOCK {
 	int rx_buf_repl_isr_limit;
 	int rx_buf_align;
 	struct timer_list timer;
+	struct timer_list statstimer;
 	int do_global_lock;
 	spinlock_t global_lock;
 	spinlock_t undi_lock;
@@ -553,6 +572,18 @@ static inline void MM_MapTxDma(PLM_DEVICE_BLOCK pDevice,
 #define MM_GETSTATS(_Ctr) (unsigned long) MM_GETSTATS64(_Ctr)
 #else
 #define MM_GETSTATS(_Ctr) (unsigned long) MM_GETSTATS32(_Ctr)
+#endif
+
+#if (LINUX_VERSION_CODE >= 0x020600)
+#define mm_copy_to_user( to, from, size ) \
+	(in_atomic() ? (memcpy((to),(from),(size)), 0) : copy_to_user((to),(from),(size)))
+#define mm_copy_from_user( to, from, size ) \
+	(in_atomic() ? (memcpy((to),(from),(size)), 0) : copy_from_user((to),(from),(size)))
+#else
+#define mm_copy_to_user( to, from, size )	\
+		copy_to_user((to),(from),(size) )
+#define mm_copy_from_user( to, from, size )	\
+		copy_from_user((to),(from),(size))
 #endif
 
 
