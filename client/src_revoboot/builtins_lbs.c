@@ -258,21 +258,32 @@ drive_info (unsigned char *buffer)
   unsigned int type, entry;
   unsigned char *buf = (char *) SCRATCHADDR;
   unsigned char disk[] = "(hdX)";
-
-  for (i = '0'; i <= '9'; i++)
+  unsigned char bnum = *(unsigned char *)0x0475;
+  
+  grub_printf("BIOS drives number: %d\n", bnum);
+  if (bnum == 0 || bnum > 32) bnum = 8;		/* for buggy bios */
+  for (i = '0'; i <= '0'+bnum-1; i++)
     {
-
       disk[3] = i;
 
       set_device (disk);
+      grub_memset(&geom, 0, sizeof(geom));
       err = get_diskinfo (current_drive, &geom);
-      //      printf("err=%d\n", err);
       if (err)
 	continue;
+      /* verify that the disk is readable */
+      
+      if (biosdisk (BIOSDISK_READ, current_drive, &geom, 0, 1, SCRATCHADDR))
+	{                                                       
+	  /* 	 grub_printf ("Error reading the 1st sector on disk %d\n", 
+		 current_drive);   */
+	  continue;                                                               
+	} 
 
       grub_sprintf (buffer, "D:%s:CHS(%d,%d,%d)=%d\n", disk, geom.cylinders,
 		    geom.heads, geom.sectors, geom.total_sectors);
       grub_printf ("%s: %d MB\n", disk, geom.total_sectors / 2048);
+      
       while (*buffer)
 	buffer++;
 
@@ -280,12 +291,13 @@ drive_info (unsigned char *buffer)
       type = 0;
       len = geom.total_sectors;
       partition = 0xFFFFFF;
+      errnum = 0;
 
       while (next_partition
 	     (current_drive, 0xFFFFFF, &partition, &type, &start, &len,
 	      &offset, &entry, &ext_offset, buf))
 	{
-	  if ((type) && ((type != 5) && (type != 0xf) && (type != 0x85)))
+	  if (((type) && (type != 5) && (type != 0xf) && (type != 0x85)))
 	    {
 	      grub_sprintf (buffer, "P:%d,t:%x,s:%d,l:%d\n",
 			    (partition >> 16), type, start, len);
@@ -1250,4 +1262,73 @@ translate_keycode (int c)
     }
   
   return ASCII_CHAR (c);
+}
+
+int
+identify_func (char *arg, int flags)
+{
+  unsigned char buffer[52];
+  int i;
+
+  buffer[0] = 0xAD;
+  buffer[1] = 'I';
+  buffer[2] = 'D';
+  for (i = 3; i < 52; i++)
+    buffer[i] = 0;
+
+  get_cmdline ("CLIENT NAME : ", buffer + 03, 40, 0, 1);
+  i = 3;
+  while (buffer[i]) {
+    if (buffer[i] == ' ') buffer[i] = '_';
+    i++;
+  }
+  buffer[i] = ':';
+  i++;
+  get_cmdline ("PASSWORD    : ", buffer + i, 10, '*', 1);
+  while (buffer[i])
+    i++;
+
+  udp_init ();
+  udp_send_withmac (buffer, i + 1, 1001, 1001);
+  udp_close ();
+
+  init_bios_info();
+
+  return 0;
+}
+
+int
+identifyauto_func (char *arg, int flags)
+{
+  unsigned char buffer[] = " ID+:+\0";
+  buffer[0] = 0xAD;
+
+  udp_init ();
+  udp_send_withmac (buffer, 7, 1001, 1001);
+  udp_close ();
+  return 0;
+}
+
+
+/* azerty keymap switching */
+int
+kbdfr_func (char *arg, int flags)
+{
+  
+#include "frkbd.h"
+
+  int i;
+  unsigned char *ptr = ascii_key_map;
+  for(i=0;i<256;i++)
+    { 
+      if (i!=keyremap[i])
+	{
+	  *ptr++=i;
+	  *ptr++=keyremap[i];
+	}
+    }
+  *ptr++=0;
+  *ptr++=0;
+
+  return 0;
 }

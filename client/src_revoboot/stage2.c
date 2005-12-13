@@ -417,6 +417,14 @@ restart:
 	      gotoxy (74, 4 + entryno);
 	    }
 
+	  if (c == 'r')
+	    {
+	      /* reload the menu */
+	      printf ("\n");
+	      init_bios_info();
+	      /* should never return */
+	    }
+
 	  /* We told them above (at least in SUPPORT_SERIAL) to use
 	     '^' or 'v' so accept these keys.  */
 	  if (c == 16 || c == '^')
@@ -757,23 +765,6 @@ cmain (void)
   /* Initialize the kill buffer.  */
   *kill_buf = 0;
 
-#ifdef FRKBD
-  if (1)
-  {
-#include "frkbd.h"
-    int i;
-    char *ptr=ascii_key_map;
-    for(i=0;i<256;i++)
-      { 
-	   if (i!=keyremap[i]){
-	     *ptr++=i;
-	     *ptr++=keyremap[i];}
-      }
-    *ptr++=0;
-    *ptr++=0;
-  }
-#endif
-
   /* Never return.  */
   for (;;)
     {
@@ -813,7 +804,6 @@ cmain (void)
 	      if (! builtin)
 		/* Unknown command. Just skip now.  */
 		continue;
-
 	      if (builtin->flags & BUILTIN_DESC)
 	      {
 	       char *ptr;

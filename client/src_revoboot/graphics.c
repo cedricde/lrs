@@ -274,6 +274,9 @@ int read_image(char *s)
     char buf[32], pal[16];
     unsigned char c, base, mask, *s1, *s2, *s4, *s8;
     unsigned i, len, idx, colors, x, y, width, height;
+    unsigned char *mem = (unsigned char*)VIDEOMEM;
+
+    graphics_setxy(0,29);
 
     if (!grub_open(s))
         return 0;
@@ -392,7 +395,10 @@ int read_image(char *s)
 
             if (++x >= 640) {
                 x = 0;
-
+		if (y % 6 == 0) { 
+		  *mem++ = 0x55;
+		  *(mem+79) = 0x55; /* progress bar */
+		}
                 if (y < 480)
                     len += 80;
                 ++y;

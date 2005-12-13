@@ -280,7 +280,7 @@ load_image (char *kernel, char *arg, kernel_t suggested_type,
 	errnum = ERR_WONT_FIT;
       else
 	{
-	  grub_printf ("   [Linux-%s, setup=0x%x, size=0x%x]\n",
+	  grub_printf ("   [Linux-%s, setup=0x%x, size=%d]\n",
 		       (big_linux ? "bzImage" : "zImage"), data_len, text_len);
 
 	  /* Video mode selection support. What a mess!  */

@@ -178,8 +178,10 @@ get_pxe_entry (void)
       ptr = (unsigned char *) (pxe_pointer_segment << 4) + pxe_pointer_offset;
       PXEEntry =
 	(unsigned char *) (pxe_int1a_segment << 4) + pxe_int1a_offset;
+#ifdef DEBUG
       if (ptr != PXEEntry)
 	printf ("Warning : ES:BS != Int1A -> trying Int1A\n");
+#endif
       if ((*(unsigned long *) PXEEntry != PXENV_ID) ||
 	  (*(unsigned short *) (PXEEntry + 4) != PXENV_ID2))
 	{
@@ -204,13 +206,16 @@ get_pxe_entry (void)
 		  (unsigned char *) pxe_emulation -
 		  (unsigned char *) pxe_call;
 		depl -= 2;
+#ifdef DEBUG
 		printf ("Jmp Depl : %d\n", depl);
+#endif
 		ptr = (unsigned char *) pxe_call;
 		*(unsigned char *) ptr = 0xEB;
 		*(unsigned char *) (ptr + 1) = depl;
-
+#ifdef DEBUG
 		printf ("MAGIC: %x\n", *(unsigned long *) (PXEEntry + 1500));
 		printf ("NIC @: %x\n", *(unsigned long *) (PXEEntry + 1504));
+#endif
 		nic = (struct nic *) *(unsigned long *) (PXEEntry + 1504);
 		return;
 	      }

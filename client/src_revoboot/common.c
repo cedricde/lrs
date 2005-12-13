@@ -354,7 +354,6 @@ init_bios_info (void)
   *(buffer-1)='\n';
   grub_sprintf(buffer,"F:%d\n",cpuspeed()); while (*buffer) buffer++;
 
-  grub_printf("\nPartitions:\n");
   drive_info(buffer);
 
   /* smbios infos */

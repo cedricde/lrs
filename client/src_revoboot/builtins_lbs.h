@@ -17,6 +17,9 @@ int nosecurity_func (char *arg, int flags);
 int partcopy_func (char *arg, int flags);
 int ptabs_func (char *arg, int flags);
 int test_func (char *arg, int flags);
+int identify_func (char *arg, int flags);
+int identifyauto_func (char *arg, int flags);
+int kbdfr_func (char *arg, int flags);
 
 /* variables */
 
@@ -71,6 +74,36 @@ static struct builtin builtin_ptabs = {
 #ifdef HELP_ON
   "ptabs DISK FILE",
   "Copy uncompressed sectors from FILE (LBA,DATA) to disk DISK."
+#endif
+};
+
+static struct builtin builtin_identify = {
+  "identify",
+  identify_func,
+  BUILTIN_CMDLINE,
+#ifdef HELP_ON
+  "identify",
+  "Ask for Name/ID and send UDP packet to server."
+#endif
+};
+
+static struct builtin builtin_identifyauto = {
+  "identifyauto",
+  identifyauto_func,
+  BUILTIN_CMDLINE,
+#ifdef HELP_ON
+  "identifyauto",
+  "Send an ID packet to the server with Name/ID=+/+"
+#endif
+};
+
+static struct builtin builtin_kbdfr = {
+  "kbdfr",
+  kbdfr_func,
+  BUILTIN_CMDLINE | BUILTIN_MENU,
+#ifdef HELP_ON
+  "kbdfr",
+  "azerty keymap"
 #endif
 };
 

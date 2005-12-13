@@ -1615,70 +1615,6 @@ static struct builtin builtin_pciscan = {
 #endif
 };
 
-static int
-identify_func (char *arg, int flags)
-{
-  unsigned char buffer[52];
-  int i;
-
-  buffer[0] = 0xAD;
-  buffer[1] = 'I';
-  buffer[2] = 'D';
-  for (i = 3; i < 52; i++)
-    buffer[i] = 0;
-
-  get_cmdline ("MACHINE NAME : ", buffer + 03, 40, 0, 1);
-  i = 3;
-  while (buffer[i]) {
-    if (buffer[i] == ' ') buffer[i] = '_';
-    i++;
-  }
-  buffer[i] = ':';
-  i++;
-  get_cmdline ("PASSWORD     : ", buffer + i, 10, '*', 1);
-  while (buffer[i])
-    i++;
-
-  udp_init ();
-  udp_send_withmac (buffer, i + 1, 1001, 1001);
-  udp_close ();
-
-  return 0;
-}
-
-static int
-identifyauto_func (char *arg, int flags)
-{
-  unsigned char buffer[] = " ID+:+\0";
-  buffer[0] = 0xAD;
-
-  udp_init ();
-  udp_send_withmac (buffer, 7, 1001, 1001);
-  udp_close ();
-  return 0;
-}
-
-static struct builtin builtin_identify = {
-  "identify",
-  identify_func,
-  BUILTIN_CMDLINE,
-#ifdef HELP_ON
-  "identify",
-  "Ask for Name/ID and send UDP packet to server."
-#endif
-};
-
-static struct builtin builtin_identifyauto = {
-  "identifyauto",
-  identifyauto_func,
-  BUILTIN_CMDLINE,
-#ifdef HELP_ON
-  "identifyauto",
-  "Send an ID packet to the server with Name/ID=+/+"
-#endif
-};
-
-
 #ifdef SUPPORT_NETBOOT
 /* rarp */
 static int
@@ -2485,6 +2421,7 @@ struct builtin *builtin_table[] = {
   &builtin_inc,
   &builtin_initrd,
 //  &builtin_install,
+  &builtin_kbdfr,
   &builtin_kernel,
   &builtin_makeactive,
   &builtin_map,

@@ -49,7 +49,6 @@ biosdisk (int read, int drive, struct geometry *geometry,
 	  int sector, int nsec, int segment)
 {
   int err;
-  
   if (geometry->flags & BIOSDISK_FLAG_LBA_EXTENSION)
     {
       struct disk_address_packet
@@ -177,6 +176,7 @@ get_diskinfo (int drive, struct geometry *geometry)
 	     This is why we specify the exactly necessary size of 0x42 
 	     bytes. */
 	  drp.size = sizeof (drp) - sizeof (drp.dummy);
+
 	  
 	  err = get_diskinfo_int13_extensions (drive, &drp);
 
