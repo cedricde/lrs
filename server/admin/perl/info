@@ -285,3 +285,7 @@ pci($ARGV[0]);
 disk($ARGV[0]);
 hdmap($ARGV[0]);
 
+# update the database if LRS Inventory is installed
+if (-x "/usr/share/webmin/lrs-inventory/classes/Drivers/Ini/UpdateIni.php") {
+    system("/usr/share/webmin/lrs-inventory/classes/Drivers/Ini/UpdateIni.php ".$ARGV[1]." >/dev/null");
+}
