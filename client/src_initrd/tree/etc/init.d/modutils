@@ -21,8 +21,8 @@ do
 		\#*|"") continue ;;
 	esac
 		
-	echo -n "$module $args - "
-	insmod -s /lib/modules/"$module".ko $args >/dev/null 2>&1
+	echo -n " - $module $args"
+	insmod -s /lib/modules/"$module".ko $args >/dev/null 2>&1 || echo -n "*"
 done
 echo
 
