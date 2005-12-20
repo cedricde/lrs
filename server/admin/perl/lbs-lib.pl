@@ -1460,14 +1460,19 @@ initrd (nd)$home/bin/initrd.gz
 	  }
 	}
 
+
+
 	$one = addEmptyLine($one) ;
 
 	# adding of other linux boot options:
 	if ($eth ne "0" && $eth ne "") {
-	  $one =~ s/(kernel \(nd\).*revosavedir.*)/$1 revoeth$eth/;
+	  $one =~ s/(kernel \(nd\).* revo.*)/$1 revoeth$eth/;
+	} else {
+	  # send the mac address on the command line to improve nic configuration
+	  $one =~ s/(kernel \(nd\).* revo.*)/$1 revomac=$mac/;
 	}
 	if ($kernelopts ne "") {
-	  $one =~ s/(kernel \(nd\).*revosavedir.*)/$1 $kernelopts/;
+	  $one =~ s/(kernel \(nd\).* revo.*)/$1 $kernelopts/;
 	}
 		
 	$bootmenu .= $one ;
