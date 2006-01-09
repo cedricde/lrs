@@ -335,7 +335,8 @@ int get_nextpart(struct part *part)
 int save(void)
 {
     unsigned char device[512], majorn[256];
-    int i=0, s=0, magic, backuped, idx;
+    int i=0, magic, backuped, idx;
+    unsigned int s=0;
     int fi, major, minor, dontsave, fmajor=0;
     FILE *fo;			/* /conf.tmp */
     FILE *fC;			/* /CONF */
@@ -457,6 +458,9 @@ int save(void)
 	/* new start of disk */
 	if (dontsave) 
 	  {
+	    FILE *fsize;
+	    char fsizename[64];
+
 	    dnum = gethdbios(s);
 	    DEBUG (printf("BIOSNUM %d\n", dnum));
 	    /* open the whole major device to save partitions later */
@@ -466,6 +470,12 @@ int save(void)
 	    /* save recovery info for CDs */
 	    fprintf(fC, "D:%d L:%u\n", dnum, s);
 	    fprintf(fC, "R\n");
+
+	    /* save disk size for later */
+	    sprintf(fsizename, "/revosave/size%02x%02x.txt", major, minor);
+	    fsize = fopen(fsizename, "w");
+	    fprintf(fsize, "%u", s/2);
+	    fclose(fsize);
 
 	    /* save recovery info for grub */
 	    fprintf(fo,
@@ -735,7 +745,7 @@ void saveimage(void)
        printf("\n"); */
 
     fo = fopen("/revosave/conf.tmp", "w");
-    fprintf(fo, "title COPY %s\n", hostname);
+    fprintf(fo, "title IMAGE %s\n", hostname);
     fprintf(fo, "desc (%s)\n", date);
     fclose(fo);
 
