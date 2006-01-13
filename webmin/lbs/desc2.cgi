@@ -52,18 +52,21 @@ my $mac = $in{'mac'} ;
 my $redir_flag = $in{'redir_flag'}; $redir_flag="" unless $redir_flag;
 
 if ( $ENV{'HTTP_REFERER'} =~ "/move.cgi" or $redir_flag eq "move" ) {
-    $redir_flag = "move";
-    $redir = "move.cgi?mac=$mac&form=move";
+	$redir_flag = "move";
+	$redir = "move.cgi?mac=$mac&form=move&group=$in{'group'}&profile=$in{'profile'}";
+} elsif ( $ENV{'HTTP_REFERER'} =~ "/bootmenu.cgi" or $redir_flag eq "boot" ) {
+	$redir_flag = "boot";
+    	$redir = "bootmenu.cgi?mac=$mac&group=$in{'group'}&profile=$in{'profile'}";
 } else {
-    $redir_flag = "imgbase";
-    $redir = "imgbase.cgi";
+	$redir_flag = "imgbase";
+	$redir = "imgbase.cgi";
 }
 
 if (not exists $in{'conf'}) {
 	error($text{'err_invalcgi_nomenu'}) ;
 }
 
-$in{'conf'} =~ s/^[\.\/]+//;
+$in{'conf'} =~ s/^\.[\.]+//g;
 $hdrname = $lbs_home . "/" . $in{'conf'} . "/conf.txt" ;
 my $data;	
 fileLoad($hdrname, \$data) or error( lbsGetError() ) ;

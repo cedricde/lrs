@@ -68,7 +68,7 @@ elsif (exists $in{'group'}) {
 
 	foreach my $k (etherGetMacs(\%einfo)) {
 	    my $n = $einfo{$k}[1];
-	    if ( $n =~ m|([^:]*):?([^:]+)/([^/]+)$| ) {
+	    if ( $n =~ m|([^:]*:)?/?([^:]+)/([^/]+)$| ) {
 		# group found
 		if (index ($2,$in{'group'}) != 0) { next; }
 		if (exists $in{'profile'} && index ($1,$in{'profile'}) != 0) { next; }
@@ -80,7 +80,7 @@ elsif (exists $in{'group'}) {
 } elsif (exists $in{'profile'}) {
 	my $macs = "";
 
-	foreach my $k (etherGetMacsFilterName(\%einfo, $in{'profile'})) {
+	foreach my $k (etherGetMacsFilterName(\%einfo, $in{'profile'}.":")) {
 	    my $n = $einfo{$k}[1];
 	    if ( $n =~ m|^([^:]+):| ) {
 		# group found

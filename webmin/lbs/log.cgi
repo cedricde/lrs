@@ -23,19 +23,24 @@
 
 # stay strict
 use strict;
-use DB_File;;
+use DB_File;
 use Fcntl;
 # get some common functions ...
 require 'lbs.pl';
+require '../lbs_common/lbs_common_priv.pl';
 
 # ... and vars
 ReadParse();
 use vars qw (%in %text $root_directory %gconfig $VERSION $LRS_HERE @LRS_MODULES %config %lbsconf $lbs_home $current_lang);
 
+cookie_send_group(%in);
+
 lbs_common::init_lbs_conf() or exit(0) ;
 $lbs_home = $lbs_common::lbsconf{'basedir'};
-# entete
+
 lbs_common::print_header( $text{'tit_index'}, "index", $VERSION);
+
+cookie_get_group(\%in);
 
 if (!defined $in{mac}) {
 
@@ -53,11 +58,19 @@ if (!defined $in{mac}) {
   push @bodyfunctions, \&details_butt;
 
   lbs_common::print_machines_list(
-                                        {
-                                        },
-                                        \@labelfunctions,
-                                        \@bodyfunctions
+				  {
+				  },
+				  \@labelfunctions,
+				  \@bodyfunctions,
+				  %in
                                 );
+
+} elsif (defined $in{postinst}) {
+  # log details
+  lbs_common::print_html_tabs(['system_backup', 'logs']);
+
+  &postlog($in{mac});
+
 } else {
   # log details
   lbs_common::print_html_tabs(['system_backup', 'logs']);
@@ -150,6 +163,18 @@ sub logfile2txt
       $log .= " ".$$l[0];
     }
   }
+
+  if ($log =~ /([0-9A-E:]+) postinstall started/) {
+    # add restoration progress info
+    my $name = $2;
+    my $mac = $1;
+    my $smac = lbs_common::mac_remove_columns($mac);
+    my $f = "$lbs_home/images/$smac/postinst.log";
+    if (-r $f) {
+      $log .= " <a href='log.cgi?mac=$mac&postinst=1'><img src='images/detail-small.gif'></a>";
+    }
+  }
+
   # cut long image names
   $log =~ s/\(Base-([0-9A-F]+)-/\(Base- $1-/;
 
@@ -234,7 +259,7 @@ sub details_butt
 }
 
 # more log details
-sub morelog
+sub morelog($)
 {
   my $smac = lbs_common::mac_remove_columns(shift);
 
@@ -242,15 +267,27 @@ sub morelog
   if (-f $file)
     {
       my $all = read_file_lines($file);
-      my $num = @$all;
+      #my $num = @$all;
 
       print "<h2>$text{lab_status}:</h2>";
       print "<pre>";
-      foreach my $l (@$all) {
+      foreach my $l (reverse(@$all)) {
 	print logfile2txt_date($l)."<br>";
       }
       print "</pre>";
 
     }
   
+}
+
+# postinstall log details
+sub postlog($)
+{
+  my $smac = lbs_common::mac_remove_columns(shift);
+
+  my $file = "$lbs_home/images/$smac/postinst.log";
+  my $all = read_file_lines($file);
+
+  print "<h2>$text{lab_status} : postinst.log</h2>";
+  print "<pre>".join("\n", @$all)."</pre>";
 }

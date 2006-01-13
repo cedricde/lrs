@@ -178,10 +178,19 @@ $title = html_escape($title) ;
 my $but_apply = $text{'but_apply'} ;
 my $but_cancel = $text{'but_cancel'} ;
 my $lab_title = $text{$label} ;
+my $more = "";
+
+if ($in{'group'} ne "") {
+	$more .= "<input type=hidden name=group value=\"$in{'group'}\">";
+}
+if ($in{'profile'} ne "") {
+	$more .= "<input type=hidden name=profile value=\"$in{'profile'}\">";
+}
 
 print <<EOF;
 <p>$mesg</p>
 <form action="$action">
+   $more
    <input type=hidden name=mac value="$mac">
    <input type=hidden name=conf value="$conf">
    <input type=hidden name=form value="title">
@@ -355,7 +364,7 @@ close LOG;
  
 }
 
-# void printBootMenuForm($mac, $default, \@items, \@titles, \@presel, \@desc, \@status)
+# void print_bootmenu_form($mac, $default, \@items, \@titles, \@presel, \@desc, \@status)
 # args:
 #   $mac: adresse MAC la machine
 #   $default: identitiant du menu par defaut.
@@ -377,6 +386,7 @@ my $schedpresel = $_[7] ? $_[7] : [];
 my $desc        = $_[8];
 my $status      = $_[9];
 my $schedstatus = $_[10];
+my $images	= $_[11];
 my $i;
 my $item;
 my $scheditem;
@@ -439,8 +449,8 @@ my %tabattr = (
 			$decor = 'style="text-decoration:none"';
 			$umenu = urlize($item);
 			
-			$$titles[$i] = "<a href=\"title.cgi?mac=$umac&obj=title&menu=$umenu\" $decor>" . html_escape( $$titles[$i] ) . "</a>";
-			$$desc[$i] = "<a href=\"desc.cgi?mac=$umac&obj=desc&menu=$umenu\" $decor>" . html_escape( $$desc[$i] ) . "</a>";
+			$$titles[$i] = "<a href=\"title2.cgi?mac=$umac&conf=$$images[$i]&redir_flag=boot\" $decor>" . html_escape( $$titles[$i] ) . "</a>";
+			$$desc[$i] = "<a href=\"desc2.cgi?mac=$umac&conf=$$images[$i]&redir_flag=boot\" $decor>" . html_escape( $$desc[$i] ) . "</a>";
 
                         # default choices for scheduled boot
 			$defaultchk = "";
@@ -636,10 +646,13 @@ my %tabattr = (
 		}
 
                 my $params = "";
+		my $impath;
                 if ($mac) {
                         $params="mac=$umac";
+			$impath="images/$smac";
                 } elsif ($group or $profile) {
                         $params="group=$group&profile=$profile";
+			$impath="imgbase";
                 }
                 
                 my $urlizedmenu = "";
@@ -649,8 +662,9 @@ my %tabattr = (
                 my $escapedtitles  = "";
                 $escapedtitles  = html_escape($$titles[$i]) if (defined$$titles[$i]);
 
-                $$desc[$i] = "<a href=\"desc.cgi?$params&obj=desc&menu=$urlizedmenu\" $decor>$escapeddesc</a>" ;
-                $$titles[$i] = "<a href=\"title.cgi?$params&obj=title&menu=$urlizedmenu\" $decor>$escapedtitles</a>" ;
+		# the rename in group may not work properly
+                $$desc[$i] = "<a href=\"desc2.cgi?$params&conf=$impath/$$dirs[$i]&redir_flag=move\" $decor>$escapeddesc</a>" ;
+                $$titles[$i] = "<a href=\"title2.cgi?$params&conf=$impath/$$dirs[$i]&redir_flag=move\" $decor>$escapedtitles</a>" ;
 
                 push @tolocal, "<center>"
                                ."<a href=\"move.cgi?$params&img=$uitem&op=h2l\">" 
@@ -937,7 +951,9 @@ sub read_subdirs_nolink {
  return grep { -d "$dirpath/$_" } @lsdir ;
 }
 
-
+#
+# not used anymore ?
+#
 sub print_bootoptions_form {
     my $mac     = $_[0];
     my $default = $_[1];

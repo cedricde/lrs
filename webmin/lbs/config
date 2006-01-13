@@ -1,12 +1,12 @@
 tc_iface=eth0
-tc_rate=100Mbit
-tc_limit=100Mbit
+tc_rate=1000Mbit
+tc_limit=1000Mbit
 
-restore_type=0
+restore_type=1
 mtftp_wait=5
 
 wake=/tftpboot/revoboot/bin/wake
 chemin_basedir=/tftpboot/revoboot
 
 grub_splashimage=
-warning_message=
+warning_message=Warning ! Your PC is being backed up or restored. Do not reboot !

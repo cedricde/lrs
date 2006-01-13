@@ -28,7 +28,7 @@ do "lbs.pl";
 
 lbs_common::init_lbs_conf() or exit(0) ;
 
-my ( @titles, @presel, @schedpresel, @desc, @menus, @schedmenus, @newmenus, @newschedmenus, @status, @schedstatus);
+my ( @titles, @presel, @schedpresel, @desc, @menus, @schedmenus, @newmenus, @newschedmenus, @status, @schedstatus, @images);
 my ( %einfo, %hdr, %schedhdr, %parm );
 my ( $macaddr, $profile, $group, $umac, $macfile, $name, $defaultmenu, $scheddefaultmenu, $mesg, $mode);
 
@@ -45,6 +45,7 @@ my %tabattr = (
 	'tr_header' => $tb,
 	'tr_body'   => $cb,
 );
+
 
 error( text( "err_dnf", $lbs_home ) )  if ( not -d $lbs_home );
 error( text( "err_fnf", $etherfile ) ) if ( not -f $etherfile );
@@ -321,6 +322,7 @@ my $mode = "";                                                  # describe how t
 
         $mode = "MONO"  if (($in{'mac'}) or ( $in{'name'}));
         $mode = "MULTI" if (($in{'group'}) or ( $in{'profile'}));
+	$mode = "SKEL" if ($in{'skel'});
         
 	# get the computer (One Computer Mode)
         if ($mode eq "MONO") {
@@ -340,7 +342,10 @@ my $mode = "";                                                  # describe how t
                 $cfgpath="$lbs_home/imgprofiles/$in{'profile'}/$in{'group'}";
                 $cfgfile = "$cfgpath/header.lst";
                 create_group_dir($cfgpath);
-        }
+        } elsif ($mode eq "SKEL") {
+                $cfgpath="$lbs_home/images/imgskel";
+                $cfgfile = "$cfgpath/header.lst";
+	}
 
         # load the needed header.lst
 	hdrLoad( $cfgfile, \%hdr ) or error( lbsGetError() );
@@ -362,6 +367,7 @@ my $mode = "";                                                  # describe how t
 	@schedstatus            = ();
 	$defaultmenu            = '';
 	$scheddefaultmenu       = '';
+	@images			= ();
 	foreach $i (@menus) {
                 # gather params for regular entries
 		if ( not hdrGetMenuInfo( \%hdr, $i, \%parm ) ) {
@@ -374,6 +380,16 @@ my $mode = "";                                                  # describe how t
                         push @presel, $i        if ( grep m/^y/i, $parm{'visu'} );
                         $defaultmenu = $i       if ( grep m/^y/i, $parm{'def'} );
                         push @status, 0;
+			
+			my $impath;
+			if ($mode eq "MONO") {
+				my $smac = $macaddr;
+				$smac =~ s/://g;
+				$impath = "images/".$smac;
+			} else {
+				$impath = "imgbase/";
+			}
+			push @images, $impath."/".$parm{'image'};
 		}
                 
                 # gather params for scheduled entries
@@ -388,12 +404,11 @@ my $mode = "";                                                  # describe how t
         
 	# header
        	lbs_common::print_header( $text{'tit_bmenu'}, "bootmenu", $VERSION);
-
 	# tabs
 	lbs_common::print_html_tabs(['system_backup', 'boot_menu']);
   
 	# boot menu, FIXME i18n
-        if ($mode eq "MONO") {          # only one client selected
+        if (($mode eq "MONO")) {          # only one client selected
 	        print "<h2 align=center>Client $name ($macaddr)</h2>";
                 print_bootmenu_form(
                         {'mac' => $macaddr},
@@ -406,9 +421,10 @@ my $mode = "";                                                  # describe how t
                         \@schedpresel,
                         \@desc,
                         \@status,
-                        \@schedstatus
+                        \@schedstatus,
+			\@images
                 );
-        } elsif ($mode eq "MULTI") {    # a group / profile selected
+        } elsif (($mode eq "MULTI") or ($mode eq "SKEL")) {    # a group / profile selected
                 my @local_title;
 	        print "<h2 align=center>";
                 push @local_title, "$text{'lab_group'} $in{'group'}" if $in{'group'};
@@ -426,7 +442,8 @@ my $mode = "";                                                  # describe how t
                         \@schedpresel,
                         \@desc,
                         \@status,
-                        \@schedstatus
+                        \@schedstatus,
+			\@images
                 );
         }
 

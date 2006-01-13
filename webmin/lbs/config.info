@@ -14,5 +14,6 @@ grub_keymap=Keyboard mapping (empty/fr),0
 
 line3=Misc,11
 wake=Binary to wake PCs,0
+wake_ip=List of broadcast addresses for WOL packets,0
 chemin_basedir=Path to the LRS Basedir (aka tftpboot),0
 add_password=Password for adding a new client,12

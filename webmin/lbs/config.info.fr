@@ -14,5 +14,6 @@ grub_keymap=Type de clavier (vide/fr),0
 
 line3=Divers,11
 wake=Executable pour reveiller les PCs,0
+wake_ip=Liste d'adresses de broadcast pour le WOL,0
 chemin_basedir=Path to the LRS Basedir (aka tftpboot),0
 add_password=Mot de passe pour l'ajout de clients,12
