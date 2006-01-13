@@ -1,6 +1,7 @@
 index_title=VNC pour les clients LRS
 
 tit_error=Erreur
+tit_logs=Logs de VNC/SSH
 
 err_cnf='$1': Commande introuvable
 err_dnf='$1': Répertoire introuvable

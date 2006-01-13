@@ -22,7 +22,6 @@
 
 include_once('lbs-vnc.php');
 
-
 $connect_error=0;
 
 #
@@ -44,7 +43,7 @@ function showMainByName($ether) {
 		      "NAME" => "&nbsp; $k &nbsp;",
 		      "IP" => $ether[$k]['ip'],
 		      "VNC_LINK" => "<a href='index.cgi?mac=".urlencode($ether[$k]['mac'])."&type=vnc'><img border=1 src='images/vnc.png'></a>",
-		      "HTTP_LINK" => "<a href='index.cgi?mac=".urlencode($ether[$k]['mac'])."&type=http'><img border=1 src='images/vnc.png'></a>"
+		      "HTTP_LINK" => "<a href='index.cgi?mac=".urlencode($ether[$k]['mac'])."&type=http'><img border=1 src='images/vnc2.png'></a>"
 		      ));
 		      
     $t->parse("main_rows", "main_row", true);
@@ -56,13 +55,17 @@ function showMainByName($ether) {
 }
 
 #
-# Try to resolve the client's name 
+# Try to resolve the client's name and launch the VNC client
 #
-function tryVNC($mac, $type)
+function tryVNC($mac, $type, $getssh)
 {
-  global $text;
+  global $text, $config, $config_directory;
+  global $nbname;
 
-  $ether = etherLoadByMac();
+  # extract the host name
+  $ether = etherLoadByMac();  
+  ereg("([^/:]+$)", $ether["$mac"]["name"], $match);
+  $nbname = $match[1];
 
   switch ($type) {
   case "http":
@@ -75,10 +78,33 @@ function tryVNC($mac, $type)
     $type = 0;
   }
 
+  # use ssh or not ?
+  $ssh = 0;
+  if ($getssh != "1") {
+    # GET parameters override config files
+    if ($config["ssh"] == "1") {
+      $ssh = 1;
+    }
+  } else {
+    $ssh = 1;
+  }
+  # Get LSC parameter or not ?
+  if ($ssh) {
+    @$lscconfig = lib_read_file($config_directory."/lsc/config");
+    if (trim($config["ssh_key"]) == "") {
+      // get LSC params
+      $config["ssh_key"] = $lscconfig["ssh_key"];
+    }
+    if (trim($config["ssh_user"]) == "") {
+      // get LSC params
+      $config["ssh_user"] = $lscconfig["ssh_user"];
+    }
+  }
+
   # Try 1st the IP
   $ip = $ether["$mac"]["ip"];
   if (!stristr($ip, "dynami")) {
-    scanRunVNC($ip, $type);
+    scanRunVNC($ip, $type, $ssh);
   }
   # Then DNS
   $name = $ether["$mac"]["name"];
@@ -86,14 +112,14 @@ function tryVNC($mac, $type)
   $name = $match[0];
   $ip = gethostbyname($name);
   if ($ip != $name) {
-    scanRunVNC($ip, $type);
+    scanRunVNC($ip, $type, $ssh);
   }
   # and nmblookupheader("Location: ".$_SERVER['HTTP_REFERER']); 
   $ret = exec("/usr/bin/nmblookup $name 2>&1");
   preg_match("/(\d+\.\d+\.\d+\.\d+) /", $ret, $match);
   $ip = $match[1]; 
   if ($ip != "") {
-      scanRunVNC($ip, $type);	
+      scanRunVNC($ip, $type, $ssh);	
   }
   
   # Last try: find info from OCS Inventory
@@ -102,59 +128,19 @@ function tryVNC($mac, $type)
     foreach ($lines as $line_num => $line) {
 	$cols = split(";", $line);
 	if (strcasecmp($cols[5], $mac) == 0) {
-	    scanRunVNC($cols[7], $type);
+	    scanRunVNC($cols[7], $type, $ssh);
 	}
     }
   }
   
   # nothing found !
   echo perl_exec("lbs_header.cgi", array("remote_control", $text{'index_title'}, "index"));
-  $t = tmplInit(array("main" => "main.tpl", "erreur" => "erreur.tpl"));             
+  $t = tmplInit(array("main" => "main.tpl", "erreur" => "erreur.tpl"));
   $t->pparse("out", "erreur");
   echo perl_exec("lbs_footer.cgi", array("2"));
 
 }
 
-#
-# Scan VNC ports and if open ports are found, connect to it
-#
-function scanRunVNC($ip, $type)
-{
-  global $config;
-  # 5800 = http, 5900 = tcp
-
-  if (strlen($ip) == 0)
-    return;
-
-  $port = $config["default_httpvnc_port"];
-  if ($type) $port = $config["default_vnc_port"];;
-
-  $i = 0;
-  while ($i <= 1) {
-    $fd = @fsockopen($ip, $port+$i, $errno, $errstr, 1);
-    if ($fd) 
-      {
-	// something found !
-	fclose ($fd);
-
-	if ($type) {
-	  header("Content-type: VncViewer/Config");
-	  header("Content-Disposition: inline; filename=\"config.vnc\"");
-	  header("Cache-control: private");
-	  //header("Content-transfer-encoding: binary");
-	  echo "[connection]\r\nhost=$ip \r\nport=".($port+$i)."\r\n";
-	  exit;
-	} else {
-	  lib_redirect("http://$ip:".($port+$i)."/");
-	}
-    }
-    $i++;
-  }
-
-  #echo "$errstr ($errno)<br>\n";
-  return;
-
-}
 
 # MAIN
 
@@ -162,7 +148,7 @@ initLbsConf($config['lbs_conf'], 1);
 
 if (isset ($_GET['mac'])) 
 {
-	$retour = tryVNC($_GET['mac'], $_GET['type']);
+	$retour = tryVNC($_GET['mac'], $_GET['type'], $_GET['ssh']);
 	
 } else {
 
@@ -170,8 +156,8 @@ if (isset ($_GET['mac']))
 	echo perl_exec("lbs_header.cgi", array("remote_control", $text{'index_title'}, "index"));
 
 	$ether = etherLoadByName();
-
 	showMainByName($ether);
+
 	echo perl_exec("lbs_footer.cgi", array("2"));
 }
 	

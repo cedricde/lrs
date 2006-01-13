@@ -1,3 +1,7 @@
 lbs_conf=Fichier de configuration LRS,0
 default_vnc_port=Port VNC TCP par défaut,0
 default_httpvnc_port=Port VNC HTTP par défaut,0
+sshsec=Options ssh,11
+ssh=Etablir un tunnel ssh,1,0-Non,1-Oui
+ssh_key=Chemin de la clé ssh,3, LSC default
+ssh_user=Utilisateur SSH distant, 3, LSC default

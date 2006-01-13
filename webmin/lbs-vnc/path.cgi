@@ -1,6 +1,6 @@
 <?php
 # one of the module config files
-$FILE = "/etc/webmin/lbs-inventory/config";
+$FILE = "/etc/webmin/lrs-inventory/config";
 $assocTable = lib_read_file($FILE);
 
 # cette variable controle l'emplacement des templates 

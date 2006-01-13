@@ -1,6 +1,7 @@
-index_title=VNC for LBS clients
+index_title=VNC for LRS clients
 
 tit_error=Error
+tit_logs=VNC/SSH logs
 
 err_cnf=Error : $1 command not found
 err_dnf='$1': Directory not found

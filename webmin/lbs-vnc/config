@@ -1,3 +1,6 @@
 lbs_conf=/etc/lbs.conf
 default_vnc_port=5900
 default_httpvnc_port=5800
+ssh=0
+ssh_key=/root/.ssh/id_dsa
+ssh_user=Administrateur

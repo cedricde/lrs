@@ -146,7 +146,7 @@ my $hashref=shift;
                                         name=\"$name\"
                                         border='0'
                                         src=\"$imgout\"
-                                        alt=\"inventory\" />
+                                        alt=\"vnc\" />
                               </a>
                             </div>";
                 
