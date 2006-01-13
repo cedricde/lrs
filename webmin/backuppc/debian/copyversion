@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Check that debian/changelog and module.info versions are in sync
 #
