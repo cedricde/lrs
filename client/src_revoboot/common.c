@@ -39,6 +39,8 @@ unsigned long saved_partition;
 unsigned long saved_mem_upper;
 /* This saves the maximum size of extended memory (in KB).  */
 unsigned long extended_memory;
+/* */
+int done_inventory = 0;
 
 /*
  *  Error code stuff.
@@ -326,91 +328,95 @@ init_bios_info (void)
     return;
 #endif
 
-#define BOOTINFO
-
-#ifdef BOOTINFO
-  // INFO AT STARTUP to PORT 999
-  //
+  /* INFO AT STARTUP to PORT 1001 */
+  if (!done_inventory)
   {
-   char *buffer; unsigned int i;
-   extern unsigned char X86;
-   unsigned char *ptr=&X86;
-   extern unsigned char *udp_packet_r;
-   extern char lbsname[];
-   int sz=0, port;
+	char *buffer; unsigned int i;
+	extern unsigned char X86;
+	unsigned char *ptr=&X86;
+	extern unsigned char *udp_packet_r;
+	extern char lbsname[];
+	int sz=0, port;
 
-  udp_init();
+	udp_init();
 
-  /* tell the LBS that we have booted */
-  udp_send_lbs("L0", 2);
+	/* tell the LBS that we have booted */
+	udp_send_lbs("L0", 2);
 
-  /* begin */
-  buffer=(char *)PASSWORD_BUF;
-  *buffer++=0xAA;
-  grub_sprintf(buffer,"M:%x,U:%x\n",mbi.mem_lower,mbi.mem_upper); while (*buffer) buffer++;
-  eth_pci_init(buffer); while (*buffer) buffer++;
-  grub_sprintf(buffer,"C:"); while (*buffer) buffer++;
-  cpuinfo(); for(i=0;i<24;i++) {grub_sprintf(buffer,"%x,",ptr[i]); while (*buffer) buffer++;}
-  *(buffer-1)='\n';
-  grub_sprintf(buffer,"F:%d\n",cpuspeed()); while (*buffer) buffer++;
+	/* begin */
+	buffer=(char *)PASSWORD_BUF;
+	*buffer++=0xAA;
+	buffer += grub_sprintf(buffer,"M:%x,U:%x\n",mbi.mem_lower,mbi.mem_upper);
+	eth_pci_init(buffer); while (*buffer) buffer++;
 
-  drive_info(buffer);
+	drive_info(buffer);
+	while (*buffer) buffer++;
 
-  /* smbios infos */
-  if ( smbios_init() )
-    {
-      unsigned char *p1, *p2, *p3, *p4, *p;
-      int i;
-      char hex[]="0123456789ABCDEF";
+	/* smbios infos */
+	if ( smbios_init() )
+	    {
+	      unsigned char *p1, *p2, *p3, *p4, *p;
+	      int i, i1, i2, i3, i4;
+	      char hex[]="0123456789ABCDEF";
 
-      smbios_get_sysinfo(&p1, &p2, &p3, &p4, &p);
-      while (*buffer) buffer++;
-      grub_sprintf(buffer, "S1:%s|%s|%s|%s|",p1, p2, p3, p4);
-      
-      while (*buffer) buffer++;
-      for (i = 0; i<16; i++)	/* UUID */
-	{
-	  *buffer++ = hex[p[i]>>4];
-	  *buffer++ = hex[p[i]&15];
+	      smbios_get_biosinfo(&p1, &p2, &p3);
+	      buffer += grub_sprintf(buffer, "S0:%s|%s|%s\n",p1, p2, p3);
+
+	      smbios_get_sysinfo(&p1, &p2, &p3, &p4, &p);
+	      buffer += grub_sprintf(buffer, "S1:%s|%s|%s|%s|",p1, p2, p3, p4);
+
+	      /* while (*buffer) buffer++; */
+	      for (i = 0; i<16; i++)	/* UUID */
+		{
+		  *buffer++ = hex[p[i]>>4];
+		  *buffer++ = hex[p[i]&15];
+		}
+
+	      smbios_get_enclosure(&p1, &p2);
+	      buffer += grub_sprintf(buffer, "\nS3:%s|%d\n",p1, *p2 & 0x7F);
+
+	      while (smbios_get_memory(&i1, &i2, &p1, &i3, &i4)) {
+		 buffer += grub_sprintf(buffer, "SM:%d:%x:%s:%x:%d\n", i1, i2, p1, i3, i4);
+	      }
+     	      buffer += grub_sprintf(buffer, "S4:%d\n", smbios_get_numcpu());
 	}
-      *buffer++ = '\n';
 
-      smbios_get_biosinfo(&p1, &p2, &p3);
-      grub_sprintf(buffer, "S0:%s|%s|%s\n",p1, p2, p3);
-      while (*buffer) buffer++;
-
-      smbios_get_enclosure(&p1, &p2);
-      grub_sprintf(buffer, "S3:%s|%d\n",p1, *p2);
-      
-    }
-  
-  /* send inventory */
-  buffer=(char *)PASSWORD_BUF;
-  udp_send_withmac((char *)PASSWORD_BUF,strlen(buffer)+1,1001,1001);
-     
-  /* I want my name */
-  /* Some buggy PXE bioses need a read before sending... (SMC cards) */ 
-  udp_get(NULL, &sz, 1001, &port);
-  udp_send_lbs("\x1A", 1);
-  i = currticks();
-  while (i+15 > currticks()) {
-    sz = 0;
-    udp_get(NULL, &sz, 1001, &port);
-    if (sz) break;
-  };
-   
-  if (sz) {
-	/* grub_strcpy does not work here ?!? */
-	for (i = 0; i < 32; i++) {
-	    lbsname[i] = udp_packet_r[i];
+	buffer += grub_sprintf(buffer,"C:");
+	cpuinfo(); 
+	for (i=0;i<24;i++) {
+		buffer += grub_sprintf(buffer,"%x,",ptr[i]);
 	}
-        lbsname[sz] = 0;
-	lbsname[31] = 0;	
-    }
-   udp_close();
+	buffer--;
+	buffer += grub_sprintf(buffer,"\nF:%d\n",cpuspeed()); 
+
+	/* send inventory */
+	buffer=(char *)PASSWORD_BUF;
+	udp_send_withmac((char *)PASSWORD_BUF,strlen(buffer)+1,1001,1001);
+
+	/* I want my name */
+	/* Some buggy PXE bioses need a read before sending... (SMC cards) */ 
+	udp_get(NULL, &sz, 1001, &port);
+	udp_send_lbs("\x1A", 1);
+	i = currticks();
+	/* wait one sec */
+	while (i+15 > currticks()) {
+	    sz = 0;
+	    udp_get(NULL, &sz, 1001, &port);
+	    if (sz) break;
+	};
+
+	if (sz) {
+		/* grub_strcpy does not work here ?!? */
+		for (i = 0; i < 32; i++) {
+		    lbsname[i] = udp_packet_r[i];
+		}
+        	lbsname[sz] = 0;
+		lbsname[31] = 0;	
+	}
+	udp_close();
+	done_inventory = 1;
   }
   
-#endif
 
   current_drive = saved_drive;
   errnum=ERR_NONE;

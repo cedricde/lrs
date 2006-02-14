@@ -1041,7 +1041,7 @@ char *smbios_addr = NULL;
 __u16 smbios_len = 0;
 __u16 smbios_num = 0;
 __u8 *smbios_base =  NULL;
-
+__u8 smbios_ver = 0;
 
 
 /*
@@ -1067,6 +1067,7 @@ int smbios_init(void)
 	    getkey();
 #else
 	    grub_printf("SMBios found. version %d.%d\n", *(check+6), *(check+7) );
+	    smbios_ver = (*(check+6)) * 10 + (*(check+7));
 #endif
 	    return 1;
 	  }     
@@ -1129,13 +1130,19 @@ char *smbios_uuid(__u8 *dm, __u8 s)
 
 __u8 *smbios_get(int rtype, __u8 **rnext)
 {
-  int i = 0;
-  __u8 *ptr;
-  __u8 *next;
+  static int i = 0;
+  static __u8 *next;
+  static __u8 *ptr = NULL;
 
-  //  if (ptr == NULL)
-    ptr = smbios_base;
-
+  if (rtype == -1) {
+	ptr = NULL;
+	return NULL;	  
+  }
+  if (ptr == NULL) {
+	ptr = smbios_base;
+	i = 0;
+  }
+    
   while (i < smbios_num)
     {
       int type, len, handle;
@@ -1144,28 +1151,30 @@ __u8 *smbios_get(int rtype, __u8 **rnext)
       len = ptr[1];
       handle = *(__u16 *)(ptr+2);
 
-      if (len == 0) {
-	//xif (*rnext != NULL) *rnext = NULL;
-	return NULL;
-      }
-
       next = ptr + len;
       while ((next-smbios_base+1) < smbios_len && (next[0] || next[1]))
 	next++;
 #ifdef DEBUG
       grub_printf("%d %d %x\n", type, len, handle);
+      getkey();
 #endif
 
       if (type == rtype) 
 	{
-	  //if (*rnext != NULL) *rnext = next + 2;
-	  return ptr;
+	  __u8 *oldptr;	
+	  
+	  oldptr = ptr;
+      	  next += 2;
+      	  ptr = next;
+          i++;
+	  return oldptr;
 	}
       next += 2;
       ptr = next;
       i++;
     }
   //if (*rnext != NULL) *rnext = NULL;
+  ptr = NULL;
   return NULL;
 }
 
@@ -1226,6 +1235,51 @@ void smbios_get_enclosure(char **p1, char **p2)
   *p2 = &ptr[0x5];
 }
 
+/*
+ * Returns pointers to: Size in MB, Form factor, Location, Type, Speed in MHZ
+ */
+int smbios_get_memory(int *size, int *form, char **location, int *type, int *speed) 
+{
+  __u8 *ptr;
+  
+  ptr = smbios_get(17, NULL);
+  if (ptr == NULL) return 0;
+  *size = *(__u16  *)(ptr + 0xC);
+  if (*size & 0x8000) {
+	*size &= 0x7FFF;
+	*size *= -1;
+  }
+  *form = ptr[0xE];
+  *location = smbios_string(ptr, ptr[0x10]);
+  *type = ptr[0x12] | (ptr[0x14]<<8) | (ptr[0x13]<<16);
+#ifdef DEBUG
+  printf("Size: %d\n", *size);
+  printf("Form: %d\n", *form);
+  printf("Location: %s\n", *location);
+  printf("Type: %X\n", *type);
+  printf("Type: %d\n", *type);
+#endif
+  if (smbios_ver >= 23) {
+  	*speed = *(__u16  *)(ptr + 0x15);
+#ifdef DEBUG
+  	printf("Speed: %d\n", *speed);
+#endif
+  } else {
+	*speed = 0;  
+  }
+  return 1;
+}
+
+/* Get the number of CPUs (count the number of type 4 structures) */
+int smbios_get_numcpu(void)
+{
+   int num = 0;
+   
+   smbios_get(-1, NULL);
+   while (smbios_get(4, NULL)) num++;
+   if (num == 0) num++;
+   return num;
+}
 
 /* Translate a special key to a common ascii code.  */
 int
