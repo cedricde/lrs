@@ -616,7 +616,8 @@ int save(void)
 		dnum, poff[i], ttype[i]);
 	system(command);
 	fatal();
-	sleep(180);
+	while (getchar() != 'c')
+	    sleep(1);
 
     }
  
@@ -628,9 +629,10 @@ int save(void)
       /* nothing backuped !!! */
       sprintf(command,
 	      "/revobin/image_error \"Nothing was backuped !\nMaybe your disk controller was not recognized...\"");
-      mysystem(command);
+      mysystem(command);      
       fatal();
-      sleep(300);
+      while (getchar() != 'c')
+	    sleep(1);
     }
     
     if (fmajor) close(fmajor);
@@ -745,7 +747,7 @@ void saveimage(void)
        printf("\n"); */
 
     fo = fopen("/revosave/conf.tmp", "w");
-    fprintf(fo, "title IMAGE %s\n", hostname);
+    fprintf(fo, "title Image %s\n", hostname);
     fprintf(fo, "desc (%s)\n", date);
     fclose(fo);
 
