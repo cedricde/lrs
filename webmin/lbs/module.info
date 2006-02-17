@@ -1,4 +1,4 @@
-# $Id: module.info 2934 2005-12-06 17:19:04Z root $
+# $Id: module.info 3047 2006-02-14 11:13:26Z root $
 name=lrs
 os_support=
 desc=LRS : System Backup
@@ -6,4 +6,4 @@ desc_fr=LRS : Sauvegarde Système
 category=other
 
 depends=0.94 lbs_common proc at
-version=2.6.0
+version=2.6.1

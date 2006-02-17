@@ -692,10 +692,11 @@ my %tabattr = (
 		}
 	}
 
-	push @lol, [ @{$titles} ],  [ @{$desc} ], [ @{$dates} ], [ @{$dirs} ], [ @tolocal ], [ @burn ], [ @detail ]  ;
+	if (scalar(@{$items}) > 0) {
+		push @lol, [ @{$titles} ],  [ @{$desc} ], [ @{$dates} ], [ @{$dirs} ], [ @tolocal ], [ @burn ], [ @detail ]  ;
+		lbs_common::lolRotate(\@lol) ;
+	}
 
-	lbs_common::lolRotate(\@lol) ;
-	
 	print lbs_common::make_html_table($text{'tab_move_bootmenu'}, \@toprow, \@lol, \%tabattr) ;
 
 print <<EOF ;
