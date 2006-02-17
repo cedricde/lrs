@@ -25,6 +25,6 @@ init_config();
 ReadParse();
 
 our $VERSION='$Rev$';
-$VERSION =~ s/\$Rev: (\d+) \$/$module_info{'version'} (r.$1)/;
+$VERSION =~ s/\$Rev: (\d+) \$/$module_info{'version'}/;
 
 foreign_require("lbs_common", "lbs_common.pl");

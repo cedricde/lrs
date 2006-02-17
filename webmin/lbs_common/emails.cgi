@@ -44,6 +44,9 @@ foreach $l (@$lref) {
     if ($l =~ /^ocsinventory: (.*)/) {
 	$conf{'ocsinventory'} = $1;
     }
+    if ($l =~ /^lsc: (.*)/) {
+	$conf{'lsc'} = $1;
+    }
 }
 
 &generate_config(\%conf, "emails.info");

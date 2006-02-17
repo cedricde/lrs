@@ -19,7 +19,7 @@ $access{'noconfig'} && &error($text{'config_ecannot'});
 
 local $lref = &read_file_lines("/etc/aliases");
 foreach $l (@$lref) {
-    foreach $name ("admin","lrs","ocsinventory","backuppc") { 
+    foreach $name ("admin","lrs","ocsinventory","backuppc","lsc") { 
         if ($l =~ /^$name: /i && defined ($conf{$name}) ) {
 	    if ($conf{$name} ne "") {
         	$l = "$name: $conf{$name}";
@@ -31,7 +31,7 @@ foreach $l (@$lref) {
     }
 }
 # add new aliases at the end of file
-foreach $name ("admin","lrs","ocsinventory","backuppc") { 
+foreach $name ("admin","lrs","ocsinventory","backuppc","lsc") { 
     if (defined ($conf{$name}) && $conf{$name} ne "") {
 	push @$lref, "$name: $conf{$name}";
     } 

@@ -24,10 +24,14 @@ use strict;
 
 # get some common functions ...
 require 'lbs_common.pl';
+require 'lbs_common_priv.pl';
 
 # ... and vars
 ReadParse();
 use vars qw (%in %text $root_directory %gconfig $VERSION $LRS_HERE @LRS_MODULES %config);
+
+# cookies
+cookie_send_group(%in);
 
 # entete
 print_header( $text{'tit_index'}, "index", $VERSION);
@@ -35,8 +39,13 @@ print_header( $text{'tit_index'}, "index", $VERSION);
 # tabs
 print_html_tabs(['list_of_machines', 'clients_list']);
 
+cookie_get_group(\%in);
+
 # lbs daemon check
 checkfordaemon();
+
+# lbs daemon check
+checkforspace();
 
 # machine list
 my (@labelfunctions, @bodyfunctions);
@@ -56,7 +65,7 @@ print_machines_list     (
                                         'searchform'    => $LRS_HERE
                                 },
                                 \@labelfunctions,
-                                \@bodyfunctions
+                                \@bodyfunctions, %in
                         );
 
 # end of tabs

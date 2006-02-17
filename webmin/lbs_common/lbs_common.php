@@ -3,16 +3,25 @@
 # $Id$
 #
 
-include_once('../lbs_common/web-lib.php');
-include_once('../lbs_common/template.php');
+require_once(dirname(__FILE__) . "/web-lib.php");
+require_once(dirname(__FILE__) . "/template.php");
 
 # perl_exec function, to handle Perl/CGI scripts from PHP
 
 function perl_exec($script, $args=array()) {
 
-	$return='';
+	global $webmin_path;
 	
-	$handle = popen("perl ../lbs_common/".$script. ' "'.join('" "', $args).'" 2>&1', "r");
+	$return='';
+	$error=0;
+	
+	if ($webmin_path == "") {
+		$path = "..";
+	} else {
+		$path = $webmin_path;
+	}
+	
+	$handle = popen("cd ".$path."/lbs_common/;perl ".$script. ' "'.join('" "', $args).'" 2>&1', "r");
 	
 	if (!$handle)
 		return;
@@ -23,10 +32,17 @@ function perl_exec($script, $args=array()) {
 
 	$output=explode("\n", $output); 	# explode it
 	
-	foreach ($output as $line)      	# we only keep pure HTML
+	foreach ($output as $line) {      	# we only keep pure HTML
 		if (!preg_match("/content-type/i", $line))
 			$return .= "$line\n";
-			
+		if (preg_match("/<\/html>/i", $line))
+			$error = 1;
+	}	
+	# try to intercept ACL errors
+	if ($error == 1 && strpos($script, "lbs_header.cgi") !== false) {
+		print $return;
+		exit(1);
+	}
 	return $return;
 }
 
@@ -380,6 +396,55 @@ function get_LRS_timestamp($mac_address) {
         } else {
                 return "N/A";
         }
+}
+
+#
+# Return the client list, filtered by group and/or profile
+#
+function filter_machines_names($profile, $group, &$ether)
+{
+	normalize_machine_names($ether);
+
+	$keys = array_keys($ether);
+
+	for ( $i=0 ; $i<count($keys) ; $i++ )
+	{
+		$name = $ether[ $keys[$i] ]['name'] ;
+
+		if ( ! ( eregi("$profile:$group", $name)
+			 || ( empty($profile) && eregi("(:|/)$group/", $name) )
+			 || ( empty($group) && eregi("^$profile:", $name) )  ) )
+
+			unset($ether[ $keys[$i] ]);
+
+	}
+}
+
+#
+# clean up the client list: 
+#
+function normalize_machine_names(&$ether)
+{
+	$keys = array_keys($ether);
+
+	for ( $i=0 ; $i<count($keys) ; $i++ )
+	{
+		$name = & $ether[ $keys[$i] ]['name'] ;
+
+		$profilepos = strpos($name, ':');
+
+		if ( strpos($name, ':')===false )
+		{
+			$profilepos = 0;
+			$name = ':'. $name;
+		}
+
+		if ( strpos($name, '/', $profilepos+1)===false )
+
+			$name = substr($name,0,$profilepos+1) . '/' . substr($name,$profilepos+1);
+
+	}
+
 }
 
 ?>

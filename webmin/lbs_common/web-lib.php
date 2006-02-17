@@ -20,6 +20,7 @@ $config_directory = getenv("WEBMIN_CONFIG");
 $webmin_path = getenv("SERVER_ROOT");
 $var_directory = getenv("WEBMIN_VAR");
 $module_name = getenv("SCRIPT_NAME");
+list($nul,$module_directory,$_nul)=split("/",$module_name);
 $base_remote_user = getenv("BASE_REMOTE_USER");
 $remote_user = getenv("REMOTE_USER");
 //__DATA__
@@ -360,6 +361,8 @@ function lib_read_file($file){
   $delimiter="=";
   if(is_dir($file))
     return -1;
+  if (!file_exists($file))
+	  return -1;
   if(!$fp=fopen($file,"r")) 
     return -1;
   while(!feof($fp)){
@@ -389,6 +392,7 @@ function lib_init_config(){
   //Global variables used in this function
   global $config_directory;
   global $module_name;
+  global $module_directory;
   global $webmin_path;
   global $cb, $tb;
   global $current_lang;
@@ -396,7 +400,6 @@ function lib_init_config(){
   global $link_css;
   
   global $remote_user;
-
   $link_css = "./tmpl/presentation.css";
 
   //Read the webmin global config file and fill the associative array $gconfig
@@ -409,15 +412,15 @@ function lib_init_config(){
   list($nul,$m,$_nul)=split("/",$module_name);
   $GLOBALS["config"]=lib_read_file($config_directory."/".$m."/config");
   
-  $GLOBALS["module_info"]=lib_read_file($webmin_path."/".$m."/module.info");
+  $GLOBALS["module_info"]=lib_read_file($webmin_path."/".$module_directory."/module.info");
   //Load language string into associative array named $text
   $GLOBALS["text"]=lib_load_language();
     
   $theme=lib_check_key_array($GLOBALS["gconfig"],theme);
 
   if($theme){
-    $tconfig = lib_read_file($module_name ? "../$theme/config"
-				      :"../$theme/config");
+    $tconfig = lib_read_file($module_name ? $webmin_path . "/" . $theme . "/config"
+				      : $webmin_path . "../" . $theme . "/config");
   }
 
   // set default table colors
@@ -532,7 +535,7 @@ Returns a hashtable mapping text codes to strings in the appropriate language
 */     
 function lib_load_language(){
 	//Global variables used in this module	
-	global $webmin_path, $gconfig, $module_name, $remote_user;
+	global $webmin_path, $gconfig, $module_name, $remote_user, $module_directory;
 	
 	// should we backport webmin's @lang_order_list to phpwebmin ??
 	$lang = $gconfig[lang];
@@ -551,7 +554,7 @@ function lib_load_language(){
 
 	//secondly with module text codes: /path/to/webmin-0.91/current_module/lang/current_language
 	if($module_name){
-		$text_mod=lib_read_file("lang/".$lang);
+		$text_mod=lib_read_file(realpath($webmin_path . "/" . $module_directory . "/lang/".$lang));
 	
 		//fill $text with the content of $text_mod
 		if (is_array($text_mod))

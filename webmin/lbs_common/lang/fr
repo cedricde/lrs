@@ -155,5 +155,6 @@ err_paramnf=Paramètre <tt>$1</tt> introuvable dans <b>$2</b> .
 err_basedirnf=Le répertoire racine LRS <b>$1</b> est inaccessible. Veuillez vérifier le paramètre <tt>basedir</tt> dans le fichier <tt>lbs.conf</tt> .
 err_cantlink=Impossible détablir un lien <tt>$1</tt> avec <tt>$2</tt> .
 err_gcr_not_running=Le service 'getClientResponse' ou 'lrsd' ne tourne pas. Vous avez probablement un problème de licence. Vérifiez la validité de votre licence <a href="/lbs/license.cgi">ici</a> ou relancez le service LRS en cliquant <a href="/lbs/restart.cgi">ici</a>.
+err_space_low=Attention ! L'espace disponible dans /var est bas. Vous devriez libérer de l'espace ou certains services LRS pourraient mal fonctionner.
 
 index_title=LRS : Centre de Contrôle

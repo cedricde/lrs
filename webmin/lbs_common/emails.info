@@ -3,4 +3,5 @@ admin=Administrator's email (admin account),0
 backuppc=Email for files backup alerts,0
 lrs=Email for system backup alerts,0
 ocsinventory=Email for inventory alerts,0
+lsc=Email for LSC alerts,0
 

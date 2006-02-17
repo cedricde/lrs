@@ -1,8 +1,8 @@
 # $Id$
+#
+# Common functions
+#
 
-# Including the common functions
-# FIXME: coder les noms des modules en pseudo-dur
-# FIXME: what wabout WOL ?
 use strict;
 
 BEGIN {
@@ -15,7 +15,10 @@ our $phplink="$logrep/php";
 	`mkdir -p $logrep` unless (-d $logrep);
 
         if (-r "/var/lib/lbs/webmin.log") {
-		system("echo \"===`date`\" >> /var/lib/lbs/webmin.log"); 
+		my $time = localtime;
+		open FID, ">>/var/lib/lbs/webmin.log";
+		print FID "=== $time \n"; 
+		close FID;
         	open STDERR, ">> /var/lib/lbs/webmin.log";
         } else {
         	open STDERR, "> /dev/null"; 
@@ -87,7 +90,7 @@ $VERSION        =~ s/\$Rev: (\d+) \$/$module_info{version} (r.$1)/;
 our $LRS_HERE   =  -d "/tftpboot/revoboot";					# are we in LRS ?
 our $LINBOX_URL = 'http://www.linbox.com';
 our $BIGLOGO_URL= '/lbs_common/images/logo-big.gif';
-our @LRS_MODULES= qw 'lbs_common lbs backuppc lbs-inventory lbs-cd  rsync lbs-vnc lrs-proxy lbs/at';      # every modules
+our @LRS_MODULES= qw 'lbs_common lbs backuppc lbs-inventory lrs-inventory lbs-cd  rsync lsc lbs-vnc lrs-proxy lbs/at ';      # every modules
 #our @LRS_MODULES= qw 'lbs_common lbs';      # every modules
 our $REALPATH   = 'readlink';
 ##############################################
@@ -220,6 +223,7 @@ my $language            = get_language();
 
 ReadParse()     	if !%in;
 
+
 $in{'host'}     	= $params->{'host'}     if !$in{'host'};
 $in{'mac'}     	 	= $params->{'mac'}      if !$in{'mac'};
 
@@ -236,8 +240,15 @@ my %menu;
                 
                 my %einfo;
                 my $etherfile = "$lbsconf{'basedir'}/etc/ether";
-                main::etherLoad( $etherfile, \%einfo);
-                $in{'mac'} = main::etherGetMacByName(\%einfo, $host, 1);
+
+		# ouch ! problems with namespaces when called from php !
+		if (*etherLoad{CODE}) {
+            		etherLoad( $etherfile, \%einfo) ;
+            		$in{'mac'} = etherGetMacByName(\%einfo, $host, 1);
+		} else {
+            		main::etherLoad( $etherfile, \%einfo) ;
+            		$in{'mac'} = main::etherGetMacByName(\%einfo, $host, 1);
+		}
         }
 
 my $mac                 = url_encode(mac_remove_columns($in{'mac'})) if $in{'mac'};
@@ -247,7 +258,6 @@ my $mac_with_dot        = url_encode(mac_add_columns(mac_remove_columns($in{'mac
         foreach my $module (@LRS_MODULES) {
         	get_hash_from_menu("$ENV{'SERVER_ROOT'}/$module/menus", \%menu) if foreign_check($module);
         }
-        
         foreach my $depth (0..3) {                                                                      # menu have a 3 level depth ? (FIXME)
                 my $selected_onglet;
                 my %hash=%menu;
@@ -519,8 +529,8 @@ sub deep_copy {
 # table's printing
 # param 1 : $paramsref: a ref on a hash containning a bunch of parameters
 # return : nothing #FIXME
-sub print_machines_list {
-        my ($paramsref, $headcallbacksref, $bodycallbacksref) = @_;
+sub print_machines_list($$$$) {
+        my ($paramsref, $headcallbacksref, $bodycallbacksref, %in) = @_;
 
         my $home=$TFTPBOOT;
 
@@ -732,7 +742,7 @@ sub print_machines_list {
 	
 	%groups = get_all_groups(0, %ether);
 	#if ($LRS_HERE) { %groups = get_all_groups(0, %ether); }
-        
+
 	$in{group}=""   if (!$in{group});       			# some init;
 	$in{wol}=0      if (!$in{wol});
 	
@@ -878,8 +888,8 @@ sub print_machines_list {
                 }
                 $template->parse('mainlist.normalrow');
         }
-        
-        if (lc($profile_key) ne "none" and lc($profile_key) ne "all") {
+
+        #if (lc($profile_key) ne "none" and lc($profile_key) ne "all") {
                 $template->assign('ACTIONONCURRENTPROF', text('lab_thisprofile', $profile_name));
                 foreach my $bodycallback (@$bodycallbacksref) {
                         foreach my $label (&$bodycallback({'currentprofile' => $in{'profile'}, 'profile' => $in{'profile'}, 'ether' => $ethero })) {
@@ -892,7 +902,7 @@ sub print_machines_list {
                         }
                 }
                 $template->parse('mainlist.endtable.moreactions');
-        }
+        #}
         
         $template->parse('mainlist.endtable');
         $template->parse('mainlist');
@@ -1034,7 +1044,7 @@ my @list;
 my @header;
 my @lol=();
 my @webminmodules=qw '  lbs             lbs-cd          lbs_common
-                        lbs-inventory   lbs-vnc         backuppc';
+                        lbs-inventory   lrs-inventory	lbs-vnc         lsc		backuppc';
 
 my @lrsmodules=qw '     backuppc        php4-cgi        lbs
                         iproute';
@@ -1107,7 +1117,7 @@ sub message {
 #
 # Check if get client response runs, and output a message if not
 #
-sub checkfordaemon {
+sub checkfordaemon () {
     if (! -r $config{'lbs_conf'}) { return; }
         
     my $run = system ("ps ax|grep -v grep|grep -q getClientResponse");
@@ -1116,6 +1126,19 @@ sub checkfordaemon {
 	{
 	    print "<font size='+2' color='red'><br>";
 	    print $text{'err_gcr_not_running'};
+	    print "<br><br></font>";
+	}
+}
+
+#
+# Check if there's at least 100MB in /var
+#
+sub checkforspace () {
+    my $run = `df -m /var|tail -1|awk '{print \$4}'`;
+    if ($run < 100)
+	{
+	    print "<font size='+2' color='red'><br>";
+	    print $text{'err_space_low'};
 	    print "<br><br></font>";
 	}
 }
