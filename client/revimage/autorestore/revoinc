@@ -15,5 +15,9 @@ echo "*** Creating backup directory ***"
 TYPE="COPY"
 grep /imgbase/Base /etc/cmdline && TYPE="BASE"
 
-echo -en "\354$TYPE\00Mc:$MAC" | nc -p 1001 -w 1 $SRV 1001
+while ! echo -en "\354$TYPE\00Mc:$MAC" | nc -p 1001 -w 1 $SRV 1001
+do
+    echo "*** Retrying"
+    sleep 5
+done
 sleep 1

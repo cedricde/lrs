@@ -6,12 +6,15 @@
 #
 # TODO: DOS drives and partitions
 # 
-ETH=`cat /etc/eth`
-MAC=`cat /etc/mac`
 
-. /etc/netinfo.sh
-SRV=$Next_server
-[ -n "$Option_177" ] && SRV=`echo $Option_177|cut -d : -f 1`
+if [ "$1" != "stdout" ]; then
+    ETH=`cat /etc/eth`
+    MAC=`cat /etc/mac`
+
+    . /etc/netinfo.sh
+    SRV=$Next_server
+    [ -n "$Option_177" ] && SRV=`echo $Option_177|cut -d : -f 1`
+fi
 
 # self-explanatory...
 # cannot use busybox's printf which does not support hex output
@@ -95,6 +98,9 @@ $PCI
 C:$CPU1,$CPU2,0,$CPU4,0,0,0,0,0,0,0,0,$CPUV
 F:$FREQ"
 
-
-echo -en "\252$DATA\00Mc:$MAC" | nc -p 1001 -w 1 $SRV 1001
-sleep 1
+if [ "$1" != "stdout" ]; then
+    echo -en "\252$DATA\00Mc:$MAC" | nc -p 1001 -w 1 $SRV 1001
+    sleep 1
+else
+    echo "$DATA"
+fi

@@ -146,7 +146,7 @@ do_cdrom()
     /bin/atftp --tftp-timeout 1 -g -r $BASE/cfg/$MAC -l menu $SRV 69 2>/dev/null
     wecho "Downloaded"
     # no menu => stop
-    [ ! -f menu -o -z "`cat menu`" ] && wecho "No menu available. Cannot continue." && sleep 3 && return
+    [ ! -f menu -o -z "`cat menu`" ] && wecho "No menu available. Cannot continue. Did you add the client using the LRS administration interface ?" && sleep 3 && return
     parse_menu
     eval CMDLINE=\$LKERN_`cat /tmp/ret`
     [ "$CMDLINE" ] || return

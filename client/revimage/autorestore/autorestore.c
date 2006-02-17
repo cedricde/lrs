@@ -70,8 +70,10 @@ unsigned long s_min = 0xFFFFFFFF, s_max = 0;
 int dnum;
 /* default NFS read/write size */
 int rsize = 8192;
+/* hd space checks enabled ? */
+int revonospc = 0;
 
-unsigned char buf[80];
+unsigned char buf[512];
 
 unsigned char command[120];
 
@@ -584,7 +586,7 @@ unsigned char *find(const char *str, const char *fname)
     f = fopen(fname, "r");
     if (f == NULL)
 	return NULL;
-    while (fgets((char *)buf, 80, f)) {
+    while (fgets((char *)buf, 256, f)) {
 	if (strstr(buf, str)) {
 	    fclose(f);
 	    return strstr(buf, str) + strlen(str);
@@ -661,6 +663,11 @@ void commandline(void)
     if ((ptr = find("slownfs", "/etc/cmdline"))) {
 	/* decrease the NFS packet size */
 	rsize = 1024;
+    }
+
+    if ((ptr = find("revonospc", "/etc/cmdline"))) {
+	/* do not check the HD size */
+	revonospc = 1;
     }
 
     /* default: mtftp restore */
@@ -790,6 +797,31 @@ void loadhdmap(void)
 }
 */
 
+/*
+ * Check if the image can fit
+ */
+void checkhdspace(__u32 major, __u32 minor, __u32 sect)
+{
+  FILE *f;
+  char fn[64], command[256];
+  __u32 orig = 0;
+
+  if (revonospc) return;
+
+  sprintf(fn, "/revosave/size%02x%02x.txt", major, minor);
+  f = fopen(fn, "r");
+  if (f == NULL) return;
+  fscanf(f, "%u", &orig);
+  if (orig > sect) {
+    /* problem : the disk seems to be too small */
+    system("/bin/revosendlog 8");
+    sprintf(command,                                                        
+	    "/revobin/image_error \"Your hard disk seems to be to small to restore this image (%u vs %u KB).\n\nIf you want to restore anyway, you can disable the disk space checks in the client's options panel.\"", sect, orig);                                      
+    system(command);
+    while (1) sleep(1);
+  }
+  fclose(f);
+}
 
 /*
  * Build a BIOS number to device map 
@@ -818,6 +850,9 @@ void makehdmap(void)
 	   && !(minor & 0xF))) {
 	char *str;
 
+	/* check that the HD is big enough for the restore */
+	checkhdspace(major, minor, sec);
+	/* fill the hdmap */
 	str = malloc(strlen(buf) + 16);
 	strcpy(str, "/dev/");
 	strcat(str, buf);
