@@ -7,6 +7,29 @@ my $devicelist;
 
 $mac = "";
 
+#
+# SMBios constants
+#
+
+@typetbl = ( "", "", "", "Desktop", "Low Profile Desktop",
+	"Pizza Box", "Mini Tower", "Tower", "Portable", "LapTop", "Notebook",
+	"Hand Held", "Docking Station", "All in One", "Sub Notebook", 
+	"Space-saving", "Lunch Box", "Main Server Chassis", "Expansion Chassis",
+	"SubChassis", "Bus Expansion Chassis", "Peripheral Chassis", 
+	"RAID Chassis", "Rack Mount Chassis", "Sealed-case", "Multi-system chassis"
+	) ;
+
+@memform = ( "", "", "", "SIMM", "SIP", "Chip", "DIP", "ZIP", "Proprietary card", 
+	"DIMM", "TSOP", "Row of chips", "RIMM", "SODIMM", "SRIMM");
+	
+@memtype = ( "", "", "", "DRAM", "EDRAM", "VRAM", "SRAM", "RAM", "ROM",
+	"FLASH", "EEPROM", "FEPROM", "EPROM", "CDRAM", "3DRAM", "SDRAM",
+	"SGRAM", "RDRAM", "DDR", "DDR2");
+
+@memdetails = ( "", "", "", "Fast-paged", "Static column", "Pseudo-static",
+	"RAMBUS", "Synchronous", "CMOS", "EDO", "Window DRAM", "Cache DRAM",
+	"Non-volatile" );  
+
 # Program
 
 sub getdevice {
@@ -124,7 +147,7 @@ sub misc
   if (/^F/)
   {
 	my ($toto,$freq)=split(/:/);
-	$freq=$freq/1000;
+	$freq=int($freq/1000 + 0.5);
 	print "Freq=$freq\n";
 	next;
   }
@@ -140,6 +163,23 @@ sub misc
       my ($t,$sys)=split(/:/);
       chomp($sys);
       print "System=$sys\n";
+      next;
+    }
+  if (/^S3:/)
+    {
+      my ($t,$sys)=split(/:/);
+      chomp($sys);
+      my ($fac, $type)=split(/\|/, $sys);
+      $typename = "Unknown";
+      if ($type >= 1 && $type <= 26) { $typename = $typetbl[$type]; } 
+      print "Chassis=$fac|$typename\n";
+      next;
+    }
+  if (/^S4:/)
+    {
+      my ($t,$sys)=split(/:/);
+      chomp($sys);
+      print "CpuNum=$sys\n";
       next;
     }
   if (/^C/)
@@ -166,11 +206,19 @@ sub misc
 		    if (($list[2] eq '9')) {print "Model=Pentium III Mobile\n";next;}
 		    if (($list[2] eq 'a')) {print "Model=Pentium III Xeon\n";next;}
 		    if (($list[2] eq 'b')) {print "Model=Pentium III 0.13u\n";next;}
+		    if (($list[2] eq 'd')) {print "Model=Pentium M 0.09u\n";next;}
 		    print "Model=Pentium Pro/II/III\n";
 		    next;
 		  }
 		if (($list[1] eq '7')) {print "Model=Itanium\n";next;}
-		if (($list[1] eq 'f')) {print "Model=Pentium 4\n";next;}
+		if (($list[1] eq 'f')) {
+		    if ($list[2] == '0') {print "Model=Pentium 4 0.18u\n";next;}
+		    if ($list[2] == '1') {print "Model=Pentium 4 0.18u\n";next;}
+		    if ($list[2] == '2') {print "Model=Pentium 4 0.13u\n";next;}
+		    if ($list[2] == '3') {print "Model=Pentium 4 0.09u\n";next;}
+		    if ($list[2] == '4') {print "Model=Pentium 4 0.09u\n";next;}
+		    print "Model=Pentium 4\n";next;
+		}
 		print "Model=???\n";
 		next;
 	}
@@ -182,20 +230,27 @@ sub misc
 		  {
 		    if ($list[2] == '1') {print "Model=Athlon 0.25u Slot A\n";next;}
 		    if ($list[2] == '2') {print "Model=Athlon 0.18u Slot A\n";next;}
-		    if ($list[2] == '3') {print "Model=Duron\n";next;}
-		    if ($list[2] == '4') {print "Model=Athlon 0.18u\n";next;}
+		    if ($list[2] == '3') {print "Model=Duron (SF core)\n";next;}
+		    if ($list[2] == '4') {print "Model=Athlon (TB core) 0.18u\n";next;}
 		    if ($list[2] == '6') {print "Model=Athlon MP/Mobile Athlon\n";next;}
 		    if ($list[2] == '7') {print "Model=Mobile Duron\n";next;}
+		    if ($list[2] == '8') {print "Model=Athlon (TH/AP core)\n";next;}
+		    if ($list[2] == 'a') {print "Model=Athlon (BT core)\n";next;}
 		    print "Model=Athlon/Duron\n";
 		    next;
 		  }
-		if (($list[1] == 'f')) {print "Model=Opteron/Athlon64\n";next;}
+		if (($list[1] == 'f')) {print "Model=Opteron/Athlon 64\n";next;}
 		print "Model=???\n";
 		next;
 	}
 	if ($list[13] == '43')
 	{	
-		print "CpuVendor=Cyrix\n";
+		print "CpuVendor=Cyrix/Via\n";
+		if (($list[1] == '5')) {print "Model=Cyrix M1/Media GX\n";next;}
+		if (($list[1] == '6')) {
+		    if ($list[2] == '5') {print "Model=Cyrix M2\n";next;}
+		    print "Model=Via C3\n";next;
+		}
 		print "Model=???\n";
 		next;
 	}
@@ -240,6 +295,7 @@ sub disk
  close(DISK);
 }
 
+
 sub hdmap
 {
   my $file=$_[0];
@@ -258,6 +314,46 @@ sub hdmap
   close(DISK);
   close(INFO);
 }
+
+sub mem
+{
+ my $file=$_[0];
+ my $i=0;
+
+ open(FILE,$file) or die;
+ while (<FILE>)
+ {
+	next unless /^SM:/;
+
+	my @list=split(/[:(),=]+/);
+	my $used = ($list[1] ne "0")+0;
+	my $size = $list[1];
+	if ($size > 0) {
+	    $size *= 1024;
+	} else {
+	    $size *= -1;
+	}
+	print "\n[MEM$i]\n";
+	print "Used=$used\n";
+	print "Capacity=$size\n" if ($used);
+	print "Form=".$memform[hex($list[2])]."\n";
+	print "Location=".$list[3]."\n";
+	my $details = "";
+	my $bit = 1;
+	my $data = hex($list[4]) >> 16;
+	foreach $det (@memdetails) {
+	    if ($data & $bit) {
+		$details .= " ".$det;
+	    }
+	    $bit *= 2;
+	}
+	print "Type=".$memtype[hex($list[4]) & 0xFFFF]."$details\n";
+	print "Speed=$list[5]\n" if ($list[5] != 0);
+	$i++;
+ }
+ close(FILE);
+}
+
 
 # MAIN
 
@@ -284,6 +380,7 @@ misc($ARGV[0]);
 pci($ARGV[0]);
 disk($ARGV[0]);
 hdmap($ARGV[0]);
+mem($ARGV[0]);
 
 # update the database if LRS Inventory is installed
 if (-x "/usr/share/webmin/lrs-inventory/classes/Drivers/Ini/UpdateIni.php") {
