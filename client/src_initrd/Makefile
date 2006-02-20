@@ -64,7 +64,7 @@ initrd: Makefile MAKEDEV pump/pump
 	gzip -6c $(INITRD) > $(INITRD).gz
 
 pump/pump: pump/Makefile
-	(cd pump; make; strip pump)
+	(cd pump; make pump; strip pump)
 
 
 lvm2:
