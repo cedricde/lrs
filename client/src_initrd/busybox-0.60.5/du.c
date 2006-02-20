@@ -37,7 +37,7 @@
 static unsigned long disp_hr = KILOBYTE;
 #endif
 
-typedef void (Display) (long, char *);
+typedef void (Display) (long long, char *);
 
 static int du_depth = 0;
 static int count_hardlinks = 0;
@@ -46,16 +46,16 @@ static dev_t dir_dev = 0;
 
 static Display *print;
 
-static void print_normal(long size, char *filename)
+static void print_normal(long long size, char *filename)
 {
 #ifdef BB_FEATURE_HUMAN_READABLE
 	printf("%s\t%s\n", make_human_readable_str(size<<10, 1, disp_hr), filename);
 #else
-	printf("%ld\t%s\n", size, filename);
+	printf("%lld\t%s\n", size, filename);
 #endif
 }
 
-static void print_summary(long size, char *filename)
+static void print_summary(long long size, char *filename)
 {
 	if (du_depth == 1) {
 		print_normal(size, filename);
@@ -63,10 +63,10 @@ static void print_summary(long size, char *filename)
 }
 
 /* tiny recursive du */
-static long du(char *filename)
+static long long du(char *filename)
 {
 	struct stat statbuf;
-	long sum;
+	long long sum;
 
 	if ((lstat(filename, &statbuf)) != 0) {
 		perror_msg("%s", filename);
@@ -170,7 +170,7 @@ int du_main(int argc, char **argv)
 		if (du(".") == 0)
 			status = EXIT_FAILURE;
 	} else {
-		long sum;
+		long long sum;
 
 		for (i=optind; i < argc; i++) {
 			sum = du(argv[i]);

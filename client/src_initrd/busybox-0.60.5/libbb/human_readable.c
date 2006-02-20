@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include "libbb.h"
 
-const char *make_human_readable_str(unsigned long size, 
+const char *make_human_readable_str(unsigned long long size, 
 									unsigned long block_size,
 									unsigned long display_unit)
 {
