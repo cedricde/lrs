@@ -29,6 +29,7 @@ forcedeth
 r8169
 tlan
 epic100
+sis190
 
 # cannot autoprobe...
 # cs89x0
