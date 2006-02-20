@@ -56,8 +56,9 @@ static void lu_put_super(struct super_block*);
 static int  lu_statfs(struct super_block*, struct kstatfs*);
 
 static struct super_operations lu_sops = {
-    .drop_inode		= generic_delete_inode,
-    .delete_inode	= lu_delete_inode,
+    .drop_inode		= generic_drop_inode,
+    .delete_inode	= generic_delete_inode,
+/*    .delete_inode	= lu_delete_inode,*/
     .put_super		= lu_put_super,
     .statfs		= lu_statfs,
 };
@@ -447,6 +448,12 @@ static void lu_put_super(struct super_block *sb)
 static void lu_delete_inode(struct inode *in)
 {
     TRACE("in\n");
+#include <linux/version.h>
+
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,13))
+    if (in->i_data.nrpages)
+        truncate_inode_pages (&in->i_data, 0);
+#endif
     clear_inode(in);
     TRACE("out\n");
 }
