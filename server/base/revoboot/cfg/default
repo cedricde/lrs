@@ -1,6 +1,7 @@
 timeout 20
 color 7/1 15/3
 default 1
+kbdfr
 
 title Disque Dur Local  / Local Hard Disk
 desc Demarrage sur disque dur local
