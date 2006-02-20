@@ -1,7 +1,7 @@
 Summary: A Bootp and DHCP client for automatic IP configuration.
 Name: pump
-Version: 0.8.11
-Release: 7
+Version: 0.8.21
+Release: 1
 Group: System Environment/Daemons
 License: MIT
 BuildRoot: %{_tmppath}/%{name}-root
@@ -9,10 +9,6 @@ Source: pump-%{version}.tar.gz
 Obsoletes: bootpc
 BuildRequires: newt-devel
 Requires: initscripts >= 3.92
-Patch: pump-0.8.11-nobootp.patch
-Patch1: pump-0.8.11-retry-forever.patch
-Patch2: pump-0.8.11-21088.patch
-Patch3: pump-0.8.11-17724.patch
 
 %description
 DHCP (Dynamic Host Configuration Protocol) and BOOTP (Boot Protocol)
@@ -46,37 +42,85 @@ A text-based tool for simple configuration of ethernet devices.
 
 %prep
 %setup -q
-%patch -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
 
 %build
-make
+make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
 %makeinstall RPM_BUILD_ROOT=$RPM_BUILD_ROOT
 
+rm -f $RPM_BUILD_ROOT/sbin/pump $RPM_BUILD_ROOT%{_mandir}/man8/pump.8*
+
+%find_lang %{name}
+
 %clean
 rm -rf $RPM_BUILD_ROOT
-
-%files
-%defattr(-,root,root)
-/sbin/pump
-%{_mandir}/*/*
 
 %files devel
 %defattr(-,root,root)
 %{_libdir}/libpump.a
 %{_includedir}/pump.h
 
-%files -n netconfig
+%files -n netconfig -f %{name}.lang
 %defattr(-,root,root)
 %{_sbindir}/netconfig
 
 %changelog
+* Tue Sep 21 2004 Jeremy Katz <katzj@redhat.com> - 0.8.21-1
+- don't bring down the interface when getting a lease, should help with 
+  some cases where switch negotiation takes a while.  anaconda already
+  takes the interface down before getting a lease and then ensures that
+  the link is present (#131475, #110036)
+
+* Tue Jan  6 2004 Jeremy Katz <katzj@redhat.com> 0.8.20-1
+- rebuild with vendor class id patch (#78843)
+
+* Thu Aug 14 2003 Bill Nottingham <notting@redhat.com> 0.8.19-1
+- translations
+
+* Wed Aug 13 2003 Bill Nottingham <notting@redhat.com> 0.8.18-1
+- add --hwaddr and --desc options to netconfig
+
+* Fri Aug 01 2003 Florian La Roche <Florian.LaRoche@redhat.de>
+- set hopcount (ip_ttl) from 0 to 16
+
+* Tue Mar 11 2003 Jeremy Katz <katzj@redhat.com> 0.8.15-2
+- rebuild
+
+* Tue Mar 11 2003 Jeremy Katz <katzj@redhat.com> 0.8.15-1
+- add mtu and ptpaddr fields for s390 
+
+* Tue Feb 11 2003 Bill Nottingham <notting@redhat.com> 0.8.14-2
+- rebuild
+
+* Wed Dec 11 2002 Elliot Lee <sopwith@redhat.com> 0.8.14-1
+- Remove unpackaged files
+
+* Fri Oct  4 2002 Jeremy Katz <katzj@redhat.com>
+- build with -fPIC
+
+* Fri Oct  4 2002 Jeremy Katz <katzj@redhat.com>
+- link against libpopt.a in %%{_libdir}
+
+* Thu Aug 15 2002 Bill Nottingham <notting@redhat.com>
+- rebuild against new newt
+
+* Thu Jun 27 2002 Bill Nottingham <notting@redhat.com>
+- don't ship main package
+
+* Tue Jun 18 2002 Bill Nottingham <notting@redhat.com>
+- sync patches and CVS
+- rebuild against new slang
+- don't strip binaries
+
+* Thu May 23 2002 Tim Powers <timp@redhat.com>
+- automated rebuild
+
+* Wed Jan 09 2002 Tim Powers <timp@redhat.com>
+- automated rebuild
+
 * Sun Aug 26 2001 Elliot Lee <sopwith@redhat.com>
 - Fix one half #17724
 

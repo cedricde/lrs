@@ -63,6 +63,9 @@ struct intfconfig_s {
 
 typedef int int32;
 
+char * hwaddr = NULL;
+char * desc = NULL;
+
 #ifdef __STANDALONE__
 static FILE * logfile = NULL;
 
@@ -495,6 +498,10 @@ int writeNetInfo(const char * fn, struct networkDeviceConfig * dev,
 #endif
     
     if (!(f = fopen(fn, "w"))) return -1;
+    
+    if (desc) {
+        fprintf(f, "# %s\n", desc);
+    }
 
     fprintf(f, "DEVICE=%s\n", dev->dev.device);
 
@@ -519,6 +526,10 @@ int writeNetInfo(const char * fn, struct networkDeviceConfig * dev,
 	fprintf(f, "HOSTNAME=%s\n", dev->dev.hostname);
     if (dev->dev.set & PUMP_NETINFO_HAS_DOMAIN)
 	fprintf(f, "DOMAIN=%s\n", dev->dev.domain);
+    
+    if (hwaddr) {
+	fprintf(f, "HWADDR=%s\n",hwaddr);
+    }
 
     fclose(f);
 
@@ -735,6 +746,7 @@ int kickstartNetwork(char ** devicePtr, struct networkDeviceConfig * netDev,
 #endif
 
 #ifdef __STANDALONE__
+
 int main(int argc, const char **argv) {
     int netSet, rc;
     int x;
@@ -773,9 +785,17 @@ int main(int argc, const char **argv) {
 	    { "nodns", '\0', POPT_ARG_NONE, &noDns, 0,
 	      _("No DNS lookups"), NULL 
 	    },
+	    { "hwaddr", '\0', POPT_ARG_STRING, &hwaddr, 0,
+	      _("Ethernet hardware address"), NULL 
+	    },
+	    { "description", '\0', POPT_ARG_STRING, &desc, 0,
+	      _("Description of the device"), NULL
+	    },
 	    { 0, 0, 0, 0, 0 }
     };
-
+	
+    bindtextdomain("pump", "/usr/share/locale");
+    textdomain("pump");
 	
     netDev = malloc(sizeof(struct networkDeviceConfig));
     memset(netDev,'\0',sizeof(struct networkDeviceConfig));
@@ -846,13 +866,15 @@ int main(int argc, const char **argv) {
 	    newtPushHelpLine(_(" <Tab>/<Alt-Tab> between elements   |   <Space> selects  |   <F12> next screen"));
 	    snprintf(roottext,80,_("netconfig %s  (C) 1999 Red Hat, Inc."), VERSION);
 	    newtDrawRootText(0, 0, roottext);
-	    x=newtWinChoice(_("Network configuration"),_("Yes"),_("No"),
-			  _("Would you like to set up networking?"));
-	    if (x==2) { 
+	    if (!device) {
+	        x=newtWinChoice(_("Network configuration"),_("Yes"),_("No"),
+				_("Would you like to set up networking?"));
+	        if (x==2) { 
 		    newtFinished();
 		    exit(0);
+	        }
+		device = "eth0";
 	    }
-	    if (!device) device="eth0";
 	    strncpy(netDev->dev.device,device,10);
 	    if (readNetConfig(device,netDev,0) != LOADER_BACK) {
 		    snprintf(path,256,"/etc/sysconfig/network-scripts/ifcfg-%s",device);

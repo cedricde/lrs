@@ -53,6 +53,10 @@
 #include "pump.h"
 
 int verbose = 0;
+#if !UDEB
+int bootp_client_port;
+int bootp_server_port;
+#endif
 
 #define N_(foo) (foo)
 
@@ -71,6 +75,7 @@ struct command {
 	    int flags;
 	    int reqLease;			/* in seconds */
 	    char reqHostname[200];
+	    struct pumpOverrideInfo override;
 	} start;
 	int result;				/* 0 for success */
 	struct {
@@ -94,8 +99,6 @@ struct command {
 	} status;
     } u;
 };
-
-static int openControlSocket(char * configFile, struct pumpOverrideInfo * override);
 
 char * readSearchPath(void) {
     int fd;
@@ -137,14 +140,15 @@ char * readSearchPath(void) {
     return NULL;
 }
 
-static void createResolvConf(struct pumpNetIntf * intf, char * domain,
-			     int isSearchPath) {
+static void createResolvConf(struct pumpNetIntf * intf, struct pumpOverrideInfo * override, char * domain) {
     FILE * f;
     int i;
     char * chptr;
+    int resolvconf;
 
     /* force a reread of /etc/resolv.conf if we need it again */
     res_close();
+    endhostent();
 
     if (!domain) {
 	domain = readSearchPath();
@@ -153,63 +157,56 @@ static void createResolvConf(struct pumpNetIntf * intf, char * domain,
 	    strcpy(chptr, domain);
 	    free(domain);
 	    domain = chptr;
-	    isSearchPath = 1;
 	}
     }
 
-    f = fopen("/etc/resolv.conf", "w");
-    if (!f) {
-	syslog(LOG_ERR, "cannot create /etc/resolv.conf: %s\n",
-	       strerror(errno));
-	return;
+    resolvconf = !(override->flags & OVERRIDE_FLAG_NORESOLVCONF);
+    if (resolvconf) {
+	struct stat buf;
+
+	if (stat("/sbin/resolvconf", &buf) < 0)
+	    resolvconf = 0;
     }
 
-    if (domain && isSearchPath) {
-	fprintf(f, "search %s\n", domain);
-    } else if (domain && !strchr(domain, '.')) {
-	fprintf(f, "search %s\n", domain);
-    } else if (domain) {
-	fprintf(f, "search");
-	chptr = domain;
-	do {
-	    /* If there is a single . in the search path, write it out
-	     * only if the toplevel domain is com, edu, gov, mil, org,
-	     * net 
-	     */
-	    /* Don't do that! It breaks virtually all installations
-	     * in Europe.
-	     * Besides, what's wrong with some company assigning hostnames
-	     * in the ".internal" TLD?
-	     * What exactly was this supposed to accomplish?
-	     * Commented out --bero
-	     */
-/*	    if (!strchr(strchr(chptr, '.') + 1, '.')) {
-		char * tail = strchr(chptr, '.');
-		if (strcmp(tail, ".com") && strcmp(tail, ".edu") &&
-		    strcmp(tail, ".gov") && strcmp(tail, ".mil") &&
-		    strcmp(tail, ".net") && 
-		    strcmp(tail, ".org") && strcmp(tail, ".int")) break;
-	    } */
+    if (resolvconf) {
+	char *arg;
 
-	    fprintf(f, " %s", chptr);
-	    chptr = strchr(chptr, '.');
-	    if (chptr) {
-		chptr++;
-		if (!strchr(chptr, '.'))
-		    chptr = NULL;
-	    }
-	} while (chptr);
-
-	fprintf(f, "\n");
+	f = NULL;
+	if (asprintf(&arg, "/sbin/resolvconf -a %s >/dev/null 2>&1", intf->device) >= 0) {
+	    f = popen(arg, "w");
+	    free(arg);
+	}
+	if (!f) {
+	    syslog(LOG_ERR, "error starting resolvconf: %s\n", strerror(errno));
+	    return;
+	}
+    } else {
+	f = fopen("/etc/resolv.conf", "w");
+	if (!f) {
+	    syslog(LOG_ERR, "error opening resolv.conf: %s\n", strerror(errno));
+	    return;
+	}
     }
+
+
+    errno = 0;
+
+    if (domain)
+	if(fprintf(f, "search %s\n", domain) < 0)
+	    syslog(LOG_ERR, "failed to write resolver configuration data\n");
 
     for (i = 0; i < intf->numDns; i++)
-	fprintf(f, "nameserver %s\n", inet_ntoa(intf->dnsServers[i]));
+	if(fprintf(f, "nameserver %s\n", inet_ntoa(intf->dnsServers[i])) < 0)
+	    syslog(LOG_ERR, "failed to write resolver configuration data\n");
 
-    fclose(f);
+    if (resolvconf) {
+	if(pclose(f) != 0) /* errno not useful on pclose failure */
+	    syslog(LOG_ERR, "error running resolvconf\n");
+    } else {
+	if(fclose(f) != 0)
+	    syslog(LOG_ERR, "error closing resolv.conf: %s\n", strerror(errno));
+    }
 
-    /* force a reread of /etc/resolv.conf */
-    endhostent();
 }
 
 void setupDomain(struct pumpNetIntf * intf, 
@@ -253,8 +250,8 @@ void setupDns(struct pumpNetIntf * intf, struct pumpOverrideInfo * override) {
 	return;
     }
 
-    if (override->searchPath) {
-	createResolvConf(intf, override->searchPath, 1);
+    if (override->searchPath[0]) {
+	createResolvConf(intf, override, override->searchPath);
 	return;
     }
 
@@ -263,7 +260,7 @@ void setupDns(struct pumpNetIntf * intf, struct pumpOverrideInfo * override) {
 	    if (intf->set & PUMP_NETINFO_HAS_HOSTNAME) {
 		hn = intf->hostname;
 	    } else {
-		createResolvConf(intf, NULL, 0);
+		createResolvConf(intf, override, NULL);
 
 		he = gethostbyaddr((char *) &intf->ip, sizeof(intf->ip),
 				   AF_INET);
@@ -283,8 +280,28 @@ void setupDns(struct pumpNetIntf * intf, struct pumpOverrideInfo * override) {
 	    dn = intf->domain;
 	}
 
-	createResolvConf(intf, dn, 0);
+	createResolvConf(intf, override, dn);
     }
+}
+
+void unsetupDns(struct pumpNetIntf * intf, struct pumpOverrideInfo * override) {
+    struct stat buf;
+    char *arg;
+
+    if (override->flags & OVERRIDE_FLAG_NODNS)
+	return;
+    if (override->flags & OVERRIDE_FLAG_NORESOLVCONF)
+	return;
+    if (stat("/sbin/resolvconf", &buf) < 0)
+	return;
+    if (asprintf(&arg, "/sbin/resolvconf -d %s", intf->device) < 0) {
+	syslog(LOG_ERR, "failed to release resolvconf: %s", strerror(errno));
+	return;
+    }
+
+    if (system(arg) != 0)
+	syslog(LOG_ERR, "resolvconf -d %s failed", intf->device);
+    free(arg);
 }
 
 static void callIfupPost(struct pumpNetIntf* intf) {
@@ -322,7 +339,7 @@ static void callScript(char* script,int msg,struct pumpNetIntf* intf) {
     char ** nextArg;
     char * class, * chptr;
 
-    if (!script) return;
+    if (!*script) return;
 
     argv[0] = script;
     argv[2] = intf->device;
@@ -371,35 +388,59 @@ static void callScript(char* script,int msg,struct pumpNetIntf* intf) {
     waitpid(child, NULL, 0);
 }
 
-static void runDaemon(int sock, char * configFile, struct pumpOverrideInfo * overrides) {
+
+static void gotNewLease(struct pumpNetIntf *intf) {
+    struct pumpOverrideInfo *o = &intf->override;
+
+    pumpSetupInterface(intf);
+
+    syslog(LOG_INFO, "configured interface %s", intf->device);
+
+    if (!(o->flags & OVERRIDE_FLAG_NOGATEWAY)) {
+	int i;
+
+	for (i = intf->numGateways - 1; i >= 0; i--)
+	    pumpSetupDefaultGateway(&intf->gateways[i]);
+    }
+
+    setupDns(intf, o);
+    setupDomain(intf, o);
+
+    callScript(o->script, PUMP_SCRIPT_NEWLEASE, intf);
+}
+
+static void killLease(struct pumpNetIntf *intf) {
+    struct pumpOverrideInfo *o = &intf->override;
+
+    unsetupDns(intf, o);
+    callScript(o->script, PUMP_SCRIPT_DOWN, intf);
+}
+
+static void runDaemon(int sock, int sock_in) {
     int conn;
     struct sockaddr_un addr;
     int addrLength = sizeof(struct sockaddr_un);
     struct command cmd;
     struct pumpNetIntf intf[20];
+    const int maxIntf = sizeof(intf) / sizeof(intf[0]);
     int numInterfaces = 0;
     int i;
     int closest;
     struct timeval tv;
     fd_set fds;
-    struct pumpOverrideInfo emptyOverride, * o;
-
-    if (!overrides)
-        readPumpConfig(configFile, &overrides);
-
-    if (!overrides) {
-	overrides = &emptyOverride;
-	overrides->intf.device[0] = '\0';
-    }
 
     while (1) {
 	FD_ZERO(&fds);
 	FD_SET(sock, &fds);
+	FD_SET(sock_in, &fds);
 
 	tv.tv_sec = tv.tv_usec = 0;
 	closest = -1;
 	if (numInterfaces) {
-	    for (i = 0; i < numInterfaces; i++)
+	    for (i = 0; i < numInterfaces; i++) {
+		if (!(intf[i].set &
+		   (PUMP_INTFINFO_NEEDS_NEWLEASE | PUMP_INTFINFO_HAS_LEASE)))
+		    continue;
 		/* if this interface has an expired lease due to
 		 * renewal failures and it's time to try again to
 		 * get a new lease, then try again
@@ -416,7 +457,7 @@ static void runDaemon(int sock, char * configFile, struct pumpOverrideInfo * ove
 			  intf[i].reqLease,
 			  intf[i].set & PUMP_NETINFO_HAS_HOSTNAME
 			    ? intf[i].hostname : NULL,
-			  intf + i, overrides)) {
+			  intf + i, &intf[i].override)) {
 
 			    /* failed to get a new lease, so try
 			     * again in 30 seconds
@@ -425,14 +466,12 @@ static void runDaemon(int sock, char * configFile, struct pumpOverrideInfo * ove
 
 		    } else {
 			intf[i].set &= ~PUMP_INTFINFO_NEEDS_NEWLEASE;
-			callScript(overrides->script, PUMP_SCRIPT_NEWLEASE,
-				   &intf[i]);
+			gotNewLease(intf + i);
                     }
 		}
-		else if ((intf[i].set & PUMP_INTFINFO_HAS_LEASE) && 
-			(closest == -1 || 
-			       (intf[closest].renewAt > intf[i].renewAt)))
+		if (closest == -1 || (intf[closest].renewAt > intf[i].renewAt))
 		    closest = i;
+	    }
 	    if (closest != -1) {
 		tv.tv_sec = intf[closest].renewAt - pumpUptime();
 		if (tv.tv_sec <= 0) {
@@ -448,13 +487,6 @@ static void runDaemon(int sock, char * configFile, struct pumpOverrideInfo * ove
 			 */
 			if ((intf[closest].renewAt = pumpUptime() + 30) >
 			    intf[closest].leaseExpiration) {
-			    o = overrides;
-			    while (*o->intf.device &&
-				   strcmp(o->intf.device,cmd.u.start.device)) 
-				o++;
-			    
-			    if (!*o->intf.device) o = overrides;
-
 			    intf[closest].set &= ~PUMP_INTFINFO_HAS_LEASE;
 			    intf[closest].set |= PUMP_INTFINFO_NEEDS_NEWLEASE;
 
@@ -464,39 +496,23 @@ static void runDaemon(int sock, char * configFile, struct pumpOverrideInfo * ove
 				  intf[closest].reqLease,
 				  intf[closest].set & PUMP_NETINFO_HAS_HOSTNAME
 				    ? intf[closest].hostname : NULL,
-				  intf + closest, o)) {
+				  intf + closest, &intf[closest].override)) {
  
- 				    /* failed to get a new lease, so try
-				     * again in 30 seconds
-                                      */
-				    intf[closest].renewAt = pumpUptime() + 30;
-#if 0
- 	/* ifdef this out since we now try more than once to get
- 	 * a new lease and don't, therefore, want to remove the interface
- 	 */
- 
-				if (numInterfaces == 1) {
-				    callScript(o->script, PUMP_SCRIPT_DOWN,
-					       &intf[closest]);
-				    syslog(LOG_INFO,
-					    "terminating as there are no "
-					    "more devices under management");
-					    exit(0);
-				}
-
-				intf[i] = intf[numInterfaces - 1];
-				numInterfaces--;
-#endif
+ 				/* failed to get a new lease, so try
+				 * again in 30 seconds
+				 */
+				intf[closest].renewAt = pumpUptime() + 30;
+				killLease(intf + closest);
 			    } else {
+				killLease(intf + closest);
 				intf[closest].set &=
 					~PUMP_INTFINFO_NEEDS_NEWLEASE;
-				callScript(o->script, PUMP_SCRIPT_NEWLEASE,
-					   &intf[closest]);
+				gotNewLease(intf + closest);
                             }
 			}
 		    } else {
-			callScript(o->script, PUMP_SCRIPT_RENEWAL,
-				   &intf[closest]);
+			callScript(intf[closest].override.script,
+				   PUMP_SCRIPT_RENEWAL, &intf[closest]);
 			callIfupPost(&intf[closest]);
 		    }
 
@@ -507,6 +523,48 @@ static void runDaemon(int sock, char * configFile, struct pumpOverrideInfo * ove
 
 	if (select(sock + 1, &fds, NULL, NULL, 
 		   closest != -1 ? &tv : NULL) > 0) {
+	    if (!FD_ISSET(sock, &fds)) {
+		char c = 0;
+		struct sockaddr_in addr_in;
+		socklen_t len;
+		struct stat buf;
+
+		if (!FD_ISSET(sock_in, &fds))
+		    continue;
+
+		conn = accept(sock_in, (struct sockaddr *) &addr_in, &len);
+
+		if (!stat(CONTROLSOCKET, &buf))
+		    goto out;
+
+		close(sock);
+
+		addr.sun_family = AF_UNIX;
+		strcpy(addr.sun_path, CONTROLSOCKET);
+		addrLength = sizeof(addr.sun_family) + strlen(addr.sun_path);
+
+		if ((sock = socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
+		    syslog(LOG_ERR, "failed to create socket: %s\n",
+			   strerror(errno));
+		    exit(1);
+		}
+
+		umask(077);
+		if (bind(sock, (struct sockaddr *) &addr, addrLength)) {
+		    syslog(LOG_ERR, "bind to %s failed: %s\n", CONTROLSOCKET,
+			   strerror(errno));
+		    exit(1);
+		}
+		umask(033);
+
+		listen(sock, 5);
+
+		write(conn, &c, 1);
+
+out:
+		close(conn);
+		continue;
+	    }
 	    conn = accept(sock, (struct sockaddr *) &addr, &addrLength);
 
 	    if (read(conn, &cmd, sizeof(cmd)) != sizeof(cmd)) {
@@ -518,7 +576,7 @@ static void runDaemon(int sock, char * configFile, struct pumpOverrideInfo * ove
 	      case CMD_DIE:
 		for (i = 0; i < numInterfaces; i++) {
 		    pumpDhcpRelease(intf + i);
-		    callScript(o->script, PUMP_SCRIPT_DOWN, &intf[i]);
+		    killLease(intf + i);
 		}
 
 		syslog(LOG_INFO, "terminating at root's request");
@@ -529,35 +587,20 @@ static void runDaemon(int sock, char * configFile, struct pumpOverrideInfo * ove
 		exit(0);
 
 	      case CMD_STARTIFACE:
-		o = overrides; 
-		while (*o->intf.device && 
-			strcmp(o->intf.device, cmd.u.start.device)) {
-		    o++;
+		if (numInterfaces >= maxIntf) {
+		    syslog(LOG_INFO, "too many interfaces");
+		    cmd.u.result = 1;
+		    break;
 		}
-		if (!*o->intf.device) o = overrides;
 
 		if (pumpDhcpRun(cmd.u.start.device,
 			        cmd.u.start.flags, cmd.u.start.reqLease, 
 			        cmd.u.start.reqHostname[0] ? 
 			            cmd.u.start.reqHostname : NULL,
-			        intf + numInterfaces, o)) {
+			        intf + numInterfaces, &cmd.u.start.override)) {
 		    cmd.u.result = 1;
 		} else {
-		    pumpSetupInterface(intf + numInterfaces);
-		    i = numInterfaces;
-
-		    syslog(LOG_INFO, "configured interface %s", intf[i].device);
-
-		    if ((intf[i].set & PUMP_NETINFO_HAS_GATEWAY) &&
-			 !(o->flags & OVERRIDE_FLAG_NOGATEWAY))
-			pumpSetupDefaultGateway(&intf[i].gateway);
-
-		    setupDns(intf + i, o);
-		    setupDomain(intf + i, o);
-
-		    callScript(o->script, PUMP_SCRIPT_NEWLEASE, 
-			       intf + numInterfaces);
-
+		    gotNewLease(intf + numInterfaces);
 		    cmd.u.result = 0;
 		    numInterfaces++;
 		}
@@ -571,7 +614,8 @@ static void runDaemon(int sock, char * configFile, struct pumpOverrideInfo * ove
 		else {
 		    cmd.u.result = pumpDhcpRenew(intf + i);
 		    if (!cmd.u.result) {
-			callScript(o->script, PUMP_SCRIPT_RENEWAL, intf + i);
+			callScript(intf[i].override.script,
+				   PUMP_SCRIPT_RENEWAL, intf + i);
 			callIfupPost(intf + i);
 		    }
 		}
@@ -584,7 +628,7 @@ static void runDaemon(int sock, char * configFile, struct pumpOverrideInfo * ove
 		    cmd.u.result = RESULT_UNKNOWNIFACE;
 		else {
 		    cmd.u.result = pumpDhcpRelease(intf + i);
-		    callScript(o->script, PUMP_SCRIPT_DOWN, intf + i);
+		    killLease(intf + i);
 		    if (numInterfaces == 1) {
 			cmd.type = CMD_RESULT;
 			write(conn, &cmd, sizeof(cmd));
@@ -662,12 +706,16 @@ static void runDaemon(int sock, char * configFile, struct pumpOverrideInfo * ove
     exit(0);
 }
 
-static int openControlSocket(char * configFile, struct pumpOverrideInfo * override) {
+static int openControlSocket(void) {
     struct sockaddr_un addr;
+    struct sockaddr_in addr_in;
     int sock;
+    int sock_in;
     size_t addrLength;
     pid_t child;
     int status;
+    int error;
+    struct timeval timeout;
 
     if ((sock = socket(PF_UNIX, SOCK_STREAM, 0)) < 0)
 	return -1;
@@ -679,12 +727,43 @@ static int openControlSocket(char * configFile, struct pumpOverrideInfo * overri
     if (!connect(sock, (struct sockaddr *) &addr, addrLength)) 
 	return sock;
 
-    if (errno != ENOENT && errno != ECONNREFUSED) {
+    error = errno;
+    if (error != ENOENT && error != ECONNREFUSED) {
 	fprintf(stderr, "failed to connect to %s: %s\n", CONTROLSOCKET,
-		strerror(errno));
-	close(sock);
-	return -1;
+		strerror(error));
+	goto err;
     }
+
+    unlink(CONTROLSOCKET);
+
+    if ((sock_in = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+	goto err;
+    }
+
+    addr_in.sin_family = AF_INET;
+    addr_in.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+    addr_in.sin_port = bootp_client_port;
+
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 0;
+    setsockopt(sock_in, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
+    if (!connect(sock_in, (struct sockaddr *) &addr_in, sizeof(addr_in))) {
+	char c;
+
+	read(sock_in, &c, 1);
+	close(sock_in);
+	goto again;
+    }
+
+    error = errno;
+    close(sock_in);
+    if (error != ECONNREFUSED && error != ETIMEDOUT) {
+	fprintf(stderr, "failed to connect to localhost:bootpc: %s\n",
+		strerror(error));
+	fprintf(stderr, "There might be another pump running!\n");
+    }
+
+    addr_in.sin_addr.s_addr = htonl(INADDR_ANY);
 
     if (!(child = fork())) {
 	close(sock);
@@ -693,13 +772,28 @@ static int openControlSocket(char * configFile, struct pumpOverrideInfo * overri
 	close(1);
 	close(2);
 
-	if ((sock = socket(PF_UNIX, SOCK_STREAM, 0)) < 0) {
+	openlog("pumpd", LOG_PID, LOG_DAEMON);
+
+	if ((sock_in = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+	    syslog(LOG_ERR, "failed to create IP socket: %s\n",
+		   strerror(errno));
+	    exit(1);
+	}
+
+	if (bind(sock_in, (struct sockaddr *) &addr_in, sizeof(addr_in))) {
+	    syslog(LOG_ERR, "bind to bootpc/tcp failed: %s\n",
+		   strerror(errno));
+	    exit(1);
+	}
+
+	listen(sock_in, 5);
+
+	if ((sock = socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
 	    syslog(LOG_ERR, "failed to create socket: %s\n", strerror(errno));
 	    exit(1);
 	}
 
 	chdir("/");
-	unlink(CONTROLSOCKET);
 	umask(077);
 	if (bind(sock, (struct sockaddr *) &addr, addrLength)) {
 	    syslog(LOG_ERR, "bind to %s failed: %s\n", CONTROLSOCKET,
@@ -712,7 +806,8 @@ static int openControlSocket(char * configFile, struct pumpOverrideInfo * overri
 
 	if (fork()) _exit(0);
 
-	openlog("pumpd", LOG_PID, LOG_DAEMON);
+	setsid();
+
 	{
 	    time_t now,upt;
 	    int updays,uphours,upmins,upsecs;
@@ -730,20 +825,25 @@ static int openControlSocket(char * configFile, struct pumpOverrideInfo * overri
 	    }
 	}
 
-	runDaemon(sock, configFile, override);
+	runDaemon(sock, sock_in);
     }
+
+    close(sock_in);
 
     waitpid(child, &status, 0);
     if (!WIFEXITED(status) || WEXITSTATUS(status))
 	return -1;
 
+again:
     if (!connect(sock, (struct sockaddr *) &addr, addrLength)) 
 	return sock;
 
-    fprintf(stderr, "failed to connect to %s: %s\n", CONTROLSOCKET,
+    fprintf(stderr, "failed to connect to localhost:bootpc: %s\n",
 	    strerror(errno));
 
-    return 0;
+err:
+    close(sock);
+    return -1;
 }
 
 void printStatus(struct pumpNetIntf i, char * hostname, char * domain,
@@ -759,8 +859,13 @@ void printStatus(struct pumpNetIntf i, char * hostname, char * domain,
     printf("\tBoot server: %s\n", inet_ntoa(i.bootServer));
     printf("\tNext server: %s\n", inet_ntoa(i.nextServer));
 
-    if (i.set & PUMP_NETINFO_HAS_GATEWAY)
-	printf("\tGateway: %s\n", inet_ntoa(i.gateway));
+    if (i.numGateways) {
+	printf("\tGateway: %s\n", inet_ntoa(i.gateways[0]));
+	printf("\tGateways:");
+	for (j = 0; j < i.numGateways; j++)
+	    printf(" %s", inet_ntoa(i.gateways[j]));
+	printf("\n");
+    }
 
     if (i.set & PUMP_INTFINFO_HAS_BOOTFILE)
 	printf("\tBoot file: %s\n", bootFile);
@@ -849,8 +954,11 @@ int main (int argc, const char ** argv) {
     int winId = 0;
     int release = 0, renew = 0, status = 0, lookupHostname = 0, nodns = 0;
     int nogateway = 0, nobootp = 0;
+    int nosetup = 0;
+    int noresolvconf = 0;
     struct command cmd, response;
     char * configFile = "/etc/pump.conf";
+    char * script = NULL;
     struct pumpOverrideInfo * overrides;
     int cont;
     struct poptOption options[] = {
@@ -882,8 +990,14 @@ int main (int argc, const char ** argv) {
 			N_("Don't update resolv.conf"), NULL },
 	    { "no-gateway", '\0', POPT_ARG_NONE, &nogateway, 0,
 			N_("Don't set a gateway for this interface"), NULL },
+	    { "no-setup", '\0', POPT_ARG_NONE, &nosetup, 0,
+			N_("Don't set up anything"), NULL },
+	    { "no-resolvconf", '\0', POPT_ARG_NONE, &noresolvconf, 0,
+			N_("Don't set up resolvconf"), NULL },
 	    { "no-bootp", '\0', POPT_ARG_NONE, &nobootp, 0,
 	                N_("Ignore non-DHCP BOOTP responses"), NULL },
+	    { "script", '\0', POPT_ARG_STRING, &script, 0,
+			N_("Script to use") },
 	    { "win-client-ident", '\0', POPT_ARG_NONE, &winId, 0,
 			N_("Set the client identifier to match Window's") },
 	    /*{ "test", 't', POPT_ARG_NONE, &test, 0,
@@ -892,6 +1006,23 @@ int main (int argc, const char ** argv) {
 	    POPT_AUTOHELP
 	    { NULL, '\0', 0, NULL, 0 }
         };
+#if !UDEB
+    struct servent *servent;
+
+    servent = getservbyname("bootpc", "udp");
+    if (!servent) {
+	perror("Cannot resolve bootpc/udp service");
+	return 1;
+    }
+    bootp_client_port = servent->s_port;
+
+    servent = getservbyname("bootps", "udp");
+    if (!servent) {
+	perror("Cannot resolve bootps/udp service");
+	return 1;
+    }
+    bootp_server_port = servent->s_port;
+#endif
 
     memset(&cmd, 0, sizeof(cmd));
     memset(&response, 0, sizeof(response));
@@ -911,6 +1042,11 @@ int main (int argc, const char ** argv) {
 	return 1;
     }
 
+    if (script && strlen(script) > sizeof(overrides->script)) {
+	fprintf(stderr, _("%s: --script argument is too long\n"), PROGNAME);
+	return 1;
+    }
+
     /* make sure the config file is parseable before going on any further */
     if (readPumpConfig(configFile, &overrides)) return 1;
 
@@ -925,16 +1061,6 @@ int main (int argc, const char ** argv) {
 	flags |= PUMP_FLAG_WINCLIENTID;
     if (lookupHostname)
 	flags |= PUMP_FLAG_FORCEHNLOOKUP;
-    if (nodns)
-	overrides->flags |= OVERRIDE_FLAG_NODNS;
-    if (nobootp)
-	overrides->flags |= OVERRIDE_FLAG_NOBOOTP;
-    if (nogateway)
-	overrides->flags |= OVERRIDE_FLAG_NOGATEWAY;
-
-    cont = openControlSocket(configFile, overrides);
-    if (cont < 0) 
-	exit(1);
 
     if (killDaemon) {
 	cmd.type = CMD_DIE;
@@ -948,6 +1074,8 @@ int main (int argc, const char ** argv) {
 	cmd.type = CMD_STOPIFACE;
 	strcpy(cmd.u.stop.device, device);
     } else {
+	struct pumpOverrideInfo * o;
+
 	cmd.type = CMD_STARTIFACE;
 	strcpy(cmd.u.start.device, device);
 	cmd.u.start.flags = flags;
@@ -956,19 +1084,47 @@ int main (int argc, const char ** argv) {
 	else
 		cmd.u.start.reqLease = lease;
 	strcpy(cmd.u.start.reqHostname, hostname);
+
+	o = overrides + 1;
+	while (*o->device && strcmp(o->device, device))
+	    o++;
+	if (!*o->device)
+	    o = overrides;
+
+	if (nodns)
+	    o->flags |= OVERRIDE_FLAG_NODNS;
+	if (nobootp)
+	    o->flags |= OVERRIDE_FLAG_NOBOOTP;
+	if (nogateway)
+	    o->flags |= OVERRIDE_FLAG_NOGATEWAY;
+	if (nosetup)
+	    o->flags |=
+		OVERRIDE_FLAG_NOSETUP |
+		OVERRIDE_FLAG_NODNS |
+		OVERRIDE_FLAG_NOGATEWAY |
+		OVERRIDE_FLAG_NONISDOMAIN;
+	if (noresolvconf)
+	    o->flags |= OVERRIDE_FLAG_NORESOLVCONF;
+	if (script)
+	    strcpy(o->script, script);
+
+	memcpy(&cmd.u.start.override, o, sizeof(*o));
     }
 
-    write(cont, &cmd, sizeof(cmd));
-    read(cont, &response, sizeof(response));
+    free(overrides);
 
-    if (response.type == CMD_RESULT && response.u.result &&
-	    cmd.type == CMD_STARTIFACE) {
-	cont = openControlSocket(configFile, overrides);
-	if (cont < 0) 
-	    exit(1);
-	write(cont, &cmd, sizeof(cmd));
-	read(cont, &response, sizeof(response));
+again:
+    cont = openControlSocket();
+    if (cont < 0) 
+	exit(1);
+
+    if (write(cont, &cmd, sizeof(cmd)) < 0) {
+retry:
+	close(cont);
+	goto again;
     }
+    if (read(cont, &response, sizeof(response)) <= 0)
+	goto retry;
 
     if (response.type == CMD_RESULT) {
 	if (response.u.result) {

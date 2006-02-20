@@ -80,13 +80,11 @@ typedef short bp_int16;
 #define DHCP_OPTION_OPTIONREQ		55
 #define DHCP_OPTION_MAXSIZE		57
 #define DHCP_OPTION_T1			58
+#define DHCP_OPTION_CLASS_IDENTIFIER    60
 #define DHCP_OPTION_CLIENT_IDENTIFIER	61
 #define DHCP_OPTION_177			177
 #define DHCP_OPTION_178			178
 #define DHCP_OPTION_179			179
-
-#define BOOTP_CLIENT_PORT	68
-#define BOOTP_SERVER_PORT	67
 
 #define BOOTP_OPCODE_REQUEST	1
 #define BOOTP_OPCODE_REPLY	2
@@ -143,8 +141,8 @@ static void initVendorCodes(struct bootpRequest * breq);
 static char * handleTransaction(int s, struct pumpOverrideInfo * override, 
 				struct bootpRequest * breq,
 			        struct bootpRequest * bresp, 
-			        struct sockaddr * serverAddr,
-			        socklen_t serverAddrLen,
+				struct sockaddr * serverAddr,
+				socklen_t serverAddrLen,
 				struct sockaddr_in * respondant,
 				int useBootpPacket, int raw,
 				time_t startTime, int dhcpResponseType);
@@ -153,7 +151,7 @@ static char * getInterfaceInfo(struct pumpNetIntf * intf, int s);
 static char * perrorstr(char * msg);
 static void addClientIdentifier(int flags, struct bootpRequest * req);
 static void buildRequest(struct bootpRequest * req, int flags, int type,
-		         char * reqHostname, int lease);
+		         char * reqHostname, char *class, int lease);
 static void updateSecCount(struct bootpRequest * breq, time_t startTime);
 static void makeraw(struct ippkt *buf, const void *payload, size_t len);
 static uint32_t checksum(const void *, size_t, uint32_t);
@@ -206,15 +204,18 @@ static char * perrorstr(char * msg) {
 }
 
 
-char * pumpDisableInterface(char * device) {
+char * pumpDisableInterface(struct pumpNetIntf * intf) {
     struct ifreq req;
     int s;
+
+    if (intf->flags & PUMP_FLAG_NOSETUP)
+	return NULL;
 
     s = socket(AF_INET, SOCK_DGRAM, 0);
 	
     memset(&req,0,sizeof(req));
 
-    strcpy(req.ifr_name, device);
+    strcpy(req.ifr_name, intf->device);
     if (ioctl(s, SIOCGIFFLAGS, &req)) {
 	close(s);
 	return perrorstr("SIOCGIFFLAGS");
@@ -238,7 +239,10 @@ char * pumpSetupInterface(struct pumpNetIntf * intf) {
     struct rtentry route;
     int s;
 
-    if ((rc = pumpDisableInterface(intf->device))) return rc;
+    if (intf->flags & PUMP_FLAG_NOSETUP)
+	return NULL;
+
+    if ((rc = pumpDisableInterface(intf))) return rc;
 
     s = socket(AF_INET, SOCK_DGRAM, 0);
 	
@@ -342,10 +346,16 @@ char * pumpPrepareInterface(struct pumpNetIntf * intf, int s) {
     struct ifreq req;
 
     memset(&req,0,sizeof(req));
+    strcpy(req.ifr_name, intf->device);
+
+    if (ioctl(s, SIOCGIFINDEX, &req))
+	return perrorstr("SIOCGIFINDEX");
+    intf->ifindex = req.ifr_ifindex;
+
+    if (intf->flags & PUMP_FLAG_NOSETUP)
+	return NULL;
 
     addrp = (struct sockaddr_in *) &req.ifr_addr;
-
-    strcpy(req.ifr_name, intf->device);
     addrp->sin_family = AF_INET;
     addrp->sin_port = 0;
     memset(&addrp->sin_addr, 0, sizeof(addrp->sin_addr));
@@ -355,10 +365,6 @@ char * pumpPrepareInterface(struct pumpNetIntf * intf, int s) {
 
     if (ioctl(s, SIOCSIFADDR, &req))
 	return perrorstr("SIOCSIFADDR");
-
-    if (ioctl(s, SIOCGIFINDEX, &req))
-	return perrorstr("SIOCGIFINDEX");
-    intf->ifindex = req.ifr_ifindex;
 
     if (ioctl(s, SIOCGIFFLAGS, &req))
 	return perrorstr("SIOCGIFFLAGS");
@@ -503,9 +509,17 @@ static void parseReply(struct bootpRequest * breq, struct pumpNetIntf * intf) {
 		break;
 
 	    case BOOTP_OPTION_GATEWAY:
-		memcpy(&intf->gateway, chptr, 4);
+		intf->numGateways = 0;
+		for (i = 0; i < length; i += 4) {
+		    if (intf->numGateways < MAX_GATEWAYS) {
+			memcpy(&intf->gateways[intf->numGateways++], chptr + i,
+			       4);
+			syslog(LOG_DEBUG, "intf: gateways[%i]: %s", 
+			       i/4, inet_ntoa (intf->gateways[i/4]));
+		    }
+		}
 		intf->set |= PUMP_NETINFO_HAS_GATEWAY;
-		syslog (LOG_DEBUG, "intf: gateway: %s", inet_ntoa (intf->gateway));
+		syslog (LOG_DEBUG, "intf: numGateways: %i", intf->numGateways);
 		break;
 
 	    case BOOTP_OPTION_HOSTNAME:
@@ -696,6 +710,9 @@ void debugbootpRequest(char *name, struct bootpRequest *breq)  {
     struct in_addr address;
     unsigned char *vndptr;
     unsigned char option, length;
+
+    if (!verbose)
+	return;
     
     memset(&address,0,sizeof(address));
 	
@@ -724,7 +741,8 @@ void debugbootpRequest(char *name, struct bootpRequest *breq)  {
     syslog (LOG_DEBUG, "%s: bootfile: %s", name, breq->bootfile);
     
     vndptr = breq->vendor;
-    sprintf (vendor, "0x%02x 0x%02x 0x%02x 0x%02x", *vndptr++, *vndptr++, *vndptr++, *vndptr++);
+    sprintf (vendor, "0x%02x 0x%02x 0x%02x 0x%02x", vndptr[0], vndptr[1], vndptr[2], vndptr[3]);
+    vndptr += 4;
     syslog (LOG_DEBUG, "%s: vendor: %s", name, vendor);
     
     
@@ -747,12 +765,12 @@ void debugbootpRequest(char *name, struct bootpRequest *breq)  {
 	    sprintf (vendor, "%3u %3u", option, length);
 	    for (i = 0; i < length; i++)
 	      {
-		if (strlen (vendor) > 22)
+		if (strlen (vendor) > sizeof(vendor2) - 6)
 		  {
 		    syslog (LOG_DEBUG, "%s: vendor: %s", name, vendor);
 		    strcpy (vendor, "++++++");
 		  }
-		snprintf (vendor2, 27, "%s 0x%02x", vendor, *vndptr++);
+		snprintf (vendor2, sizeof(vendor2), "%s 0x%02x", vendor, *vndptr++);
 		strcpy (vendor, vendor2);
 		
 	      }
@@ -904,9 +922,9 @@ static char * handleTransaction(int s, struct pumpOverrideInfo * override,
 	    continue;
 */
 
-	    if (ntohs(udpHdr->source) != BOOTP_SERVER_PORT)
+	    if (udpHdr->source != bootp_server_port)
 		continue;
-	    if (ntohs(udpHdr->dest) != BOOTP_CLIENT_PORT) 
+	    if (udpHdr->dest != bootp_client_port) 
 		continue;
 	    /* Go on with this packet; it looks sane */
 
@@ -1036,12 +1054,12 @@ static int createSocket(const char * device) {
     }
 
     if (setsockopt(s, SOL_SOCKET, SO_BINDTODEVICE, device, strlen(device)+1)) {
-	syslog(LOG_ERR, "SO_BINDTODEVICE %s (%d) failed: %s", device, strlen(device), strerror(errno));
+	syslog(LOG_ERR, "SO_BINDTODEVICE %s (%zu) failed: %s", device, strlen(device), strerror(errno));
     }
 
     memset(&clientAddr.sin_addr, 0, sizeof(&clientAddr.sin_addr));
     clientAddr.sin_family = AF_INET;
-    clientAddr.sin_port = htons(BOOTP_CLIENT_PORT);	/* bootp client */
+    clientAddr.sin_port = bootp_client_port;	/* bootp client */
 
     if (bind(s, (struct sockaddr *) &clientAddr, sizeof(clientAddr))) {
 	close(s); 
@@ -1060,7 +1078,7 @@ int pumpDhcpRelease(struct pumpNetIntf * intf) {
     char hostname[1024];
 
     if (!(intf->set & PUMP_INTFINFO_HAS_LEASE)) {
-	pumpDisableInterface(intf->device);
+	pumpDisableInterface(intf);
 	syslog(LOG_INFO, "disabling interface %s", intf->device);
 
 	return 0;
@@ -1071,7 +1089,7 @@ int pumpDhcpRelease(struct pumpNetIntf * intf) {
     if ((chptr = prepareRequest(&breq, s, intf->device, pumpUptime()))) {
 	close(s);
 	while (1) {
-	    pumpDisableInterface(intf->device);
+	    pumpDisableInterface(intf);
 	    return 0;
 	}
     }
@@ -1095,13 +1113,13 @@ int pumpDhcpRelease(struct pumpNetIntf * intf) {
     }
 
     serverAddr.sin_family = AF_INET;
-    serverAddr.sin_port = htons(BOOTP_SERVER_PORT);	/* bootp server */
+    serverAddr.sin_port = bootp_server_port;	/* bootp server */
     serverAddr.sin_addr = intf->bootServer;
 
     handleTransaction(s, NULL, &breq, &bresp, (struct sockaddr *) &serverAddr,
 		      sizeof(serverAddr), NULL, 0, 0, -1, NORESPONSE);
 
-    pumpDisableInterface(intf->device);
+    pumpDisableInterface(intf);
     close(s);
 
     if (intf->set & PUMP_NETINFO_HAS_HOSTNAME)
@@ -1159,7 +1177,7 @@ int pumpDhcpRenew(struct pumpNetIntf * intf) {
     addVendorCode(&breq, DHCP_OPTION_LEASE, 4, &i);
 
     serverAddr.sin_family = AF_INET;
-    serverAddr.sin_port = htons(BOOTP_SERVER_PORT);	/* bootp server */
+    serverAddr.sin_port = bootp_server_port;	/* bootp server */
     serverAddr.sin_addr = intf->bootServer;
 
     if (handleTransaction(s, NULL, &breq, &bresp,
@@ -1213,7 +1231,7 @@ static void addClientIdentifier(int flags, struct bootpRequest * req) {
 }
 
 static void buildRequest(struct bootpRequest * req, int flags, int type,
-		         char * reqHostname, int lease) {
+		         char * reqHostname, char *class, int lease) {
     unsigned char messageType = type;
     short aShort;
     int anInt;
@@ -1261,14 +1279,17 @@ static void buildRequest(struct bootpRequest * req, int flags, int type,
 	addVendorCode(req, BOOTP_OPTION_HOSTNAME,
 		      strlen(reqHostname) + 1, reqHostname);
     }
-
+    if (class) {
+       addVendorCode(req, DHCP_OPTION_CLASS_IDENTIFIER,
+                     strlen(class) + 1, class);
+    }
     anInt = htonl(lease);
     addVendorCode(req, DHCP_OPTION_LEASE, 4, &anInt);
 }
 
-char * pumpDhcpRun(char * device, int flags, int reqLease,
-		   char * reqHostname, struct pumpNetIntf * intf,
-		   struct pumpOverrideInfo * override) {
+char * pumpDhcpClassRun(char * device, int flags, int reqLease,
+                  char * reqHostname, char * class, struct pumpNetIntf * intf,
+		  struct pumpOverrideInfo * override) {
     int s;
     struct sockaddr_in serverAddr;
     struct sockaddr_ll broadcastAddr;
@@ -1277,6 +1298,7 @@ char * pumpDhcpRun(char * device, int flags, int reqLease,
     time_t startTime = pumpUptime();
     char * saveDeviceName;
     unsigned char messageType;
+    struct pumpOverrideInfo saveOverride;
 
     /* If device is the same as intf->device, don't let the memset()
        blow away the device name */
@@ -1284,10 +1306,19 @@ char * pumpDhcpRun(char * device, int flags, int reqLease,
     strcpy(saveDeviceName, device);
     device = saveDeviceName;
 
+    memcpy(&saveOverride, override, sizeof(*override));
+    override = &saveOverride;
+
     memset(intf, 0, sizeof(*intf));
     strcpy(intf->device, device);
     intf->reqLease = reqLease;
     intf->set |= PUMP_INTFINFO_HAS_REQLEASE;
+    memcpy(&intf->override, override, sizeof(*override));
+
+    /* Save these for later */
+    intf->flags = flags & PUMP_FLAG_WINCLIENTID;
+    if (override && (override->flags & OVERRIDE_FLAG_NOSETUP))
+	intf->flags |= PUMP_FLAG_NOSETUP;
 
     s = socket(AF_PACKET, SOCK_DGRAM, ntohs(ETH_P_IP));
     if (s < 0) {
@@ -1306,7 +1337,7 @@ char * pumpDhcpRun(char * device, int flags, int reqLease,
 
     if ((chptr = prepareRequest(&breq, s, intf->device, startTime))) {
 	close(s);
-	pumpDisableInterface(intf->device);
+	pumpDisableInterface(intf);
 	return chptr;
     }
 
@@ -1318,10 +1349,15 @@ char * pumpDhcpRun(char * device, int flags, int reqLease,
 	addVendorCode(&breq, BOOTP_OPTION_HOSTNAME,
 		      strlen(reqHostname) + 1, reqHostname);
     }
+    if (class) {
+       syslog(LOG_DEBUG, "CLASSID: sending %s\n", class);
+        addVendorCode(&breq, DHCP_OPTION_CLASS_IDENTIFIER,
+                      strlen(class) + 1, class);
+    }
 
     memset(&serverAddr,0,sizeof(serverAddr));
     serverAddr.sin_family = AF_INET;
-    serverAddr.sin_port = htons(BOOTP_SERVER_PORT);	/* bootp server */
+    serverAddr.sin_port = bootp_server_port;   /* bootp server */
 
 #if 0
     /* seems like a good idea?? */
@@ -1344,7 +1380,7 @@ char * pumpDhcpRun(char * device, int flags, int reqLease,
 				   (struct sockaddr *) &broadcastAddr,
 				   sizeof(broadcastAddr), NULL, (override && (override->flags & OVERRIDE_FLAG_NOBOOTP))?0:1, 1, startTime, DHCP_TYPE_OFFER))) {
 	close(s);
-	pumpDisableInterface(intf->device);
+	pumpDisableInterface(intf);
 	return chptr;
     }
 
@@ -1356,7 +1392,7 @@ char * pumpDhcpRun(char * device, int flags, int reqLease,
 	syslog (LOG_DEBUG, "got dhcp offer\n");
 
 	initVendorCodes(&breq);
-	buildRequest(&breq, flags, DHCP_TYPE_DISCOVER, reqHostname, 
+	buildRequest(&breq, flags, DHCP_TYPE_DISCOVER, reqHostname, class,
 		     intf->reqLease);
 
 	syslog (LOG_DEBUG, "PUMP: sending second discover");
@@ -1368,14 +1404,14 @@ char * pumpDhcpRun(char * device, int flags, int reqLease,
 				       NULL, 0, 1,
 				       startTime, DHCP_TYPE_OFFER))) {
 	    close(s);
-	    pumpDisableInterface(intf->device);
+	    pumpDisableInterface(intf);
 	    return chptr;
 	}
 
 
 	if (dhcpMessageType(&bresp) != DHCP_TYPE_OFFER) {
 	    close(s);
-	    pumpDisableInterface(intf->device);
+	    pumpDisableInterface(intf);
 	    return "dhcp offer expected";
 	}
 
@@ -1387,7 +1423,7 @@ char * pumpDhcpRun(char * device, int flags, int reqLease,
 	}
 
 	initVendorCodes(&breq);
-	buildRequest(&breq, flags, DHCP_TYPE_REQUEST, reqHostname, 
+	buildRequest(&breq, flags, DHCP_TYPE_REQUEST, reqHostname, class,
 		     intf->reqLease);
 
 	addVendorCode(&breq, DHCP_OPTION_SERVER, 4, &serverAddr.sin_addr);
@@ -1401,7 +1437,7 @@ char * pumpDhcpRun(char * device, int flags, int reqLease,
 				       NULL, 0, 1,
 				       startTime, DHCP_TYPE_ACK))) {
 	    close(s);
-	    pumpDisableInterface(intf->device);
+	    pumpDisableInterface(intf);
 	    return chptr;
 	}
 
@@ -1423,17 +1459,20 @@ char * pumpDhcpRun(char * device, int flags, int reqLease,
     if (flags & PUMP_FLAG_FORCEHNLOOKUP)
 	intf->set &= ~(PUMP_NETINFO_HAS_DOMAIN | PUMP_NETINFO_HAS_HOSTNAME);
 
-    /* Save these for later */
-    intf->flags = flags & PUMP_FLAG_WINCLIENTID;
-
     return NULL;
 }
 
+char * pumpDhcpRun(char * device, int flags, int reqLease,
+                  char * reqHostname, struct pumpNetIntf * intf,
+                  struct pumpOverrideInfo * override) {
+    pumpDhcpClassRun(device, flags, reqLease, reqHostname, NULL, intf,
+                     override);
+}
+
 void pumpInitOverride(struct pumpOverrideInfo * override) {
-    strcpy(override->intf.device, "MASTER");
+    strcpy(override->device, "MASTER");
     override->timeout = DEFAULT_TIMEOUT;
     override->numRetries = DEFAULT_NUM_RETRIES;
-    override->script = NULL;
 }
 
 /*
@@ -1486,8 +1525,8 @@ static void makeraw(struct ippkt *buf, const void *payload, size_t len) {
 
 	buf->ip.ip_sum = wrapsum(checksum(&buf->ip, sizeof(buf->ip), 0));
 
-	buf->udp.source = htons(BOOTP_CLIENT_PORT);
-	buf->udp.dest = htons(BOOTP_SERVER_PORT);
+	buf->udp.source = bootp_client_port;
+	buf->udp.dest = bootp_server_port;
 	buf->udp.len = htons(sizeof(struct udphdr) + len);
 	buf->udp.check = 0;
 

@@ -101,8 +101,9 @@ static int readStanza(char ** cfg, struct pumpOverrideInfo * overrideList,
  	    }
 	
 	    *nextO = *override;
-	    strcpy(nextO->intf.device, rest);
-	    nextO->script = override->script ? strdup(override->script) : NULL;
+	    strcpy(nextO->device, rest);
+	    if (override->script[0])
+		strcpy(nextO->script, override->script);
 
 	    (*lineNum)++;
 	    if (readStanza(&next, overrideList, nextO, lineNum)) return 1;
@@ -155,6 +156,8 @@ static int readStanza(char ** cfg, struct pumpOverrideInfo * overrideList,
 
 	    override->numRetries = num;
 	} else if (!strcmp(start, "domainsearch")) {
+	    size_t len;
+
 	    if (overrideList != override) {
 		parseError(*lineNum, "domainsearch directive may not occur "
 			   "inside of device specification");
@@ -169,12 +172,18 @@ static int readStanza(char ** cfg, struct pumpOverrideInfo * overrideList,
 		return 1;
 	    }
 
+	    len = strlen(argv[0]);
+	    if (len >= sizeof(override->searchPath)) {
+		parseError(*lineNum, "domainsearch directive is too long");
+		return 1;
+	    }
+
 	    /*
 		We don't free this as other configurations may have inherited 
 		it. This could be the wrong decision, but leak would be tiny
 		so why worry?
 	    */
-	    override->searchPath = strdup(argv[0]);
+	    memcpy(override->searchPath, argv[0], len + 1);
 	    free(argv);
 	} else if (!strcmp(start, "nodns")) {
 	    if (*rest) {
@@ -200,7 +209,25 @@ static int readStanza(char ** cfg, struct pumpOverrideInfo * overrideList,
 		return 1;
 	    }
 	    override->flags |= OVERRIDE_FLAG_NONISDOMAIN;
+	} else if (!strcmp(start, "nosetup")) {
+	    if (*rest) {
+		parseError(*lineNum, "unexpected argument to nosetup directive");
+		return 1;
+	    }
+	    override->flags |=
+		OVERRIDE_FLAG_NOSETUP |
+		OVERRIDE_FLAG_NODNS |
+		OVERRIDE_FLAG_NOGATEWAY |
+		OVERRIDE_FLAG_NONISDOMAIN;
+	} else if (!strcmp(start, "noresolvconf")) {
+	    if (*rest) {
+		parseError(*lineNum, "unexpected argument to noresolvconf directive");
+		return 1;
+	    }
+	    override->flags |= OVERRIDE_FLAG_NORESOLVCONF;
 	} else if (!strcmp(start, "script")) {
+	    size_t len;
+
 	    if (overrideList != override) {
 		parseError(*lineNum, "script directive may not occur "
 			   "inside of device specification");
@@ -214,7 +241,14 @@ static int readStanza(char ** cfg, struct pumpOverrideInfo * overrideList,
 			   "single argument");
 		return 1;
 	    }
-	    override->script = strdup(argv[0]);
+
+	    len = strlen(argv[0]);
+	    if (len >= sizeof(override->script)) {
+		parseError(*lineNum, "script directive is too long");
+		return 1;
+	    }
+
+	    memcpy(override->script, argv[0], len + 1);
 	    free(argv);
         } else {
 	    char * error;
@@ -245,7 +279,6 @@ int readPumpConfig(char * configFile, struct pumpOverrideInfo ** overrides) {
     if ((fd = open(configFile, O_RDONLY)) < 0) {
 	*overrides = calloc(sizeof(**overrides), 2);
 	pumpInitOverride(*overrides);
-	close(fd);
 	return 0;
     }
 
