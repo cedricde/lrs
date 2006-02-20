@@ -20,7 +20,7 @@ kernel:
 	cp -f logo_linux_vga16.ppm $(SRC)/linux/drivers/video/logo/
 	(cd $(SRC)/linux/;make all)
 # bcm5700 compile
-	(cd ./bcm/bcm5700-7.3.5/src; make; cp bcm5700.ko $(SRC)/linux/drivers/net/)
+	(cd ./bcm/bcm5700-8.2.18/src; make; cp bcm5700.ko $(SRC)/linux/drivers/net/)
 	cp -f $(SRC)/linux/arch/i386/boot/bzImage .
 	rdev bzImage /dev/ram0
 	# lufs
