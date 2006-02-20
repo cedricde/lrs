@@ -25,7 +25,8 @@ set -e
 
 case "$1" in
     configure)
-
+	#chmod 1777 /tftpboot/revoboot/lsc
+	chmod 1777 /tftpboot/revoboot/images/data
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
