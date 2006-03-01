@@ -150,6 +150,12 @@ ReadParse();
 
 etherLoad( $etherfile, \%einfo ) or error( lbsGetError() );
 
+# make sure to use the 'all' directory when any profile is requested
+my $oprofile = $in{'profile'};
+if (exists($in{'profile'}) && ($in{'profile'} eq "")) {
+    $in{'profile'} = "all";
+}
+
 # On effectue une modif si presence du param cgi 'apply' (on ignore sa valeur). 
 # Ou on redirige sur index.cgi si presence du param cgi 'cancel'.
 # Ou sinon on affiche le formulaire du menu de boot.
@@ -169,8 +175,8 @@ if ( exists( $in{'cancel'} ) ) {
 	error( $text{'acl_error'} ) if ( $access{'modify'} );
 
 	if ( exists( $in{'form2'} ) ) {
-                $mode = "MONO"  if (($in{'mac'}));
                 $mode = "MULTI" if (($in{'group'}) or ( $in{'profile'}));
+                $mode = "MONO"  if (($in{'mac'}));
 
                 # get the computer (One Computer Mode)
                 if ($mode eq "MONO") {
@@ -201,7 +207,7 @@ if ( exists( $in{'cancel'} ) ) {
                         my $group = $in{'group'} or "";
 
                         lbs_common::etherLoad("$home/etc/ether", \%ether);
-                        lbs_common::filter_machines_names($in{'profile'}, $in{'group'}, \%ether);
+                        lbs_common::filter_machines_names($oprofile, $in{'group'}, \%ether);
 
                         foreach my $name (etherGetNames(\%ether)) {
                                 my $macaddr = etherGetMacByName (\%ether, $name);
@@ -258,7 +264,7 @@ if ( exists( $in{'cancel'} ) ) {
                 if ($mode eq "MONO") {
 		        redirect("bootoptions.cgi?mac=$umac") ;
                 } elsif ($mode eq "MULTI") {
-		        redirect("bootoptions.cgi?group=$in{'group'}&profile=$in{'profile'}") ;
+		        redirect("bootoptions.cgi?group=$in{'group'}&profile=$oprofile") ;
                 }
 		exit;
 	}
@@ -268,8 +274,9 @@ if ( exists( $in{'cancel'} ) ) {
 
 	# Must define a default menu:
 	error( $text{'err_bootmenu_mustdef'} ) if ( not exists( $in{'default'} ) );
-        $mode = "MONO"  if (($in{'mac'}));
+
         $mode = "MULTI" if (($in{'group'}) or ( $in{'profile'}));
+        $mode = "MONO"  if (($in{'mac'}));
         
 	# get the computer (One Computer Mode)
         if ($mode eq "MONO") {
@@ -345,7 +352,7 @@ if ( exists( $in{'cancel'} ) ) {
                 print "<p>&nbsp;</p>\n";
         } elsif ($mode eq "MULTI") {
                 print "<p>$mesg</p>\n";
-                print "<a href=\"bootoptions.cgi?group=$in{'group'}&profile=$in{'profile'}\">$but_return</a>";
+                print "<a href=\"bootoptions.cgi?group=$in{'group'}&profile=$oprofile\">$but_return</a>";
                 print "<p>&nbsp;</p>\n";
         }
 
@@ -377,8 +384,8 @@ if ( exists( $in{'cancel'} ) ) {
                    );
 	lbsClearError();
 
-        $mode = "MONO"  if (($in{'mac'}) or ( $in{'name'}));
         $mode = "MULTI" if (($in{'group'}) or ( $in{'profile'}));
+        $mode = "MONO"  if (($in{'mac'}) or ( $in{'name'}));
 	
 	# get the computer (One Computer Mode)
         if ($mode eq "MONO") {
@@ -580,7 +587,7 @@ if ( exists( $in{'cancel'} ) ) {
         	print "<input type=hidden name='mac' value=\"$macaddr\">\n";
         } elsif ($mode eq "MULTI") {
 	        print "<input type=hidden name=group value=\"$in{'group'}\">\n";
-	        print "<input type=hidden name=profile value=\"$in{'profile'}\">\n";
+	        print "<input type=hidden name=profile value=\"$oprofile\">\n";
         }
 
 	print "<input type=hidden name='form2' value=\"bootoptions\">\n";

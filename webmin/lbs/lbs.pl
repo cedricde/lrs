@@ -535,7 +535,7 @@ EOF
 
 
 sub checkhostname {
-	return 0 if ( not grep(m/^[0-9a-z\.:\/-]+$/i, $_[0]) ) ;
+	return 0 if ( not grep(m/^[0-9a-z\.:\/-_]+$/i, $_[0]) ) ;
         1;
 }
 
@@ -895,7 +895,7 @@ print "<hr><center>\n" ;
 		$arrow = "cross.gif";
 		$arrow = "doubleup1.gif" if ($$flags[$i]);
 		
-                if (($profile ne "") or ($group ne "")) {
+                if ((($profile ne "") or ($group ne "")) and ($mac eq "")) {
                         push @tohdr, "<center><a href=\"move.cgi?profile=$profile&group=$group&img=$uitem&op=b2h\">" 
                                       . "<img src=\"images/$arrow\" border=no "
                                       . "alt=\"".$text{'lab_tomenu'}."\" </a></center>" ;

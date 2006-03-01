@@ -63,7 +63,7 @@ if (exists $in{'mac'}) {
 	
 	#redirect($redir) ;
 }
-elsif (exists $in{'group'}) {
+elsif ($in{'group'}) {
 	my $macs = "";
 
 	foreach my $k (etherGetMacs(\%einfo)) {
@@ -80,12 +80,17 @@ elsif (exists $in{'group'}) {
 } elsif (exists $in{'profile'}) {
 	my $macs = "";
 
-	foreach my $k (etherGetMacsFilterName(\%einfo, $in{'profile'}.":")) {
+	my $filt = $in{'profile'}.":";
+	if ($filt eq ":") { $filt = "" };
+
+	foreach my $k (etherGetMacsFilterName(\%einfo, $filt)) {
 	    my $n = $einfo{$k}[1];
 	    if ( $n =~ m|^([^:]+):| ) {
-		# group found
+		# prof found
 		if (index ($1,$in{'profile'}) != 0) { next; }
 		$macs .=  $k." ";
+	    } elsif ( $filt eq "" ) {
+		$macs .=  $k." ";	    
 	    }
 	}
 	$redir .= "ext_cmd=".urlize("$macs")."&group=".urlize($in{'group'})."&profile=".urlize($in{'profile'});	

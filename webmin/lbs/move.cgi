@@ -54,9 +54,15 @@ error(text("err_fnf",$etherfile)) if (not -f $etherfile) ;
 # Resultat dans %in:
 ReadParse() ;
 
-$mode = "MONO"  if (($in{'mac'}) or ( $in{'name'}));
+# make sure to use the 'all' directory when any profile is requested
+my $oprofile = $in{'profile'};
+if (exists($in{'profile'}) && ($in{'profile'} eq "")) {
+    $in{'profile'} = "all";
+}
+
 $mode = "MULTI" if (($in{'group'}) or ( $in{'profile'}));
-        
+$mode = "MONO"  if (($in{'mac'}) or ( $in{'name'}));
+
 if ($mode eq "MONO") {
         if (not exists($in{'mac'})) {
                 error($text{'err_invalcgi_nomac'}) ;
@@ -111,43 +117,7 @@ if (exists($in{'cancel'})) {
 	        	# check if it's a base image, delete this link/base image if needeed
 		        unlink("$lbs_home/images/$macfile/$img") if (-l "$lbs_home/images/$macfile/$img"); 
                 } elsif ($mode eq "MULTI") {
-		        moveHdr2Local_Multi($lbs_home, $cfgpath, $img);                        
-
-                        # to do this, we need the entire mac list to be loaded
-                        my $home=$lbs_common::lbsconf{'basedir'};
-                        my %ether;
-        
-                        # and normalized
-                        lbs_common::etherLoad("$home/etc/ether", \%ether);
-                        lbs_common::filter_machines_names($in{'profile'}, $in{'group'}, \%ether);
-
-                        my $profile = $in{'profile'} or "";
-                        my $group = $in{'group'} or "";
-                        
-                        foreach my $name (etherGetNames(\%ether)) {
-                                my $macaddr = etherGetMacByName (\%ether, $name);
-                                my $macfile = toMacFileName($macaddr);
-                                my $cfgpath = "$home/images/$macfile";
-                                if (opendir CFGPATH, $cfgpath) {
-                                        unlink map "$cfgpath/$_", grep { -l "$cfgpath/$_"} readdir(CFGPATH);
-                                        closedir CFGPATH;
-                                }
-                                my $origpath = "$lbs_home/imgprofiles/$in{'profile'}/$in{'group'}";
-                                if (opendir ORIGPATH, $origpath) {
-                                        my $cmd = "cp -a " . join " ", map "$origpath/$_", grep { -l "$origpath/$_" or $_ eq "header.lst" or $_ eq "header.lst.$WOL_EXTENSION" } readdir(ORIGPATH);
-                                        closedir CFGPATH;
-                                        $cmd .= " $cfgpath";
-                                        system($cmd);
-                                }
-                        }
-                        
-#                        foreach my $name (etherGetNames(\%ether)) {
-#                                my $macaddr = etherGetMacByName (\%ether, $name);
-#                                $macfile = toMacFileName($macaddr);
-#                                moveHdr2Local($lbs_home, $macaddr, $img, undef, 1);
-#                                unlink("$lbs_home/images/$macfile/$img") if (-l "$lbs_home/images/$macfile/$img"); 
-#                        }
-                        
+		        moveHdr2Local_Multi($lbs_home, $cfgpath, $img);
                 }
 	} elsif ($op eq "l2h") {				# from local to host
 		moveLocal2Hdr($lbs_home, $macaddr, $img) ;
@@ -158,39 +128,6 @@ if (exists($in{'cancel'})) {
 		        moveBase2Hdr($lbs_home, $macaddr, $img) ;
                 } elsif ($mode eq "MULTI") {
 		        moveBase2Hdr_Multi($lbs_home, $cfgpath, $img);
-
-                        # then save the checked values for every machine of our group / profile
-                        my $profile=$in{'profile'};
-                        my $group=$in{'group'};
-        
-                        # to do this, we need the entire mac list to be loaded
-                        my $home=$lbs_common::lbsconf{'basedir'};
-                        my %ether;
-
-                        # and normalized
-                        lbs_common::etherLoad("$home/etc/ether", \%ether);
-                        lbs_common::filter_machines_names($in{'profile'}, $in{'group'}, \%ether);
-
-                        foreach my $name (etherGetNames(\%ether)) {
-                                my $macaddr = etherGetMacByName (\%ether, $name);
-                                my $macfile = toMacFileName($macaddr);
-                                my $cfgpath = "$home/images/$macfile";
-                                if (opendir CFGPATH, $cfgpath) {
-                                        unlink map "$cfgpath/$_", grep { -l "$cfgpath/$_"} readdir(CFGPATH);
-                                        closedir CFGPATH;
-                                }
-                                my $origpath = "$lbs_home/imgprofiles/$in{'profile'}/$in{'group'}";
-                                if (opendir ORIGPATH, $origpath) {
-                                        my $cmd = "cp -a " . join " ", map "$origpath/$_", grep { -l "$origpath/$_" or $_ eq "header.lst" or $_ eq "header.lst.$WOL_EXTENSION" } readdir(ORIGPATH);
-                                        closedir CFGPATH;
-                                        $cmd .= " $cfgpath";
-                                        system($cmd);
-                                }
-                        }
-                        
-#                        foreach my $name (etherGetNames(\%ether)) {
-#                                moveBase2Hdr($lbs_home, etherGetMacByName (\%ether, $name), $img, undef, 1);
-#                        }
                 }
 	} elsif ($op eq "del") {				# deletion
 		redirect("delimg.cgi?from=move&mac=$umac&img=$img") ;
@@ -203,7 +140,7 @@ if (exists($in{'cancel'})) {
         if ($mode eq "MONO") {                  # local images are only in mono mode
         	redirect("move.cgi?mac=$umac") ;
         } elsif ($mode eq "MULTI") {
-        	redirect("move.cgi?group=$in{'group'}&profile=$in{'profile'}") ;
+        	redirect("move.cgi?group=$in{'group'}&profile=$oprofile") ;
         }
 	
 } else { # Affichage du formulaire si pas de 'apply':
@@ -328,8 +265,8 @@ if (exists($in{'cancel'})) {
                                 
                                 addBackupProgressInfo($f, \$d);
 
-                                push @basetitles, "<a href='title2.cgi?group=$in{'group'}&profile=$in{'profile'}&conf=$ff' $decor>$t</a>";
-                                push @basedescs, "<a href='desc2.cgi?group=$in{'group'}&profile=$in{'profile'}&conf=$ff' $decor>$d</a>" ;
+                                push @basetitles, "<a href='title2.cgi?group=$in{'group'}&profile=$oprofile&conf=$ff' $decor>$t</a>";
+                                push @basedescs, "<a href='desc2.cgi?group=$in{'group'}&profile=$oprofile&conf=$ff' $decor>$d</a>" ;
                         } else {
                                 push @basetitles, "(storage?)" ;
                                 push @basedescs, "(storage?)" ;

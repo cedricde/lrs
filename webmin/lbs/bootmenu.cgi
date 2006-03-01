@@ -55,6 +55,12 @@ ReadParse();
 
 etherLoad( $etherfile, \%einfo ) or error( lbsGetError() );
 
+# make sure to use the 'all' directory when any profile is requested
+my $oprofile = $in{'profile'};
+if (exists($in{'profile'}) && ($in{'profile'} eq "")) {
+    $in{'profile'} = "all";
+}
+
 # On effectue une modif si presence du param cgi 'apply' (on ignore sa valeur). 
 # Ou on redirige sur index.cgi si presence du param cgi 'cancel'.
 # Ou sinon on affiche le formulaire du menu de boot.
@@ -101,8 +107,8 @@ if ( exists( $in{'cancel'} ) ) {			# back to the main menu
 	error( $text{'err_bootmenu_schedmustdef'} ) if ( not exists( $in{'scheddefault'} ) );
 
         # Mode Selection
-        $mode = "MONO"  if (($in{'mac'}));
         $mode = "MULTI" if (($in{'group'}) or ( $in{'profile'}));
+        $mode = "MONO"  if (($in{'mac'}));
         
 	# Get the computer (One Computer Mode)
         if ($mode eq "MONO") {
@@ -178,8 +184,10 @@ if ( exists( $in{'cancel'} ) ) {			# back to the main menu
                 my $profile = $in{'profile'} or "";
                 my $group   = $in{'group'}   or "";
                 
+		if ($profile eq "all") { $profile = ""; } # filter_machines_names does not like profile=all
+
                 lbs_common::etherLoad("$home/etc/ether", \%ether);
-                lbs_common::filter_machines_names($in{'profile'}, $in{'group'}, \%ether);
+                lbs_common::filter_machines_names($profile, $in{'group'}, \%ether);
                 
                 foreach my $name (etherGetNames(\%ether)) {
                         my $macaddr = etherGetMacByName (\%ether, $name);
@@ -239,9 +247,9 @@ if ( exists( $in{'cancel'} ) ) {			# back to the main menu
 	        print "<a href=\"bootmenu.cgi?mac=$umac\">$but_return</a>";
         } else {
         	$mesg = text( "msg_bootmenu_groupwriteok", "$in{'profile'}:$in{'group'}");
-                print "<script>setTimeout(\"location='bootmenu.cgi?group=$in{'group'}&profile=$in{'profile'}&random='+Math.random();\",2000)</script>";
+                print "<script>setTimeout(\"location='bootmenu.cgi?group=$in{'group'}&profile=$oprofile&random='+Math.random();\",2000)</script>";
                 print "<p>$mesg</p>\n";
-	        print "<a href=\"bootmenu.cgi?group=$in{'group'}&profile=$in{'profile'}\">$but_return</a>";
+	        print "<a href=\"bootmenu.cgi?group=$in{'group'}&profile=$oprofile\">$but_return</a>";
         }
 	print "<p>&nbsp;</p>\n";
 	
@@ -255,8 +263,8 @@ if ( exists( $in{'cancel'} ) ) {			# back to the main menu
 } elsif ( exists( $in{'sync'} ) ) {    		                # needs to sync sched menu on no-sched menu
         
         # Mode Selection
-        $mode = "MONO"  if (($in{'mac'}));
         $mode = "MULTI" if (($in{'group'}) or ( $in{'profile'}));
+        $mode = "MONO"  if (($in{'mac'}));
 
 	# grab the path of our menu
         if ($mode eq "MONO") {
@@ -286,9 +294,9 @@ if ( exists( $in{'cancel'} ) ) {			# back to the main menu
 	        print "<a href=\"bootmenu.cgi?mac=$umac\">$but_return</a>";
         } else {
         	$mesg = text( "msg_bootmenu_groupwriteok", "$in{'profile'}:$in{'group'}");
-                print "<script>setTimeout(\"location='bootmenu.cgi?group=$in{'group'}&profile=$in{'profile'}&random='+Math.random();\",2000)</script>";
+                print "<script>setTimeout(\"location='bootmenu.cgi?group=$in{'group'}&profile=$oprofile&random='+Math.random();\",2000)</script>";
                 print "<p>$mesg</p>\n";
-	        print "<a href=\"bootmenu.cgi?group=$in{'group'}&profile=$in{'profile'}\">$but_return</a>";
+	        print "<a href=\"bootmenu.cgi?group=$in{'group'}&profile=$oprofile\">$but_return</a>";
         }
 	print "<p>&nbsp;</p>\n";
 
@@ -320,8 +328,8 @@ my $mode = "";                                                  # describe how t
                    );
 	lbsClearError();
 
+        $mode = "MULTI" if (($in{'group'}) or exists($in{'profile'}));
         $mode = "MONO"  if (($in{'mac'}) or ( $in{'name'}));
-        $mode = "MULTI" if (($in{'group'}) or ( $in{'profile'}));
 	$mode = "SKEL" if ($in{'skel'});
         
 	# get the computer (One Computer Mode)
