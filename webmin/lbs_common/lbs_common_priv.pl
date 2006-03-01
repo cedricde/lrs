@@ -16,14 +16,15 @@ sub cookie_send_group($)
 
     if ($in{group}) {
       my $c = new CGI::Cookie(-name => 'group',
-				  -value => $in{group},
+				  -value => "$in{group}",
 				  -expires => '+1M'
 				 );
       print "Set-Cookie: $c\n";
     }
-    if ($in{profile}) {
+
+    if ($in{profile} || $in{profile} eq "") {
       my $c = new CGI::Cookie(-name => 'profile',
-				  -value => $in{profile},
+				  -value => "$in{profile}",
 				  -expires => '+1M'
 				 );
       print "Set-Cookie: $c\n";
@@ -38,12 +39,12 @@ sub cookie_get_group($)
   my %cookies = fetch CGI::Cookie;
   my $in = %{$_[0]};
 
-  if (!$in{group}) {
+  if (!$in{'group'}) {
     if ( defined($cookies{'group'}) ) {
       $in{'group'} = $cookies{'group'}->value;
     }
   }
-  if (!$in{profile}) {
+  if (! defined($in{'profile'}) ) {
     if ( defined($cookies{'profile'}) ) {
       $in{'profile'} = $cookies{'profile'}->value;
     }

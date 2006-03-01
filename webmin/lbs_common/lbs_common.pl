@@ -307,7 +307,7 @@ my $mac_with_dot        = url_encode(mac_add_columns(mac_remove_columns($in{'mac
                                                 $todisplay = 1 if ($toreplaces{'mac'} && $mac && $mac ne "");
                                                 $todisplay = 1 if ($toreplaces{'mac_with_dot'} && $mac && $mac ne "");
                                                 $todisplay = 1 if ($toreplaces{'mac_with_dot'} && $mac_with_dot && $mac_with_dot ne "");
-                                                $todisplay = 1 if ($toreplaces{'group'} && $toreplaces{'group'} && ( $group ne "" || $profile ne "") );
+                                                $todisplay = 1 if ($toreplaces{'group'});
                                                 $todisplay = 1 if (lc($menu{$onglet}{'DATAS'}{'dont_shade'}) eq "y");
                                                 
                                                 $host = "" unless $host;
@@ -326,7 +326,7 @@ my $mac_with_dot        = url_encode(mac_add_columns(mac_remove_columns($in{'mac
                                                         $url =~ s/(.*)%group%(.*)/$1$group$2/     			# perhaps an "host" arg given ?
                                                                 if $url =~ m/%group%/;           
                                                         $url =~ s/(.*)%profile%(.*)/$1$profile$2/     			# perhaps an "host" arg given ?
-                                                                if $url =~ m/%profile%/;           
+                                                                if $url =~ m/%profile%/;
                                                         $template->assign('URL', $url);
                                                         if ($label) {                                                   # shown only if there is a label
                                                                 $template->assign('NOM_LIEN', $label);
@@ -618,7 +618,7 @@ sub print_machines_list($$$$) {
                 
                 # first tab is selected
                 $template->assign('IS_SELECTED', "selected");
-                $template->assign('URL', "?profile=all");
+                $template->assign('URL', "?profile=");
                 $template->assign('PROFIL', text("lab_all"));
                 $template->parse('mainlist.profils.profil');
                 
@@ -635,7 +635,7 @@ sub print_machines_list($$$$) {
                 $template->assign('PROFIL', text("lab_unprofiled"));
                 $template->parse('mainlist.profils.profil');
                 
-                $profile_key = "all";
+                $profile_key = "";
                 $profile_name = text("lab_all");
         } elsif ( (lc($in{'profile'}) eq "none") ) {
                 
@@ -653,7 +653,7 @@ sub print_machines_list($$$$) {
                 
                 # leading tabs are not selected
                 $template->assign('IS_SELECTED', "unselected");
-                $template->assign('URL', "?profile=all");
+                $template->assign('URL', "?profile=");
                 $template->assign('PROFIL', text("lab_all"));
                 $template->parse('mainlist.profils.profil');
 
@@ -686,7 +686,7 @@ sub print_machines_list($$$$) {
                 }
                 
                 $template->assign('IS_SELECTED', "unselected");
-                $template->assign('URL', "?profile=all");
+                $template->assign('URL', "?profile=");
                 $template->assign('PROFIL', text("lab_all"));
                 $template->parse('mainlist.profils.profil');
 
@@ -1134,7 +1134,7 @@ sub checkfordaemon () {
 # Check if there's at least 100MB in /var
 #
 sub checkforspace () {
-    my $run = `df -m /var|tail -1|awk '{print \$4}'`;
+    my $run = `df -Pm /var|tail -1|awk '{print \$4}'`;
     if ($run < 100)
 	{
 	    print "<font size='+2' color='red'><br>";
@@ -1401,7 +1401,7 @@ sub get_server_kernel_version {
 
 # return the available space
 sub get_server_free_space {
-        return `/bin/df -h` or text('lab_unknown');
+        return `/bin/df -Ph` or text('lab_unknown');
 }
 
 # return the network configuration
