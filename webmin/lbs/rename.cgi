@@ -73,6 +73,7 @@ if (exists $in{'cancel'}) {
 } elsif (exists $in{'apply'}) {
 
         my $t = $in{'title'};
+        my $old = $in{'oldname'};
         my $g = "$in{'pregroup'}/$in{'group'}";
         my $p = $in{'profile'} || $in{'preprofile'};
         
@@ -103,8 +104,16 @@ if (exists $in{'cancel'}) {
         # update the hostname file
         open(HOST,">$lbs_home/images/".toMacFileName($mac)."/hostname") ;
         print HOST $t;
-        close(HOST) ;    
-        
+        close(HOST);
+
+	# rename for other modules
+	# ...will be moved to lbs_common soon
+	foreach my $mod ("lrs-inventory", "backuppc") {
+		if (-x "../$mod/lrs-admin") {
+			system("unset SERVER_SOFTWARE;unset SERVER_NAME;unset GATEWAY_INTERFACE;unset REQUEST_METHOD;unset SCRIPT_FILENAME;unset QUERY_STRING;../$mod/lrs-admin rename $mac $old $t >/dev/null");
+		}
+        }
+	
         redirect($redir) ;
         exit(0) ;
 } else {

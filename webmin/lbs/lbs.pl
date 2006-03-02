@@ -1216,6 +1216,7 @@ $buff .= <<EOF ;
                         </div>
                         <input type=hidden name=mac value="$mac">
                         <input type=hidden name=menu value="$menu">
+                        <input type=hidden name=oldname value="$n">
                         <input type=hidden name=form value="title">
                         <input type=hidden name=redir_flag value="$redir_flag">
                 </form>
