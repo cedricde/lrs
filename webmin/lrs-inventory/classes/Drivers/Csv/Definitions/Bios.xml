@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<CsvFile>
+
+	<Type>Bios</Type>
+	
+	<Versions>
+	
+		<Version number="3.0" default="yes">
+		
+			<Directory>Bios</Directory>
+
+			<Fields>
+				<Field index="0">Host</Field>
+				<Field index="1">Serial</Field>
+				<Field index="2">Chipset</Field>
+				<Field index="3">BiosVersion</Field>
+				<Field index="4">ChipSerial</Field>
+				<Field index="5">ChipVendor</Field>
+				<Field index="6">BiosVendor</Field>
+				<Field index="7">TypeMachine</Field>
+			</Fields>
+	
+		</Version>
+	
+		<Version number="2.0">
+		
+			<Directory>BIOS</Directory>
+
+			<Fields>
+				<Field index="0">Host</Field>
+				<Field index="1">Serial</Field>
+				<Field index="2">Chipset</Field>
+				<Field index="3">BiosVersion</Field>
+				<Field index="4">ChipSerial</Field>
+				<Field index="5">ChipVendor</Field>
+				<Field index="6">BiosVendor</Field>
+				<Field index="7">TypeMachine</Field>
+			</Fields>
+	
+		</Version>
+	
+	</Versions>
+
+</CsvFile>

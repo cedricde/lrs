@@ -1,0 +1,4 @@
+chemin_basedir=Répertoire Basedir,0
+chemin_CSV=Répertoire des fichiers CSV,0
+adresse_mail=Adresse mail,0
+showempty=Afficher les clients sans inventaire,1,1-Oui,0-Non

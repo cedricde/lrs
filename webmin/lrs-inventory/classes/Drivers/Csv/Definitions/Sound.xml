@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<CsvFile>
+
+	<Type>Sound</Type>
+	
+	<Versions>
+	
+		<Version number="2.0">
+		
+			<Directory>Sounds</Directory>
+
+			<Fields>
+				<Field index="0">Host</Field>
+				<Field index="1">Manufacturer</Field>
+				<Field index="2">Name</Field>
+				<Field index="3">Description</Field>
+			</Fields>
+	
+		</Version>
+	
+	</Versions>
+
+</CsvFile>

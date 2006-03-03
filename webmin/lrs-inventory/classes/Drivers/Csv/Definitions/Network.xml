@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<CsvFile>
+
+	<Type>Network</Type>
+
+	<Versions>
+
+		<Version number="3.0" default="yes">
+
+			<Directory>Networks</Directory>
+
+			<Fields>
+				<Field index="0">Host</Field>
+				<Field index="1">CardType</Field>
+				<Field index="2">NetworkType</Field>
+				<Field index="3">MIB</Field>
+				<Field index="4">Bandwidth</Field>
+				<Field index="5">MACAddress</Field>
+				<Field index="6">State</Field>
+				<Field index="7">IP</Field>
+				<Field index="8">SubnetMask</Field>
+				<Field index="9">Gateway</Field>
+				<Field index="10">DNS</Field>
+			</Fields>
+
+		</Version>
+
+		<Version number="2.0">
+
+			<Directory>Network</Directory>
+
+			<Fields>
+				<Field index="0">Host</Field>
+				<Field index="1">CardType</Field>
+				<Field index="2">NetworkType</Field>
+				<Field index="3">MIB</Field>
+				<Field index="4">Bandwidth</Field>
+				<Field index="5">MACAddress</Field>
+				<Field index="6">State</Field>
+				<Field index="7">IP</Field>
+				<Field index="8">SubnetMask</Field>
+				<Field index="9">Gateway</Field>
+				<Field index="10">DNS</Field>
+			</Fields>
+
+		</Version>
+
+	</Versions>
+
+</CsvFile>

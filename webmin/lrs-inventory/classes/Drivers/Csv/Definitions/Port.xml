@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<CsvFile>
+
+	<Type>Port</Type>
+	
+	<Versions>
+	
+		<Version number="2.0">
+		
+			<Directory>Ports</Directory>
+
+			<Fields>
+				<Field index="0">Host</Field>
+				<Field index="1">Stamp</Field>
+				<Field index="2">Unused</Field>
+				<Field index="3">Unused</Field>
+				<Field index="4">Type</Field>
+				<Field index="5">Unused</Field>
+				<Field index="6">Unused</Field>
+			</Fields>
+	
+		</Version>
+	
+	</Versions>
+
+</CsvFile>

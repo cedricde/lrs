@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<CsvFile>
+
+	<Type>BootDisk</Type>
+	
+	<Versions>
+	
+		<Version number="3.0" default="yes">
+		
+			<Directory>BootDisk</Directory>
+			
+			<Fields>
+				<Field index="0">Host</Field>
+				<Field index="1">Num</Field>
+				<Field index="2">Name</Field>
+				<Field index="3">Cyl</Field>
+				<Field index="4">Head</Field>
+				<Field index="5">Sector</Field>
+				<Field index="6">Capacity</Field>
+			</Fields>
+	
+		</Version>
+	
+	</Versions>
+
+</CsvFile>

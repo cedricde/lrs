@@ -1,0 +1,35 @@
+--
+-- Inventory update
+--
+
+CREATE TABLE IF NOT EXISTS Custom (
+  id int(10) unsigned NOT NULL auto_increment,
+  BuyDate DATE default NULL,
+  DeliveryDate DATE default NULL,
+  WorkingDate DATE default NULL,
+  WarrantyEnd DATE default NULL,
+  SupportEnd DATE default NULL,
+  Department varchar(32) default NULL,
+  Location varchar(32) default NULL,
+  Phone varchar(32) default NULL,
+  Comments varchar(255) default NULL,
+  BuyValue DOUBLE default NULL,
+  ResidualValue DOUBLE default NULL,  
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS hasCustom (
+  machine mediumint(9) unsigned NOT NULL default '0',
+  inventory mediumint(5) unsigned NOT NULL default '0',
+  custom int(11) unsigned NOT NULL default '0',
+  PRIMARY KEY  (machine,inventory,custom)
+);
+
+
+ALTER TABLE Machine ADD lastId mediumint(8) unsigned;
+ALTER TABLE Machine ADD lastBootId mediumint(8) unsigned;
+ALTER TABLE Machine ADD lastCustomId mediumint(8) unsigned;
+ALTER TABLE Machine ADD lastNmapId mediumint(8) unsigned;
+
+DELETE FROM Version;
+INSERT INTO Version VALUES( '4' );

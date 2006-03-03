@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<CsvFile>
+
+	<Type>BootGeneral</Type>
+	
+	<Versions>
+	
+		<Version number="3.0" default="yes">
+		
+			<Directory>BootGeneral</Directory>
+			
+			<Fields>
+				<Field index="0">Host</Field>
+				<Field index="1">MacAddr</Field>
+				<Field index="2">LowMem</Field>
+				<Field index="3">HighMem</Field>
+				<Field index="4">TotalMem</Field>
+				<Field index="5">CpuVendor</Field>
+				<Field index="6">Model</Field>
+				<Field index="7">Freq</Field>
+				<Field index="8">System</Field>
+				<Field index="9">Bios</Field>
+				<Field index="10">MiscSMB</Field>
+				<Field index="11">MiscMem</Field>
+				<Field index="12">Chassis</Field>
+			</Fields>
+	
+		</Version>
+	
+	</Versions>
+
+</CsvFile>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<CsvFile>
+
+	<Type>Controller</Type>
+	
+	<Versions>
+	
+		<Version number="2.0">
+		
+			<Directory>Controllers</Directory>
+
+			<Fields>
+				<Field index="0">Host</Field>
+				<Field index="1">Vendor</Field>
+				<Field index="2">ExpandedType</Field>
+				<Field index="4">HardwareVersion</Field>
+				<Field index="6">StandardType</Field>
+			</Fields>
+	
+		</Version>
+	
+	</Versions>
+
+</CsvFile>

@@ -1,0 +1,37 @@
+#!/var/lib/lrs/php -q
+<?
+#
+# $Id: UpdateIni.php 2942 2005-12-07 15:14:13Z root $
+#
+include_once('./classes/DataSource.php');
+include_once('/usr/share/webmin/lbs_common/lbs_common.php');
+
+$action = $argv[1];
+if ($action != "rename") exit(1);
+
+#
+# Only rename supported
+#
+
+$datasource = & DataSource::getDefaultDataSource();
+$driver = $datasource->getDefaultSourceDriver();
+$conn = $driver->getConnection();
+
+$mac = $argv[2]; // ignore
+$before= addslashes($argv[3]);
+$after = addslashes($argv[4]);
+
+ereg("[^:/]+$", $before, $m);
+$before=$m[0];
+ereg("[^:/]+$", $after, $m);
+$after=$m[0];
+
+$sql = "SELECT Name FROM Machine WHERE Name='$before'";
+$conn->query($sql);
+if ($conn->num_rows() == 1) {                          
+    echo $conn->Record['Name'];
+    $sql = "UPDATE Machine SET Name='$after' WHERE Name='$before'";    
+    $conn->query($sql);
+}
+
+?>

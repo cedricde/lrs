@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<CsvFile>
+
+	<Type>Slot</Type>
+	
+	<Versions>
+	
+		<Version number="3.0">
+		
+			<Directory>Slots</Directory>
+
+			<Fields>
+				<Field index="0">Host</Field>
+				<Field index="1">Connector</Field>
+				<Field index="2">PortType</Field>
+				<Field index="3">Availability</Field>
+				<Field index="4">State</Field>
+			</Fields>
+	
+		</Version>
+	
+	</Versions>
+
+</CsvFile>

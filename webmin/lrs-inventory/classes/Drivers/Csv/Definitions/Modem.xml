@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<CsvFile>
+
+	<Type>Modem</Type>
+	
+	<Versions>
+	
+		<Version number="2.0">
+		
+			<Directory>Modems</Directory>
+
+			<Fields>
+				<Field index="0">Host</Field>
+				<Field index="1">Vendor</Field>
+				<Field index="2">ExpandedDescription</Field>
+				<Field index="3">Type</Field>
+			</Fields>
+	
+		</Version>
+	
+	</Versions>
+
+</CsvFile>

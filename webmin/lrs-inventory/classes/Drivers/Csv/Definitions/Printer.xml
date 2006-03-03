@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<CsvFile>
+
+	<Type>Printer</Type>
+	
+	<Versions>
+	
+		<Version number="2.0">
+		
+			<Directory>Printers</Directory>
+
+			<Fields>
+				<Field index="0">Host</Field>
+				<Field index="1">Name</Field>
+				<Field index="2">Driver</Field>
+				<Field index="3">Port</Field>
+				<Field index="4">Unused</Field>
+				<Field index="5">Unused</Field>
+			</Fields>
+	
+		</Version>
+	
+	</Versions>
+
+</CsvFile>

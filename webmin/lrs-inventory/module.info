@@ -1,0 +1,5 @@
+name=lrs-inventory
+desc=LRS : Inventory
+desc_fr=LRS : Inventaire
+depends=1.030 lbs_common
+version=2.0.8

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<CsvFile>
+
+	<Type>Software</Type>
+
+	<Versions>
+
+		<Version number="3.0">
+
+			<Directory>Softwares</Directory>
+
+			<Fields>
+				<Field index="0">Host</Field>
+				<Field index="1">Company</Field>
+				<Field index="2">ProductName</Field>
+				<Field index="3">ProductVersion</Field>
+				<Field index="4">ProductPath</Field>
+				<Field index="5">Unused</Field>
+				<Field index="6">Application</Field>
+				<Field index="7">Unused</Field>
+				<Field index="8">Unused</Field>
+				<Field index="9">Unused</Field>
+				<Field index="10">Unused</Field>
+			</Fields>
+
+		</Version>
+		
+		<Version number="2.0" default="yes">
+			
+			<Directory>Softwares</Directory>
+			
+			<Fields>
+				<Field index="0">Host</Field>
+				<Field index="2">ProductPath</Field>
+				<Field index="3">Application</Field>
+				<Field index="4">ExecutableSize</Field>
+				<Field index="5">Company</Field>
+				<Field index="6">ProductName</Field>
+				<Field index="7">Type</Field>
+				<Field index="8">ProductVersion</Field>
+			</Fields>
+			
+		</Version>
+		
+		<Version number="OCS">
+			
+			<Directory>Results</Directory>
+			
+			<Fields>
+				<Field index="0">Host</Field>
+				<Field index="2">ProductPath</Field>
+				<Field index="3">ProductName</Field>
+				<Field index="4">ExecutableSize</Field>
+				<Field index="5">Company</Field>
+				<Field index="6">Application</Field>
+				<Field index="7">Type</Field>
+				<Field index="8">ProductVersion</Field>
+			</Fields>
+			
+		</Version>
+
+	</Versions>
+
+</CsvFile>

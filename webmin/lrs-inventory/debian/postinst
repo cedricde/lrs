@@ -1,0 +1,23 @@
+#!/bin/sh
+set -e
+
+/usr/sbin/update-webmin add lrs-inventory
+
+[ ! -d /var/lib/ocsinventory ] && mkdir /var/lib/ocsinventory
+chown www-data /var/lib/ocsinventory
+
+# lbs-inventory cleanup
+if [ -f /etc/apache/lbs-inventory.conf ]; then
+    mv -f /etc/apache/lbs-inventory.conf /etc/apache/lbs-inventory.conf.old
+    ln -sf /etc/apache/lrs-inventory.conf /etc/apache/lbs-inventory.conf
+fi
+
+# db update
+echo "Updating database..."
+(cd /usr/share/webmin/lrs-inventory/sql/; ./create-db.sh)
+
+# update the aliases
+[ -x /etc/init.d/apache ] && /etc/init.d/apache reload
+true
+
+#DEBHELPER#

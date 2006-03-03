@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<CsvFile>
+
+	<Type>Hardware</Type>
+	
+	<Versions>
+	
+		<Version number="2.0">
+		
+			<Directory>Hardware</Directory>
+
+			<Fields>
+				<Field index="0">Host</Field>
+				<Field index="1">OperatingSystem</Field>
+				<Field index="2">Version</Field>
+				<Field index="3">Build</Field>
+				<Field index="4">ProcessorType</Field>
+				<Field index="5">ProcessorFrequency</Field>
+				<Field index="6">ProcessorCount</Field>
+				<Field index="7">RamTotal</Field>
+				<Field index="8">SwapSpace</Field>
+				<Field index="9">IpAddress</Field>
+				<Field index="11">Date</Field>
+				<Field index="12">User</Field>
+				<Field index="16">Workgroup</Field>
+				<Field index="17">RegisteredName</Field>
+				<Field index="18">RegisteredCompany</Field>
+				<Field index="19">OSSerialNumber</Field>
+			</Fields>
+	
+		</Version>
+	
+	</Versions>
+
+</CsvFile>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<CsvFile>
+
+	<Type>Machine</Type>
+	
+	<Versions>
+	
+		<Version number="2.0">
+
+			<Fields>
+				<Field index="0">Name</Field>
+				<Field index="1">MACAddress</Field>
+			</Fields>
+	
+		</Version>
+	
+	</Versions>
+
+</CsvFile>

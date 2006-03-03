@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<DataSources>
+
+	<DataSource>
+		<Name>Default</Name>
+		<Type>Sql</Type>
+		<Parameters>
+			<Parameter name="Type">mysql</Parameter>
+			<Parameter name="Host">localhost</Parameter>
+			<Parameter name="Database">inventory</Parameter>
+			<Parameter name="Username">lrs</Parameter>
+			<Parameter name="Password">lrs</Parameter>
+		</Parameters>
+	</DataSource>
+
+	<DataSource>
+		<Name>Ocs3</Name>
+		<Type>CsvHttp</Type>
+		<Parameters>
+			<Parameter name="DefinitionPath">/usr/share/webmin/lrs-inventory/classes/Drivers/Csv/Definitions/</Parameter>
+		</Parameters>
+	</DataSource>
+
+	<DataSource>
+		<Name>OcsNG</Name>
+		<Type>Xml</Type>
+		<Parameters>
+			<Parameter name="MapFile">/usr/share/webmin/lrs-inventory/classes/Drivers/Xml/Maps/OcsNGMap.xml</Parameter>
+		</Parameters>
+	</DataSource>
+
+	<DataSource>
+		<Name>Http</Name>
+		<Type>CsvHttp</Type>
+		<Parameters>
+			<Parameter name="DefinitionPath">/usr/share/webmin/lrs-inventory/classes/Drivers/Csv/Definitions/</Parameter>
+		</Parameters>
+	</DataSource>
+
+	<DataSource>
+		<Name>Ini</Name>
+		<Type>Ini</Type>
+		<Parameters>
+			<Parameter name="DefinitionPath">/usr/share/webmin/lrs-inventory/classes/Drivers/Csv/Definitions/</Parameter>
+		</Parameters>
+	</DataSource>
+
+</DataSources>

@@ -1,0 +1,20 @@
+Source: webmin-lrs-inventory
+Section: utils
+Priority: optional
+Build-Depends-Indep: debhelper (>= 4.0) 
+Maintainer: Linbox team <libre@linbox.com>
+Standards-Version: 3.6.1
+
+Package: webmin-lrs-inventory
+Section: utils
+Architecture: all
+Depends: webmin, php4, php4-cgi, webmin-lbs-common, php4-mysql, mysql-client (>> 4.0.0) | mysql-client-4.1
+Suggests: lbs
+Conflicts: mysql-server (<< 4.0.23)
+Description: Webmin inventory module for the LRS
+ This package contains the Webmin module of the LRS inventory. 
+ .
+ The inventory gives a complete description of the clients hardware 
+ configuration, and a list of installed softwares.
+ Conflicts: webmin-lbs-inventory
+ 

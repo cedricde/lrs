@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<CsvFile>
+
+	<Type>VideoCard</Type>
+	
+	<Versions>
+	
+		<Version number="3.0" default="yes">
+		
+			<Directory>Videos</Directory>
+
+			<Fields>
+				<Field index="0">Host</Field>
+				<Field index="1">Model</Field>
+				<Field index="2">Chipset</Field>
+				<Field index="3">VRAMSize</Field>
+				<Field index="4">Resolution</Field>
+				<Field index="5">Unused</Field>
+				<Field index="6">Unused</Field>
+			</Fields>
+	
+		</Version>
+	
+		<Version number="2.0">
+		
+			<Directory>Graphics</Directory>
+
+			<Fields>
+				<Field index="0">Host</Field>
+				<Field index="1">Model</Field>
+				<Field index="2">Chipset</Field>
+				<Field index="3">VRAMSize</Field>
+				<Field index="4">Resolution</Field>
+			</Fields>
+	
+		</Version>
+	
+	</Versions>
+
+</CsvFile>

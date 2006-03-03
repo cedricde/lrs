@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<CsvFile>
+
+	<Type>Memory</Type>
+	
+	<Versions>
+	
+		<Version number="2.0">
+		
+			<Directory>Memories</Directory>
+
+			<Fields>
+				<Field index="0">Host</Field>
+				<Field index="2">ExtendedDescription</Field>
+				<Field index="3">Size</Field>
+				<Field index="4">ChipsetType</Field>
+				<Field index="5">Frequency</Field>
+				<Field index="6">SlotCount</Field>
+			</Fields>
+	
+		</Version>
+	
+	</Versions>
+
+</CsvFile>

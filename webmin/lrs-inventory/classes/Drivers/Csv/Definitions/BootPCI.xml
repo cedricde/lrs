@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<CsvFile>
+
+	<Type>BootPCI</Type>
+	
+	<Versions>
+	
+		<Version number="3.0" default="yes">
+		
+			<Directory>BootPCI</Directory>
+
+			<Fields>
+				<Field index="0">Host</Field>
+				<Field index="1">Num</Field>
+				<Field index="2">Bus</Field>
+				<Field index="3">Func</Field>
+				<Field index="4">Vendor</Field>
+				<Field index="5">Device</Field>
+				<Field index="6">Class</Field>
+				<Field index="7">Type</Field>
+			</Fields>
+	
+		</Version>
+	
+	</Versions>
+
+</CsvFile>

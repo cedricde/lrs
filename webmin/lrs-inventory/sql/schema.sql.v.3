@@ -1,0 +1,35 @@
+--
+-- Inventory update
+--
+
+CREATE TABLE IF NOT EXISTS BootMem (
+  id int(10) unsigned NOT NULL auto_increment,
+  Used INT default '0',
+  Location varchar(32) default NULL,
+  Form varchar(16) default NULL,
+  Type varchar(32) default NULL,
+  Speed INT default NULL,
+  Capacity INT default NULL,
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS hasBootMem (
+  machine mediumint(9) unsigned NOT NULL default '0',
+  inventory mediumint(5) unsigned NOT NULL default '0',
+  bootmem int(11) unsigned NOT NULL default '0',
+  PRIMARY KEY  (machine,inventory,bootmem)
+);
+
+ALTER TABLE BootGeneral MODIFY Model varchar(64) default NULL;
+
+ALTER TABLE Monitor MODIFY Stamp varchar(64) default NULL;
+ALTER TABLE Monitor MODIFY Description varchar(64) default NULL;
+ALTER TABLE Monitor MODIFY Type varchar(64) default NULL;
+
+ALTER TABLE Drive MODIFY VolumeName varchar(32) default NULL;
+
+ALTER TABLE BootGeneral ADD CpuNum INT default '1';
+ALTER TABLE BootGeneral ADD Chassis varchar(64) default NULL;
+
+DELETE FROM Version;
+INSERT INTO Version VALUES( '3' );

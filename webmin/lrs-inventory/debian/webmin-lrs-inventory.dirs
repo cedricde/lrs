@@ -1,0 +1,5 @@
+etc/webmin/lrs-inventory
+etc/apache
+usr/share/webmin/lrs-inventory
+usr/share/webmin/lrs-inventory/lang
+usr/share/webmin/lrs-inventory/images

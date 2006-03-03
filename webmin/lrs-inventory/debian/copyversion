@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+# Check that debian/changelog and module.info versions are in sync
+#
+
+[ -d debian ] && cd debian
+[ changelog -ot ../module.info ] && exit 0
+
+echo "Updating module.info version"
+
+VER=`head -1 changelog|cut -f 2 -d " "|tr -d \(\)`
+#echo *$VER*
+
+INFO=`grep -v version= ../module.info`
+echo -e "$INFO\nversion=$VER" > ../module.info
+exit 1

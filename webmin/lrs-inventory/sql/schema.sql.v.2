@@ -1,0 +1,83 @@
+--
+-- Table structure for table 
+--
+
+CREATE TABLE IF NOT EXISTS BootGeneral (
+  id int(10) unsigned NOT NULL auto_increment,
+  MacAddr varchar(32) default NULL,
+  LowMem INT default '0',
+  HighMem BIGINT default '0',  
+  TotalMem BIGINT default '0',
+  CpuVendor varchar(32) default NULL,
+  Model varchar(32) default NULL,
+  Freq varchar(32) default NULL,
+  System varchar(255) default NULL,
+  Bios varchar(255) default NULL,
+  MiscSMB varchar(255) default NULL,
+  MiscMem varchar(255) default NULL,
+  PRIMARY KEY  (id)
+);
+
+CREATE TABLE IF NOT EXISTS hasBootGeneral (
+  machine mediumint(9) unsigned NOT NULL default '0',
+  inventory mediumint(5) unsigned NOT NULL default '0',
+  bootgeneral int(11) unsigned NOT NULL default '0',
+  PRIMARY KEY  (machine,inventory,bootgeneral)
+);
+
+CREATE TABLE IF NOT EXISTS BootPCI (
+  id int(10) unsigned NOT NULL auto_increment,
+  Num INT default NULL,
+  Bus INT default '0',
+  Func varchar(8) default NULL,  
+  Vendor varchar(64) default NULL,
+  Device varchar(255) default NULL,
+  Class varchar(64) default NULL,
+  Type varchar(64) default NULL,
+  PRIMARY KEY  (id)
+);
+
+CREATE TABLE IF NOT EXISTS hasBootPCI (
+  machine mediumint(9) unsigned NOT NULL default '0',
+  inventory mediumint(5) unsigned NOT NULL default '0',
+  bootpci int(11) unsigned NOT NULL default '0',
+  PRIMARY KEY  (machine,inventory,bootpci)
+);
+
+CREATE TABLE IF NOT EXISTS BootDisk (
+  id int(10) unsigned NOT NULL auto_increment,
+  Num INT default '-1',
+  Name varchar(32) default NULL,
+  Cyl INT default '0',
+  Head INT default '0',
+  Sector INT default '0',
+  Capacity INT default '0',
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS hasBootDisk (
+  machine mediumint(9) unsigned NOT NULL default '0',
+  inventory mediumint(5) unsigned NOT NULL default '0',
+  bootdisk int(11) unsigned NOT NULL default '0',
+  PRIMARY KEY  (machine,inventory,bootdisk)
+);
+
+CREATE TABLE IF NOT EXISTS BootPart (
+  id int(10) unsigned NOT NULL auto_increment,
+  Disk INT default '-1',
+  Num INT default '-1',
+  Type varchar(32) default NULL,
+  Length INT default '0',
+  Flag varchar(32) default NULL,
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS hasBootPart (
+  machine mediumint(9) unsigned NOT NULL default '0',
+  inventory mediumint(5) unsigned NOT NULL default '0',
+  bootpart int(11) unsigned NOT NULL default '0',
+  PRIMARY KEY  (machine,inventory,bootpart)
+);
+
+DELETE FROM Version;
+INSERT INTO Version VALUES( '2' );

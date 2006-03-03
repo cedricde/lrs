@@ -1,0 +1,121 @@
+h3
+{
+	border-bottom: 1px solid #EA4F26;
+}
+
+label
+{
+	display: block;
+	width:150px;
+	float: left;
+}
+
+td
+{
+	padding: 5px;
+}
+
+th,
+td
+{
+	font-size: 10pt;
+}
+
+tr.pair
+{
+	background: #ffffff;
+}
+
+tr.impair
+{
+	background: #f4f4f4;
+}
+
+tr.pair td.sorted
+{
+	background: #f3f3f3;
+}
+
+tr.impair td.sorted
+{
+	background: #e7e7e7;
+}
+
+th
+{
+	padding:0 5px 0 5px;
+}
+
+
+.machine td
+{
+	background: #f0f0f0;
+
+	font-size: 9pt;
+	font-weight: bold;
+}
+
+.download-informations
+{
+	float: right;
+	clear: right;
+}
+
+.download-informations a,
+.download-informations a:hover,
+.download-informations a:visited
+{
+	font-size: 9pt;
+	font-weight: bold;
+}
+
+.download-informations img
+{
+	margin-right: 5px;
+}
+
+.error
+{
+	margin: 10px;
+	padding: 10px 10px 15px 42px;
+
+	border: solid 1px #f00;
+	background: #fee url(../images/error.png) no-repeat;
+	background-position: 3px 3px;
+}
+
+#popup
+{
+	padding: 5px;
+}
+
+#popup h1
+{
+	font-size: 18pt;
+	padding-bottom: 10px;
+}
+
+#popup #cadre
+{
+	border: 1px solid #EA4F26;
+	padding: 10px;
+	background: white;
+}
+
+#popup input
+{
+	text-align: center;
+}
+
+#request-form form
+{
+	float: right;
+	margin:0 0 0 15px;
+	padding: 0;
+}
+
+
+#eocontent
+{
+	clear:both;
+}
