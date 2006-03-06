@@ -535,7 +535,7 @@ EOF
 
 
 sub checkhostname {
-	return 0 if ( not grep(m/^[0-9a-z\.:\/-_]+$/i, $_[0]) ) ;
+	return 0 if ( not grep(m/^[0-9a-z\.:_\/-]+$/i, $_[0]) ) ;
         1;
 }
 
