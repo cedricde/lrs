@@ -12,11 +12,12 @@
 
 			<Fields>
 				<Field index="0">Host</Field>
-				<Field index="1">Stamp</Field>
-				<Field index="2">Description</Field>
-				<Field index="3">Type</Field>
+				<Field index="1">Manuf</Field>
+				<Field index="2">Stamp</Field>
+				<Field index="3">Description</Field>
+				<Field index="4">Type</Field>
 			</Fields>
-	
+				
 		</Version>
 	
 	</Versions>

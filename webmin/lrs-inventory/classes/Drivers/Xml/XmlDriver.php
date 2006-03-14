@@ -139,13 +139,14 @@ class XmlDriver extends Driver
 			$machine = & $machines[$i];
 			
 			// For each component of the machine
-			for ( $j=0 ; $j<count($machine->m_Components[$type]) ; $j++ )
-
+			for ( $j=0 ; $j<count($machine->m_Components[$type]) ; $j++ ) {
 				// Only append the current component to the end of array
-				$objects[] = & $machine->m_Components[$type][$j];
-
+				$obj = & $machine->m_Components[$type][$j];
+				$obj->setHost($machine);
+				$objects[] = & $obj;
+			}
 		}
-		
+	
 		return $objects;
 	}
 	
@@ -198,7 +199,7 @@ class XmlDriver extends Driver
 		xml_parse($parser, $content);
 
 		xml_parser_free($parser);
-		
+
 		return $machine;
 	}
 
@@ -243,6 +244,8 @@ class XmlDriver extends Driver
 		//print $GLOBALS['CURRENTLEVEL'] ." : Debut $name\n";
 		
 		$xmlmap = & $GLOBALS['CURRENTXMLMAP'];
+
+		//echo $GLOBALS['CURRENTLEVEL'].":$name;".$GLOBALS['CURRENTTAG'].";";
 		
 		switch ( $GLOBALS['CURRENTLEVEL'] )
 		{
@@ -261,7 +264,7 @@ class XmlDriver extends Driver
 						$datasource->loadComponentClass($class);
 					}
 
-					if ( class_exists($class) )
+					if ( class_exists($class) && $class != "Null" )
 					{
 						unset($GLOBALS['CURRENTOBJECT']);
 						
@@ -276,10 +279,11 @@ class XmlDriver extends Driver
 					}
 					else
 					{
-						global $datasource;
-						$datasource->loadComponentClass('Object');
+						//global $datasource;
+						//$datasource->loadComponentClass('Object');
 						
-						$GLOBALS['CURRENTOBJECT'] = new Object();
+						unset($GLOBALS['CURRENTOBJECT']);
+						// = new Object();
 					}
 				}
 
@@ -314,21 +318,18 @@ class XmlDriver extends Driver
 	 */
 	function characterDataXmlParser($parser, $data)
 	{
-		if ( ! empty($data) && $data!='N/A' )
+		if ( trim($data) != "" && $data!='N/A' && isset($GLOBALS['CURRENTOBJECT']))
 		{		
 			$object = & $GLOBALS['CURRENTOBJECT'];
 	
-			$object->setProperty($GLOBALS['CURRENTFIELD'], $data);
+			$object->setProperty($GLOBALS['CURRENTFIELD'], utf8_decode($data));
 	
 			$machine = & $GLOBALS['CURRENTMACHINE'];
 			
 			// Sets the machine name
-			if ( $GLOBALS['CURRENTFIELD']=='Host' && $GLOBALS['CURRENTTAG']=='HARDWARE' )
-
+			if ( ($GLOBALS['CURRENTFIELD']=='Host' || $GLOBALS['CURRENTFIELD']=='NAME') && $GLOBALS['CURRENTTAG']=='HARDWARE') {
 				$machine->setName($data);
-
+			}
 		}
 	}
-
-
 ?>

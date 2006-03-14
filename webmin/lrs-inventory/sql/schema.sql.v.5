@@ -1,0 +1,9 @@
+--
+-- Inventory update
+--
+
+ALTER TABLE Modem ADD Model varchar(64) default NULL;
+ALTER TABLE Monitor ADD Manuf varchar(32) default NULL;
+
+DELETE FROM Version;
+INSERT INTO Version VALUES( '5' );

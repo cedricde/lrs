@@ -52,7 +52,7 @@ class SqlDriver extends Driver
 		} else {
 			// hack used by transfer.php to make sure that an inventory has the same
 			// Id for all object types
-			$todayinventory = new Inventory($this->m_InvIdDate, $this->m_InvIdTime);			
+			$todayinventory = new Inventory($this->m_InvIdDate, $this->m_InvIdTime);
 		}
 		$this->m_InvIdDate = $todayinventory->getDate();
 		$this->m_InvIdTime = $todayinventory->getTime();
@@ -62,13 +62,16 @@ class SqlDriver extends Driver
 		{
 			$ismachine = $object->getClassName()=='machine';
 
+			if ($object->getClassName() == "object") continue;
+
 			// Get object and machine IDs in the database
 			$objectid = $this->getObjectId(&$object);
 			debug("Object ID : $objectid");
 			
+			
 			if ( $ismachine )
 
-				$this->saveCustomFields($object);
+				$this->saveCustomFields($object);	// obsolete ?
 
 			else
 			{

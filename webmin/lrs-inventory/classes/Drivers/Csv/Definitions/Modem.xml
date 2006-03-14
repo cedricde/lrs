@@ -5,6 +5,20 @@
 	<Type>Modem</Type>
 	
 	<Versions>
+
+		<Version number="3.0">
+		
+			<Directory>Modems</Directory>
+
+			<Fields>
+				<Field index="0">Host</Field>
+				<Field index="1">Vendor</Field>
+				<Field index="2">Model</Field>
+				<Field index="3">ExpandedDescription</Field>
+				<Field index="4">Type</Field>
+			</Fields>
+	
+		</Version>
 	
 		<Version number="2.0">
 		

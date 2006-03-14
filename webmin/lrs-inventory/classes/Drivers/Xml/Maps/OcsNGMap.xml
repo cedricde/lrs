@@ -8,6 +8,7 @@
 		<MappedField from="WORKGROUP" to="Workgroup" />
 		<MappedField from="OSNAME" to="OperatingSystem" />
 		<MappedField from="OSVERSION" to="Version" />
+		<MappedField from="OSCOMMENTS" to="Build" />
 		<MappedField from="PROCESSORT" to="ProcessorType" />
 		<MappedField from="PROCESSORS" to="ProcessorFrequency" />
 		<MappedField from="PROCESSORN" to="ProcessorCount" />
@@ -71,14 +72,15 @@
 
 		<MappedField from="CAPTION" to="Stamp" />
 		<MappedField from="DESCRIPTION" to="Description" />
+		<MappedField from="MANUFACTURER" to="Manuf" />
 		<MappedField from="TYPE" to="Type" />
 
 	</MappedObject>
 
 	<MappedObject name="NETWORKS" class="Network">
 
-		<MappedField from="DESCRIPTION" to="Description" />
-		<MappedField from="TYPE" to="CardType" />
+		<MappedField from="DESCRIPTION" to="CardType" />
+		<MappedField from="TYPE" to="NetworkType" />
 		<MappedField from="TYPEMIB" to="MIB" />
 		<MappedField from="SPEED" to="Bandwidth" />
 		<MappedField from="MACADDR" to="MACAddress" />
@@ -163,6 +165,22 @@
 		<MappedField from="MEMORY" to="VRAMSize" />
 		<MappedField from="RESOLUTION" to="Resolution" />
 
+	</MappedObject>
+
+	<MappedObject name="MODEMS" class="Modem">
+		<MappedField from="NAME" to="Vendor" />
+		<MappedField from="MODEL" to="Model" />
+		<MappedField from="DESCRIPTION" to="ExpandedDescription" />
+		<MappedField from="TYPE" to="Type" />
+	</MappedObject>
+
+	<MappedObject name="ACCOUNTINFO" class="Null">
+	</MappedObject>
+
+	<MappedObject name="ACCESSLOG" class="Null">
+	</MappedObject>
+
+	<MappedObject name="DEVICEID" class="Null">
 	</MappedObject>
 
 </MappedFields>

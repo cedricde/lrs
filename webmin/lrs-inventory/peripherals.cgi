@@ -8,6 +8,7 @@
 	renderTable('Printer');
 	renderTable('Input');
 	renderTable('Monitor');
+	renderTable('Modem');
 
     print perl_exec("lbs_footer.cgi");
 
