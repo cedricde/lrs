@@ -19,13 +19,13 @@ use IO::Socket::INET;
 
 # command line parsing: simple, always 6 arguments
 
-if ( $#ARGV != 6 )
+if ( $#ARGV != 7 )
   {
-    print "Usage: proxy.pl run|test from.ip dest.ip dest.port key user host\n";
+    print "Usage: proxy.pl run|test from.ip dest.ip dest.port key user host loguser\n";
     exit 1;
   }
 
-my ($command, $from, $dest, $destport, $key, $sshuser, $host) = @ARGV;
+my ($command, $from, $dest, $destport, $key, $sshuser, $host, $loguser) = @ARGV;
 
 # globals
 my $pid;
@@ -249,7 +249,7 @@ sub sigterm {
 #
 
 setlogsock('unix');
-openlog("proxy.pl $host", "", "daemon");
+openlog("proxy.pl: to $host as $loguser", "", "daemon");
 
 $pid = 0;			# SSH pid
 

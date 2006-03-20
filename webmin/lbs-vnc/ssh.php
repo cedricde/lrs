@@ -50,9 +50,9 @@ Class sshtunnel
   //
   function connect()
     {
-      global $nbname;
+      global $nbname, $remote_user;
     
-      $cmd = escapeshellcmd("./proxy.pl run $this->from $this->ip $this->port $this->key $this->user $nbname");
+      $cmd = escapeshellcmd("./proxy.pl run $this->from $this->ip $this->port $this->key $this->user $nbname $remote_user");
       $handle = popen($cmd, "r");
       $string = fgets($handle, 100);
       pclose ($handle);

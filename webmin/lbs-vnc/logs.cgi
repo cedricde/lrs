@@ -28,7 +28,7 @@ initLbsConf($config['lbs_conf'], 1);
 echo perl_exec("lbs_header.cgi", array("remote_control logs", $text{'tit_logs'}, "index"));
 
 $lines = file("/var/log/daemon.log");
-$proxy = preg_grep("/proxy.pl /", $lines);
+$proxy = preg_grep("/ proxy.pl:? /", $lines);
 print( join("<br>",array_reverse($proxy)));
 
 #$t = tmplInit(array("main" => "main.tpl", "erreur" => "erreur.tpl"));
