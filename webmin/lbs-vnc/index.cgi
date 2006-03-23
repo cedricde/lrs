@@ -102,9 +102,11 @@ function tryVNC($mac, $type, $getssh)
   }
 
   # Try 1st the IP
+  $ips = "";
   $ip = $ether["$mac"]["ip"];
   if (!stristr($ip, "dynami")) {
     scanRunVNC($ip, $type, $ssh);
+    $ips .= $ip;
   }
   # Then DNS
   $name = $ether["$mac"]["name"];
@@ -113,13 +115,25 @@ function tryVNC($mac, $type, $getssh)
   $ip = gethostbyname($name);
   if ($ip != $name) {
     scanRunVNC($ip, $type, $ssh);
+    $ips .= " ".$ip;
   }
-  # and nmblookupheader("Location: ".$_SERVER['HTTP_REFERER']); 
+
+  # and nmblookup 
   $ret = exec("/usr/bin/nmblookup $name 2>&1");
   preg_match("/(\d+\.\d+\.\d+\.\d+) /", $ret, $match);
   $ip = $match[1]; 
   if ($ip != "") {
       scanRunVNC($ip, $type, $ssh);	
+      $ips .= " ".$ip;
+  }
+
+  # and net lookup 
+  $ret = exec("/usr/bin/net lookup host $name 2>&1");
+  preg_match("/^(\d+\.\d+\.\d+\.\d+)/", $ret, $match);
+  $ip = $match[1]; 
+  if ($ip != "") {
+      scanRunVNC($ip, $type, $ssh);	
+      $ips .= " ".$ip;
   }
   
   # Last try: find info from OCS Inventory
@@ -129,6 +143,7 @@ function tryVNC($mac, $type, $getssh)
 	$cols = split(";", $line);
 	if (strcasecmp($cols[5], $mac) == 0) {
 	    scanRunVNC($cols[7], $type, $ssh);
+	    $ips .= " ".$ip;
 	}
     }
   }
@@ -136,6 +151,7 @@ function tryVNC($mac, $type, $getssh)
   # nothing found !
   echo perl_exec("lbs_header.cgi", array("remote_control", $text{'index_title'}, "index"));
   $t = tmplInit(array("main" => "main.tpl", "erreur" => "erreur.tpl"));
+  $t->set_var("IPS", $ips);
   $t->pparse("out", "erreur");
   echo perl_exec("lbs_footer.cgi", array("2"));
 

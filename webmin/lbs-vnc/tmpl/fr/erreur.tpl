@@ -9,3 +9,4 @@
 <li>Le mode vidéo du client affiche plus de 256 couleurs.</li>
 </ul></td></tr>
 </table><br/><br/>
+<p>Adresses IP essayées: {IPS}

@@ -9,3 +9,4 @@
 <li>The host's selected video mode has at least 256 colors.</li>
 </ul></td></tr>
 </table><br/><br/>
+<p>IP addresses tried: {IPS}
