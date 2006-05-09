@@ -67,6 +67,7 @@ lab_burn=Graver
 lab_command=Commande
 lab_commands=Commandes
 lab_comments=Commentaires
+lab_convtolocal=Conv. en Locale
 lab_copyfile=Indiquez le nom de la copie de $1
 lab_createfile=Indiquez le nom du fichier à créer
 lab_ctr=Ctrl.

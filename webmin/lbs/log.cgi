@@ -137,7 +137,7 @@ sub logfile2txt
 
 	      );
 
-  if ($log =~ /([0-9A-E:]+) backup started \((.*)\)/) {
+  if ($log =~ /([0-9A-F:]+) backup started \((.*)\)/) {
     # add backup progress info
     my $name = $2;
     my $mac = $1;
@@ -152,7 +152,7 @@ sub logfile2txt
     }
   }
 
-  if ($log =~ /([0-9A-E:]+) restoration started \((.*)\)/) {
+  if ($log =~ /([0-9A-F:]+) restoration started \((.*)\)/) {
     # add restoration progress info
     my $name = $2;
     my $mac = $1;
@@ -164,7 +164,7 @@ sub logfile2txt
     }
   }
 
-  if ($log =~ /([0-9A-E:]+) postinstall started/) {
+  if ($log =~ /([0-9A-F:]+) postinstall started/) {
     # add restoration progress info
     my $name = $2;
     my $mac = $1;

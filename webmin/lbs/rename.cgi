@@ -83,6 +83,8 @@ if (exists $in{'cancel'}) {
         $t =~ s|^(.*)/$|$1|gi;          # remove trailing "/"
         $t =~ s|[^a-z0-9\.\-\+]|_|gi;   # translate unauthorized characters into underscores
 
+	if ($t eq "") { error($text{'err_name_mandat'}); }
+
         # group parsing:
         chomp($g);                      # remove leading and trailing spaces
         $g =~ s|^/+(.*)$|$1|;           # remove leading "/"
@@ -108,7 +110,7 @@ if (exists $in{'cancel'}) {
 
 	# rename for other modules
 	# ...will be moved to lbs_common soon
-	foreach my $mod ("lrs-inventory", "backuppc") {
+	foreach my $mod ("lbs", "lrs-inventory", "backuppc") {
 		if (-x "../$mod/lrs-admin") {
 			system("unset SERVER_SOFTWARE;unset SERVER_NAME;unset GATEWAY_INTERFACE;unset REQUEST_METHOD;unset SCRIPT_FILENAME;unset QUERY_STRING;../$mod/lrs-admin rename $mac $old $t >/dev/null");
 		}

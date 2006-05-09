@@ -72,6 +72,7 @@ else {
 	# Normal cron job.. can edit command
 	$job->{'command'} =~ s/\\%/\0/g;
 	$job->{'command'} =~ s/$config{'wake'}\s+//g;
+	$job->{'command'} =~ s/>\/dev\/null//g;
 	@lines = split(/%/ , $job->{'command'});
 	if ($in{ext_cmd} ne "") {
 	    $lines = [];

@@ -77,6 +77,7 @@ foreach $u (@ulist) {
 		else {
 			local $cmd = $job->{'command'};
 			$cmd =~ s/$config{'wake'}/Wake On Lan, /;
+			$cmd =~ s/>.dev.null//;
 			$cmd =~ s/\\%/\0/g; $cmd =~ s/%.*$//;
 			$cmd =~ s/\0/%/g;
 			$cmd = &html_escape($cmd);

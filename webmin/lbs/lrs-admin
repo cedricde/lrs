@@ -1,0 +1,36 @@
+#!/usr/bin/perl
+#
+# $Id$
+#
+
+my $action = $ARGV[0];
+my $mac = $ARGV[1];
+
+
+my $restart="service dhcpd restart";
+if ( -r "/etc/debian_version") {                                                
+    $restart="/etc/init.d/dhcp3-server restart";                                
+}
+
+if ($action eq "remove") {
+	# clean up dhcpd.conf
+	my $conf = "/etc/dhcp3/dhcpd.conf";
+	if (! -w $conf) { exit(1); }
+
+	local(*INPUT, $/);
+	open (INPUT, "+>>", $conf) || die "can't open $file: $!";
+	seek(INPUT, 0, 0);
+	my $all = <INPUT>;
+	
+	# find the block
+	$all =~ s/host \S+\s+{\s+hardware ethernet\s+$mac;[^}]*}\n+//is;
+	
+	truncate(INPUT, 0);	
+	print INPUT $all;
+	close(INPUT);
+	
+	system($restart. " >/dev/null 2>&1");
+
+} elsif ($action eq "rename") {
+	# nothing
+}

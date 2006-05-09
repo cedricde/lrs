@@ -95,7 +95,15 @@ if (not exists $in{'mac'}) {
 
 		$mesg = text("msg_delete_ok",$name,$mac);
 		lbs_common::print_header( $text{'tit_delete'}, "index", $VERSION);
-        	lbs_common::print_html_tabs(['system_backup', "delete_machine"]);
+            	lbs_common::print_html_tabs(['system_backup', "delete_machine"]);
+
+		# delete for other modules
+		# ...will be moved to lbs_common soon
+		foreach my $mod ("lbs", "lrs-inventory", "backuppc") {
+		    if (-x "../$mod/lrs-admin") {
+			system("unset SERVER_SOFTWARE;unset SERVER_NAME;unset GATEWAY_INTERFACE;unset REQUEST_METHOD;unset SCRIPT_FILENAME;unset QUERY_STRING;../$mod/lrs-admin remove $mac $name >/dev/null");
+		    }
+    		}
 
 		print "<h2>$mesg</h2>\n" ;
 

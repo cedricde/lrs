@@ -25,7 +25,7 @@ use strict;
 require "./lbs.pl";
 
 # ... and vars
-use vars qw (%access %config %in %lbsconf %text $VERSION);
+use vars qw (%access %config %in %lbsconf %text $VERSION $current_lang);
 lbs_common::init_lbs_conf() or exit(0) ;
 
 ReadParse();
@@ -83,6 +83,79 @@ if (exists $in{'cancel'}) {     					# CANCEL button pressed
 	
 	# then the footer
 	footer("", $text{'index'}) ;
+
+} elsif (exists($in{'imgtolocal'}) and exists($in{'apply'}) and exists($in{'image'})) {
+
+	# move the data
+	my $from = $lbs_home . "/imgbase/". $in{'image'};
+	my $to = $lbs_home . "/images/". lbs_common::mac_remove_columns($in{'imgtolocal'});
+
+	# new name
+	my $lref = &read_file_lines($to."/COPYNUM");
+
+	my $nextref = $$lref[0];
+	$nextref =~ s/[^0-9]+//;
+	$$lref[0] = ($nextref + 1);	# increment COPYNUM
+	&flush_file_lines();
+
+	if ( -l $to."/".$in{'image'} ) {
+		# the shared image is in the menu 
+		unlink($to."/".$in{'image'});
+		system("mv $from $to ; cd $to ; mv ".$in{'image'}." Local-$nextref");
+		# modify header.lst*
+		foreach my $name ("/header.lst", "/header.lst.wol") {
+			my $href = &read_file_lines($to.$name);
+			for (@$href) {
+				s/=$in{'image'}\//=Local-$nextref\//;
+				s/=$in{'image'}$/=Local-$nextref/;
+    			}
+			&flush_file_lines();
+		}
+		
+	} else {
+		# the shared image is not in any menu
+		system("mv $from $to ; cd $to ; mv ".$in{'image'}." Local-$nextref");
+	}
+
+	redirect("imgbase.cgi") ;
+	exit(0) ;
+	
+
+} elsif (exists($in{'imgtolocal'})) {
+    
+       	my $options;
+	my %einfo;
+	
+	my $etherfile = $lbs_home . "/etc/ether" ;
+	etherLoad($etherfile, \%einfo) or error( lbsGetError() ) ;
+
+	# the header
+	lbs_common::print_header( $text{'tit_imgbase'}, "imgbase", $VERSION);
+	lbs_common::print_html_tabs(['list_of_machines', 'shared_images']);
+	
+	if (exists($in{'mac'})) {
+		my $name = etherGetNameByMac(\%einfo, $in{'mac'});
+		$options = "<option value=\"$in{mac}\">$name</option>";
+	} else {
+		my @all = etherGetNames(\%einfo);
+		foreach my $n (@all) {
+			my $mac = etherGetMacByName(\%einfo, $n);
+			$options .= "<option value=\"$mac\">$n</option>\n";
+		}
+	}
+	
+	# then the main part
+	my $t = new Qtpl("./tmpl/$current_lang/basetolocal.tpl");
+	$t->assign('IMAGE', $in{'imgtolocal'});
+	$t->assign('OPTIONS', $options);
+        $t->parse('all');
+        $t->out('all');
+	
+        # end of tabs                                                           
+        lbs_common::print_end_menu();                                           
+        lbs_common::print_end_menu();                                           
+        # footer                                                                
+        lbs_common::footer("", $text{'index'}) ;
 
 } else {								# show images array
 	imgBaseUsage($lbs_home, \%busage) or error(lbsGetError()) ;

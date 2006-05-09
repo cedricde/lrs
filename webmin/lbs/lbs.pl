@@ -57,15 +57,14 @@ sub images_base_usage {
 my $lbs_home = $lbs_common::lbsconf{"basedir"} ;
 my $etherfile = $lbs_home . "/etc/ether" ;
 my $img_base = $lbs_home."/imgbase";
-my ($busage,$btitle,$bdesc,$bstat,$imgdir) = @_ ;
-my (@lol, @lsdel, @lsused, @lsdesc, @lstitle,@sizes,@burn,@details) ;
+my ($busage, $btitle, $bdesc, $bstat, $imgdir) = @_ ;
+my (@lol, @lsdel, @lsused, @lsdesc, @lstitle, @sizes, @burn, @details, @lsconv) ;
 my %tabattr ;
 
 my %einfo;
 etherLoad($etherfile, \%einfo) or error( lbsGetError() ) ;
 
-my $delicon;    							# « delete » icon
-my @images;
+my ($delicon, $mvicon, $delref, $mvref, $mvmac, @images);
 my @toprow = (
 	$text{'lab_baseimg'},
 	$text{'lab_title'},
@@ -73,6 +72,7 @@ my @toprow = (
 	$text{'lab_usedby'},
 	$text{'lab_size'},
 	$text{'lab_rm'},
+	$text{'lab_convtolocal'},
 	$text{'lab_burn'},
 	$text{'lab_details'},
 	);
@@ -81,14 +81,22 @@ my @toprow = (
 		my @ls = @{$$busage{$k}} ;
 		my $size = scalar(@ls);
 		my @uls=();
+		my $first = $ls[0];
 		
 		push @images, $k ;
-	
-		if (not $size) {					# if there are no images attached
+
+		$mvmac = "";
+		if ($size == 0 && $k ne "Base-0") {			# if there are no images attached
 			$delicon = "trash.gif";
+			$mvicon = "up1.gif";
+			$delref = "<a href=\"imgbase.cgi?imgbase=".urlize($k)."\">";
+			$mvref = "<a href=\"imgbase.cgi?imgtolocal=".urlize($k)."\">";
 			@uls = ( $text{"lab_none"} ) ;
 		} else {						# else we built an anchor list
 			$delicon = "cross.gif";
+			$mvicon = "cross.gif";
+			$delref = "";
+			$mvref = "";
 			foreach my $i (@ls) 
 			  {
 			    my $sname = $i;
@@ -97,17 +105,27 @@ my @toprow = (
 			    push @uls,$i ;
 			  }
 		}
+
+		if ($size == 1 && $k ne "Base-0") {
+			my $sname = $first;
+			$sname =~ s/.*\///;
+			$mvicon = "up1.gif";
+			$mvref = "<a href=\"imgbase.cgi?imgtolocal=".urlize($k).
+				"&mac=".etherGetMacByName(\%einfo, $first)."\">";
+		}
 	
 		push @lsused, "<small>" . join("<br>", @uls) . "</small>" ;# which we attach with som "<br>" between each
 
 		push @lsdel,
-			"<center>"
-			."<a href=\"imgbase.cgi?imgbase="
-			.urlize($k)
-			."\">"
-			."<img src=\"images/$delicon\" "
+			"<center>$delref<img src=\"images/$delicon\" "
 			."border=no alt=\""
 			.$text{'lab_rm'}
+			." $k\"></a></center>" ;
+
+		push @lsconv,
+			"<center>$mvref<img src=\"images/$mvicon\" "
+			."border=no alt=\""
+			.$text{'lab_convtolocal'}
 			." $k\"></a></center>" ;
 
 		push @lstitle, $$btitle{$k} ;
@@ -128,7 +146,7 @@ my @toprow = (
 		push @sizes, $siz ;
 	}
 
-        push @lol, [ @images ],[ @lstitle ],[ @lsdesc ],[ @lsused ], [@sizes],[ @lsdel ], [@burn], [@details] ;
+        push @lol, [ @images ],[ @lstitle ],[ @lsdesc ],[ @lsused ], [@sizes],[ @lsdel ], [@lsconv], [@burn], [@details] ;
         lbs_common::lolRotate(\@lol) ;
   
 	%tabattr = (

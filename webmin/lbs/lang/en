@@ -67,6 +67,7 @@ lab_burn=Burn
 lab_command=Command
 lab_commands=Commandss
 lab_comments=Comments
+lab_convtolocal=Conv. to Local
 lab_copyfile=Enter the name of the copy of $1
 lab_createfile=Enter the name of the file to create
 lab_ctl=Ctrl.
