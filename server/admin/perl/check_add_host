@@ -434,10 +434,7 @@ if (iniGetVal(\%config, "-", "addscript") ne "") {
     close(HOST);
 }
 
-if (! isTrue(iniGetVal(\%config, "dhcp", "nostaticip"))) {
-    if (isTrue(iniGetVal(\%config, "dhcp", "dhcpdrestart"))) {system($restart);}
-}
-
+if (isTrue(iniGetVal(\%config, "dhcp", "dhcpdrestart"))) {system($restart. " >/dev/null 2>&1");}
 
 print LOG "IP $ip added successfully to 'ether' file\n";
 close(LOG);
