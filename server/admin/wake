@@ -76,7 +76,7 @@ do
  do
  # notify the menu builder that a WOL was attempted
   sm=`echo $m|tr -d :`
-  touch $BASEDIR/images/$sm/wol
+  touch $BASEDIR/images/$sm/wol 2>/dev/null
 
   echo "Wake $m (IP=$IP)"
   for i in 1 2
