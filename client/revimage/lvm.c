@@ -72,10 +72,11 @@ void lvm_check(char *device, long long *offset)
     else
       {
 	__u64 off;
-	int state = 0;
-	int pe_count = 0, extent = 0;
+	int state = 0, pe_count = 0, extent = 0;
+	__u64 *pv;
 
 	/* lvm2 */
+	/* buf[128] = label_header */
 	if (buf[128] != 0x4542414C || buf[129] != 0x454E4F4C) 
 	  {
 	    debug("LVM2 LABELONE not found\n");
@@ -87,7 +88,18 @@ void lvm_check(char *device, long long *offset)
 	    debug("LVM2 001 not found\n");
 	    return;
 	  }
-	fseek(fi, 0x800, SEEK_SET);
+	/* buf[133] = label_header.offset_xl */
+	/* pv_header */
+	pv = (__u64 *)(((__u8 *)&buf[128]) + buf[133]);
+	debug("LVM2 pv UUID: %32s\n", (char *)pv);
+	/* skip data */
+	pv += 5;
+	while (*pv) {
+	    pv += 2;
+	}
+	pv += 2;
+	debug("LVM2: Mdh offset: 0x%llX\n", *pv);
+	fseek(fi, *pv, SEEK_SET);
 	fread(buf, 128*4, 1, fi);
 	if (strncmp((char *)&buf[1], (char *)FMTT_MAGIC, 16))
 	  {
@@ -97,6 +109,7 @@ void lvm_check(char *device, long long *offset)
 	debug("LVM2: FMTT v%ld\n", buf[5]);
 	off = buf[10] + ((__u64)buf[11] << 32);
 	debug("LVM2: Meta offset: 0x%llX\n", off);
+	if (off == 0) return;
 	off += 0x800;
 	fseek(fi, off, SEEK_SET);
 	*offset = 0;
