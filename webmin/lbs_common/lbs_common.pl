@@ -377,9 +377,9 @@ my $mac_with_dot        = url_encode(mac_add_columns(mac_remove_columns($in{'mac
 # Print the end of the menu
 sub print_end_menu {
 
- print <<EOFFENDMENU;
+ print <<EOF;
   </div>
-EOFFENDMENU
+EOF
 }
 
 # Print the header
@@ -751,15 +751,15 @@ sub print_machines_list($$$$) {
         my $lineisodd  = 0;                     # 0 for even, !0 for odd
         
         my @tmpcols;
+
 	foreach my $name (etherGetNames($einfo)) {      # add "/" to every entry to enable sorting
 		my $g;
-
-		foreach my $group(sort(keys(%groups))) {		# for each not already displayed group
+		foreach my $group (sort(keys(%groups))) {		# for each not already displayed group
 			if (defined($groups{$group})) {
 				my $group_url = urlize($group);
                                 my @localcount=split '/', $group;
 				my $level=@localcount;
-				if ($name =~ m|$group/|) {      		# if the current machine belong to the current group: we must draw the group before
+				if ($name =~ m|^$group/|) {      		# if the current machine belong to the current group: we must draw the group before
 					my $grouplabel = 0;
 					
 					my $basegroup = $group;
@@ -771,10 +771,10 @@ sub print_machines_list($$$$) {
 					
 					if ($in{'group'} eq $group) {      # our selected group ?
 						$grouplabel = "<table class='noborder'><tr><td class='noborder' nowrap>" . "&nbsp;" x (5 * ($level-1)) . "<img align='middle' src='$IMAGES_URL/folder-open.gif'>&nbsp;<a name=\"$group_url\" href='$id&profile=$in{profile}&group=$parentgroup#$parentgroup'><b>$basegroup</b></a></td></tr></table>";
+					} elsif ($group =~ m|^$in{'group'}/|){ # child ?
+						$grouplabel = "<table class='noborder'><tr><td class='noborder' nowrap>" . "&nbsp;" x (5 * ($level-1)) . "<img align='middle' src='$IMAGES_URL/folder-closed.gif'>&nbsp;<a href=\"$id&profile=$in{profile}&group=$group_url#$group_url\"><b>$basegroup</b></a></td></tr></table>";
 					} elsif ($in{'group'} =~ m|$group/|) {  # a parent group ?
 						$grouplabel = "<table class='noborder'><tr><td class='noborder' nowrap>" . "&nbsp;" x (5 * ($level-1)) . "<img align='middle' src='$IMAGES_URL/folder-open.gif'>&nbsp;<a name=\"$group_url\" href=\"$id&profile=$in{profile}&group=$group_url#$group_url\"><b>$basegroup</b></a></td></tr></table>";
-					} elsif ($group =~ m|^$in{'group'}/|){
-						$grouplabel = "<table class='noborder'><tr><td class='noborder' nowrap>" . "&nbsp;" x (5 * ($level-1)) . "<img align='middle' src='$IMAGES_URL/folder-closed.gif'>&nbsp;<a href=\"$id&profile=$in{profile}&group=$group_url#$group_url\"><b>$basegroup</b></a></td></tr></table>";
 					} else {
 						my $partialgroup = $group;
 						if (!($partialgroup =~ s|^(.+/)[^/]+$|$1|)) { # first level group, always displayed  
@@ -783,10 +783,10 @@ sub print_machines_list($$$$) {
 							$grouplabel = "<table class='noborder'><tr><td class='noborder' nowrap>" . "&nbsp;" x (5 * ($level-1)) . "<img align='middle' src='$IMAGES_URL/folder-closed.gif'>&nbsp;<a href=\"$id&profile=$in{profile}&group=$group_url#$group_url\"><b>$basegroup</b></a></td></tr></table>";
 						}
 					}
-					undef $groups{$group};  		# undef already drawn dirs
 					
 					if ($grouplabel) {
-                                                
+						undef $groups{$group};  		# undef already drawn dirs
+					        
                                                 # special: name is drown from here
                                                 $template->assign('ROWSTYLE', "style='background-color: ".oddorevenline(\$lineisodd).";'");
                                                 $template->assign('CONTENT', $grouplabel);
