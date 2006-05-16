@@ -118,6 +118,15 @@ function tryVNC($mac, $type, $getssh)
     $ips .= " ".$ip;
   }
 
+  # and net lookup 
+  $ret = exec("sh -c \"/usr/bin/net cache flush;/usr/bin/net lookup host ".escapeshellcmd($name)." 2>&1\"");
+  preg_match("/^(\d+\.\d+\.\d+\.\d+)/", $ret, $match);
+  $ip = $match[1]; 
+  if ($ip != "") {
+      scanRunVNC($ip, $type, $ssh);	
+      $ips .= " ".$ip;
+  }
+
   # and nmblookup 
   $ret = exec("/usr/bin/nmblookup $name 2>&1");
   preg_match("/(\d+\.\d+\.\d+\.\d+) /", $ret, $match);
@@ -127,14 +136,6 @@ function tryVNC($mac, $type, $getssh)
       $ips .= " ".$ip;
   }
 
-  # and net lookup 
-  $ret = exec("/usr/bin/net lookup host $name 2>&1");
-  preg_match("/^(\d+\.\d+\.\d+\.\d+)/", $ret, $match);
-  $ip = $match[1]; 
-  if ($ip != "") {
-      scanRunVNC($ip, $type, $ssh);	
-      $ips .= " ".$ip;
-  }
   
   # Last try: find info from OCS Inventory
   if (is_readable("/var/lib/ocsinventory/Network/$name.csv")) {
