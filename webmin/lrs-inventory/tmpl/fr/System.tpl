@@ -17,7 +17,7 @@
 				<th>Marque {SORT_SYSTEM0} {GRAPH_SYSTEM0}</th>
 				<th>Modèle {SORT_SYSTEM1}</th>
 				<th>Version {SORT_SYSTEM2}</th>
-				<th>Serie {SORT_SYSTEM3}</th>
+				<th>Série {SORT_SYSTEM3}</th>
 				<th>UUID {SORT_SYSTEM4}</th>
 				<th>Type {SORT_CHASSIS1}</th>
 				<th>Apparition {SORT_FIRSTAPPARITION}</th>

@@ -587,6 +587,9 @@
 		return($obj);
 	}
 
+	/**
+	 *
+	 */
 	function getMacForMachine(&$machine)
 	{
 		$ether = etherLoad();
@@ -604,6 +607,34 @@
 		return '';
 	}
 	
-	
+	/**
+	 * Reverse a date (should be in lbs_common ?)
+	 *
+	 * @param data string containing a date like DD/MM/YYYY
+	 * @return returns YYYY-MM-DD.
+	 */
+	function dateReverseToSQL($data)
+	{
+		global $reversedate;
+		if (!$reversedate) return $data;
 
+		$ret = ereg_replace("([0-9]{1,2})/([0-9]{1,2})/([0-9]{4})", "\\3-\\2-\\1", $data);
+		return $ret;
+	}
+
+	/**
+	 * Reverse a date (should be in lbs_common ?)
+	 *
+	 * @param data string containing a date like YYYY-MM-DD
+	 * @return returns DD/MM/YYYY.
+	 */
+	function dateReverseFromSQL($data)
+	{
+		global $reversedate;
+		if (!$reversedate) return $data;
+
+		$ret = ereg_replace("([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})", "\\3/\\2/\\1", $data);
+		return $ret;
+	}
+	
 ?>

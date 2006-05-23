@@ -18,7 +18,7 @@
 				<th>Modèle {SORT_MODEL}</th>
 				<th>Description {SORT_EXPANDEDDESCRIPTION}</th>
 				<th>Type {SORT_TYPE}</th>
-				<th>Appearance {SORT_FIRSTAPPARITION}</th>
+				<th>Apparition {SORT_FIRSTAPPARITION}</th>
 			</tr>
 			
 			<!-- BEGIN row -->

@@ -56,3 +56,5 @@ request_failed=L'inventaire de la machine %s n'a pu être effectué. LRS Inventory
 request_delayed=La machine %s n'a pu être contactée. L'inventaire sera demandé à sa prochaine disponibilité.
 
 no=Non
+
+received=reçu le

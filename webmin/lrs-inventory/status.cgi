@@ -22,7 +22,10 @@ $template->set_block('all', 'row', 'rows');
 if ($hosts) {
 	sort($hosts);
 	foreach ($hosts as $id => $val) {
-		$template->set_var("HOST", "$val");	
+		$template->set_var("HOST", "$val[0]");	
+		if ($val[1]) {
+			$template->set_var("DATE", " &nbsp; ".$text[received]." ".dateReverseFromSQL($val[1])." $val[2]");
+		}
 		$template->parse('rows', 'row', true);
 	}
 }
@@ -34,7 +37,10 @@ $template->set_block('all', 'rowboot', 'rowsboot');
 if ($hosts) {
 	sort($hosts);
 	foreach ($hosts as $id => $val) {
-		$template->set_var("HOST", "$val");	
+		$template->set_var("HOST", "$val[0]");
+		if ($val[1]) {
+			$template->set_var("DATE", " &nbsp; ".$text[received]." ".dateReverseFromSQL($val[1])." $val[2]");
+		}
 		$template->parse('rowsboot', 'rowboot', true);
 	}
 }

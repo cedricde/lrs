@@ -2,3 +2,4 @@ chemin_basedir=Basedir directory,0
 chemin_CSV=CSV directory,0
 adresse_mail=Email,0
 showempty=Show hosts with no inventory,1,1-Yes,0-No
+genfromocs=Show general information using:,1,1-OCS Inventory,0-PXE Boot Inventory

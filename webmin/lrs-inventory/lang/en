@@ -69,3 +69,5 @@ request_failed=The inventory of the client %s cannot be done. Unable to find LRS
 request_delayed=The client %s is currently unreachable. Inventory will be requested on its next availability.
 
 no=No
+
+received=received at

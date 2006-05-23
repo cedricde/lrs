@@ -13,6 +13,7 @@ class XmlDriver extends Driver
 {
 	var $m_MappedFields;
 	var $m_DataPath;
+	var $m_UTF8 = false;
 
 	function XmlDriver($source, $parameters)
 	{
@@ -195,7 +196,11 @@ class XmlDriver extends Driver
 		$machine = new Machine();
 
 		$parser = & $this->createParser($machine);
-			
+		
+		if (eregi(" encoding=.utf-8.", $content)) {
+			$this->m_UTF8 = true;
+		}
+		
 		xml_parse($parser, $content);
 
 		xml_parser_free($parser);
@@ -261,7 +266,7 @@ class XmlDriver extends Driver
 					if ( ! class_exists($class) )
 					{
 						global $datasource;
-						$datasource->loadComponentClass($class);
+						@$datasource->loadComponentClass($class);
 					}
 
 					if ( class_exists($class) && $class != "Null" )
@@ -322,7 +327,8 @@ class XmlDriver extends Driver
 		{		
 			$object = & $GLOBALS['CURRENTOBJECT'];
 	
-			$object->setProperty($GLOBALS['CURRENTFIELD'], utf8_decode($data));
+			if ($this->m_UTF8) { $data = utf8_decode($data); }
+			$object->setProperty($GLOBALS['CURRENTFIELD'], $data);
 	
 			$machine = & $GLOBALS['CURRENTMACHINE'];
 			

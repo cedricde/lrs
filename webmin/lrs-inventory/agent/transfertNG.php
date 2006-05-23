@@ -36,9 +36,14 @@
 	}
 	fclose($stdin);
 	// Uncompress it
-	$DATA = gzuncompress($data);
-	
-	system("rm /tmp/${_SERVER[REMOTE_ADDR]}.tmp -f");
+	// Write it in a temporary file (proc_open is only for php >=4.3)
+	$tname = tempnam("/tmp", "OCS");
+	$fh = fopen($tname, 'w');  
+	fwrite($fh,$data);  
+	fclose($fh);  
+	exec("perl uncompress.pl $tname",$DATA);  
+	$DATA = join('',$DATA);  
+	unlink($tname);
 	
 	// Retrieve query and sender
 	ereg("<QUERY>([a-zA-Z0-9_-]+)</QUERY>", $DATA, $matches);
@@ -54,11 +59,18 @@
 		// Always send the inventory
 		$resp = '<?xml version="1.0" encoding="utf-8" ?><REPLY><RESPONSE>SEND</RESPONSE></REPLY>';
 	}
+	if ( $QUERY=='UPDATE' ) {
+		// Always send the inventory
+		$resp = '<?xml version="1.0" encoding="utf-8" ?><REPLY><RESPONSE>no_update</RESPONSE></REPLY>';
+	}
 	else if ( $QUERY=='INVENTORY' )
 	{
 		// Extract inventory data
 		ereg('<CONTENT>(.+)<\/CONTENT>', $DATA, $matches);
-		$INVENTORY = '<?xml version="1.0" encoding="utf-8" ?><Inventory>'. $matches[1] .'</Inventory>';
+		eregi(' encoding="([^"]+)"', $DATA, $matches2);
+		$enc = $matches2[1];
+		
+		$INVENTORY = '<?xml version="1.0" encoding="'.$enc.'" ?><Inventory>'. $matches[1] .'</Inventory>';
 		$resp = '<?xml version="1.0" encoding="utf-8" ?><REPLY><RESPONSE>no_account_update</RESPONSE></REPLY>';
 
 		// Store data on the server

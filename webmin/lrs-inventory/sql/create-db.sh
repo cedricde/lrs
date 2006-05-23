@@ -41,6 +41,7 @@ if [ "$VER" = "" ]
 then
     echo "Create the database"
     create
+    VER=1
     upgrade
 else
     if [ "$VER" = "$TOVER" ]; then

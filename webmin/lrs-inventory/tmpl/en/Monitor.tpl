@@ -18,6 +18,7 @@
 				<th>Description {SORT_DESCRIPTION}</th>
 				<th>Type {SORT_TYPE}</th>
 				<th>Category {SORT_STAMP}</th>
+				<th>Serial {SORT_SERIAL}</th>
 				<th>Appearance {SORT_FIRSTAPPARITION}</th>
 			</tr>
 			
@@ -29,6 +30,7 @@
 				<td class="{DESCRIPTION_CLASS}">{DESCRIPTION}</td>
 				<td class="{TYPE_CLASS}">{TYPE}</td>
 				<td class="{STAMP_CLASS}">{STAMP}</td>
+				<td class="{SERIAL_CLASS}">{SERIAL}</td>
 				<td class="{FIRSTAPPARITION_CLASS}">{FIRSTAPPARITION}</td>
 			</tr>
 

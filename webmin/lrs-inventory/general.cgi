@@ -28,7 +28,12 @@
 	
 	print perl_exec("./lbs_header.cgi", array("lrs-inventory general", $text{'title_gen'}, "general"));
 
-	renderTable('BootGeneral', 'System.tpl', array(), null, 'FilterSplitPipe');
+	if ($config['genfromocs'] == "1") {
+		renderTable('Bios', 'SystemOCS.tpl');
+	} else {
+		renderTable('BootGeneral', 'System.tpl', array(), null, 'FilterSplitPipe');
+	}		
+	
 	renderTable('Hardware', 'OS.tpl' );
 
 	renderTable('Custom', 'Warranty.tpl');

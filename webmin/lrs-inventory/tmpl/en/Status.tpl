@@ -3,7 +3,7 @@
 <div  style="text-align: right;">
 <form>
 Clients without inventory since: 
-<input type="checkbox" name="cb" onSelect="since.value=0" checked /> always or more than
+<input type="checkbox" name="cb" onClick="since.value=0" checked /> always or more than
 <input type="text" name="since" onKeyDown="cb.checked=0" value="{SINCE}" size=3 /> days.
 </from>
 </div>
@@ -12,7 +12,7 @@ Clients without inventory since:
 		
 	<ul>	
 	<!-- BEGIN row -->			
-	<li><a href="general.cgi?host={HOST}">{HOST}</a></li>
+	<li><a href="general.cgi?host={HOST}">{HOST}</a> {DATE}</li>
 	<!-- END row -->
 	</ul>
 
@@ -20,7 +20,7 @@ Clients without inventory since:
 		
 	<ul>	
 	<!-- BEGIN rowboot -->
-	<li><a href="general.cgi?host={HOST}">{HOST}</a></li>
+	<li><a href="general.cgi?host={HOST}">{HOST}</a> {DATE}</li>
 	<!-- END rowboot -->
 	</ul>
 	

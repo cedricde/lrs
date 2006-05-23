@@ -74,6 +74,7 @@
 		<MappedField from="DESCRIPTION" to="Description" />
 		<MappedField from="MANUFACTURER" to="Manuf" />
 		<MappedField from="TYPE" to="Type" />
+		<MappedField from="SERIAL" to="Serial" />
 
 	</MappedObject>
 

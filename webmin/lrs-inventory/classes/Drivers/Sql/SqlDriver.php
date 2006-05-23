@@ -1025,7 +1025,7 @@ class SqlDriver extends Driver
 		} else {
 			$hastbl = "hasBootGeneral";
 			if ($type == "") $hastbl = "hasHardware";
-			$sql = "SELECT m.Name, TO_DAYS(NOW()) - TO_DAYS(MAX(i.Date)) as maxi 
+			$sql = "SELECT m.Name, TO_DAYS(NOW()) - TO_DAYS(MAX(i.Date)) as maxi, i.Date, i.Time
 			FROM Machine m, $hastbl h, Inventory i WHERE
 			h.Machine=m.Id AND h.Inventory=i.Id GROUP BY m.Name;";
 		}
@@ -1033,7 +1033,10 @@ class SqlDriver extends Driver
 		$connection->query($sql);
 		while ( $connection->next_record() ) {
 			if ($date <=0 || ($date > 0 && $connection->Record['maxi'] >= $date))
-				$ret[] = $connection->Record['Name'];
+				$ret[] = array ( $connection->Record['Name'],
+						 $connection->Record['Date'],
+						 $connection->Record['Time']
+						);
 		
 		}
 		return $ret;

@@ -8,7 +8,7 @@
 			</a>
 		</div>
 
-		<h3>General informations</h3>
+		<h3>General information</h3>
 
 		<table>
 		
