@@ -110,6 +110,7 @@ lab_none=(néant)
 lab_nosecurity=Accès ligne de command GRUB
 lab_notitle=(sans titre)
 lab_number=Images
+lab_numcli=Nombre de clients
 lab_option=Option
 lab_options=Options
 lab_ordynamic=<small>(ou 'Dynamic' si l'adresse est assignée dynamiquement)</small>

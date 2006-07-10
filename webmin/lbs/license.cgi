@@ -33,7 +33,7 @@ $access{'noconfig'} &&
 
 
 lbs_common::print_header( $text{'config_title'}, "index", $VERSION);
-lbs_common::print_html_tabs(['list_of_machines', '']);
+lbs_common::print_html_tabs(['list_of_machines', 'configuration', 'license']);
 
 print "<center><font size=+2>$text{'config_title'} ",&text('config_dir', $module_info{'desc'}),
       "</font></center>\n";
@@ -53,6 +53,16 @@ print "</table></td></tr></table>\n";
 print "<input type=submit value=\"$text{'save'}\"></form>\n";
 print "<h4>$text{lab_allmacs}</h4>";
 print `/sbin/ifconfig|grep HWaddr|awk '{print \$1,":",\$5,"<br>"}'`;
+
+# find the number of registered clients
+
+my %einfo ;                                         
+my $lbs_home = $lbs_common::lbsconf{'basedir'};
+my $etherfile = $lbs_home . "/etc/ether" ;
+etherLoad($etherfile, \%einfo);
+my $num = keys %einfo;
+print "<h4>$text{lab_numcli} :".$num."</h4>";
+
 print "<hr>\n";
 
 # end of tabs                                                                   

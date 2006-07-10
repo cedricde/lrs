@@ -109,6 +109,7 @@ lab_none=(none)
 lab_nosecurity=GRUB command line access
 lab_notitle=(no title)
 lab_number=Images
+lab_numcli=Number of clients
 lab_option=Option
 lab_options=Options
 lab_ordynamic=<small>(or 'Dynamic' if the address is dynamically assigned)</small>
