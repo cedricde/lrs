@@ -511,45 +511,6 @@ my %tabattr = (
 	return 1;
 }
 
-sub print_dhcp_form {
-my ($action, $nrlicenses, %einfo) = @_;
-
-my $lab_name =		$text{'lab_name'} ;
-my $lab_ipaddr =	$text{'lab_ipaddr'} ;
-my $lab_macaddr =	$text{'lab_macaddr'} ;
-my $lab_adminid =	$text{'lab_adminid'} ;
-my $but_apply =		$text{'but_apply'} ;
-my $but_cancel =	$text{'but_cancel'} ;
-
-my $formdesc = $text{'msg_dhcp_formdesc'} ;
-
-my $num_keys = scalar keys %einfo;
-
-	if ($num_keys > $nrlicenses) {
-		print "<h2>$text{'msg_dhcp_nolic'}</h2>";
-		return;
-	}
-
-print <<EOF ;
-<center><p><h2>$formdesc</h2></p>
-	<form action="$action">
-	<table><tr>
-	<td class="noborder"><b>$lab_name:</b></td><td class="noborder"><input name=name size=30 value=""></td>
-	</tr><tr>
-	<td class="noborder"><b>$lab_macaddr:</b></td><td class="noborder"><input name=mac size=30 value=""></td>
-	</tr><tr>
-	<td class="noborder"><b>$lab_ipaddr:</b></td><td class="noborder"><input name=ip size=30 value="Dynamic">$text{'lab_ordynamic'}</td>
-	</tr><tr>
-	<td class="noborder"><b>$lab_adminid:</b></td>
-	<td class="noborder"><input type=password name=passwd size=30 value=""></td>
-	</tr></table>
-	<input type=submit name=apply value="$but_apply">
-	<input type=submit name=cancel value="$but_cancel">
-	</form>
-</center>
-EOF
-
-}
 
 
 sub checkhostname {
