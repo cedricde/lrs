@@ -23,6 +23,7 @@ my $template = new Qtpl("./tmpl/$current_lang/config.tpl");
 $template->parse('all');  
 $template->out('all');  
 
+
 # end of tabs
 print_end_menu();
 print_end_menu();
