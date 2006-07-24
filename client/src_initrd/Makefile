@@ -5,7 +5,7 @@
 #VERSION=2610_6
 
 TREE=./tree
-LOOP=/mnt/loop
+LOOP=/mnt/build
 INITRD=initrd
 MKDEV=$(shell pwd)/MAKEDEV
 IMAGES=image_error image_lvmreiserfs image_raw image_swap image_e2fs image_fat image_ntfs image_xfs image_jfs image_ufs image_lvm
@@ -19,14 +19,15 @@ DEVMAP=$(shell pwd)/devmapper/
 
 all: initrd
 
-initrd: Makefile MAKEDEV pump/pump
-	-umount $(LOOP)
+initrd: Makefile MAKEDEV pump/pump $(IMAGE_DIR)/autorestore/revoboot
+	#-umount $(LOOP)
 	(cd $(TREE);./symlinks)
-	dd if=/dev/zero of=$(INITRD) bs=1k count=8192
-	mke2fs -i $$((4096+512)) -m 0 -F $(INITRD)
-	mount $(INITRD) $(LOOP) -o loop
+	mkdir $(LOOP)
+	#dd if=/dev/zero of=$(INITRD) bs=1k count=8192
+	#mke2fs -i $$((4096+512)) -m 0 -F $(INITRD)
+	#mount $(INITRD) $(LOOP) -o loop
 	tar cvf - --exclude .svn -C $(TREE) . | tar xf - -C $(LOOP)
-	(cd $(LOOP)/dev; $(MKDEV) console ptyp std hda hdb hdc hdd hde hdf hdg hdh sda sdb sdc sdd fd0 cciss.0 cciss.1 ida.0; mknod -m 600 initctl p; mknod -m 600 log p)
+	(cd $(LOOP)/dev; $(MKDEV) console ptyp std hda hdb hdc hdd hde hdf hdg hdh sda sdb sdc sdd fd0 cciss.0 cciss.1 ida.0 scd0 scd1; mknod -m 600 initctl p; mknod -m 600 log p)
 	# get the latest pump
 	strip pump/pump
 	cp -f pump/pump $(LOOP)/bin
@@ -57,11 +58,22 @@ initrd: Makefile MAKEDEV pump/pump
 	-find $(SRCLIN)/drivers/pcmcia -name "*.ko" -exec cp -av {} $(LOOP)/lib/modules \;
 	# latest imagers
 	for i in $(IMAGES); do cp -f $(IMAGE_DIR)/$$i $(LOOP)/revobin/ || exit 1 ;done
+	# cp -f $(IMAGE_DIR)/liblrs.so.1 $(LOOP)/lib
 	# clean
 	rm -f $(LOOP)/symlinks
 	rm -rvf $(LOOP)/*/CVS/
-	umount $(LOOP)
+	(cd $(LOOP); ln -s sbin/init; find . | cpio -o -H newc ) >$(INITRD)
+	rm -rf $(LOOP)
 	gzip -6c $(INITRD) > $(INITRD).gz
+
+initrdcd:
+	mkdir -p $(LOOP)/lib/modules/cd
+	for i in ide/ide-cd.ko cdrom/cdrom.ko ../fs/isofs/isofs.ko usb/storage/usb-storage.ko scsi/sr_mod.ko ;do \
+	    cp -v $(SRCLIN)/drivers/$$i $(LOOP)/lib/modules/cd ;\
+	done
+	(cd $(LOOP); find . | cpio -o -H newc ) >$(INITRD)cd
+	gzip $(INITRD)cd
+	rm -rf $(LOOP)
 
 pump/pump: pump/Makefile
 	(cd pump; make pump; strip pump)
