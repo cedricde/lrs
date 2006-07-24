@@ -16,7 +16,7 @@
 # To install in $HOME instead of /usr/local, use:
 #    make install prefix=$HOME
 
-CC=cc
+CC=gcc-2.95
 
 #CFLAGS=-O
 #CFLAGS=-O -DMAX_WBITS=14 -DMAX_MEM_LEVEL=7
@@ -25,7 +25,7 @@ CC=cc
 #           -Wstrict-prototypes -Wmissing-prototypes
 CFLAGS=-O3 -Wall -Wwrite-strings -Wpointer-arith -Wconversion \
            -Wstrict-prototypes -Wmissing-prototypes \
-           -DMAX_WBITS=14 -DMAX_MEM_LEVEL=7
+           -DMAX_WBITS=14 -DMAX_MEM_LEVEL=7 
 
 
 LDFLAGS=libz.a
@@ -53,7 +53,8 @@ man3dir = ${mandir}/man3
 OBJS = adler32.o compress.o crc32.o gzio.o uncompr.o deflate.o trees.o \
        zutil.o inflate.o infback.o inftrees.o inffast.o
 
-OBJA =
+OBJA = 
+#match.o
 # to use the asm code: make OBJA=match.o
 
 TEST_OBJS = example.o minigzip.o
@@ -82,7 +83,7 @@ match.o: match.S
 	rm -f _match.s
 
 $(SHAREDLIBV): $(OBJS)
-	$(LDSHARED) -o $@ $(OBJS)
+	$(LDSHARED) -o $@ $(OBJS) $(OBJA)
 	rm -f $(SHAREDLIB) $(SHAREDLIBM)
 	ln -s $@ $(SHAREDLIB)
 	ln -s $@ $(SHAREDLIBM)
