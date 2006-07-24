@@ -17,6 +17,12 @@
 
 #define BLKGETSIZE _IO(0x12,96) /* return device size /512 (long *arg) */
 
+typedef struct {
+  unsigned char *bitmap;
+  unsigned long bitmaplg;
+  unsigned long nb_sect;
+} PARAMS;
+
 typedef struct i
 {
     unsigned char header[HEADERLG] __attribute__((packed));
@@ -35,6 +41,7 @@ typedef struct c
 	FILE *f;
 } COMPRESS;
 
+void compress_volume (int fi, unsigned char *nameprefix, PARAMS * p, char *info);
 void compress_init(COMPRESS **c,int block,unsigned long long bytes,FILE *index);
 void compress_data(COMPRESS *c,unsigned char *data,int lg,FILE *out,char end);
 unsigned long long compress_end(COMPRESS *c,FILE *out);

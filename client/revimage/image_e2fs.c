@@ -69,13 +69,6 @@ setbit (unsigned char *p, int num)
   p[num >> 3] |= mask[num & 7];
 }
 
-typedef struct p
-{
-  unsigned char *bitmap;
-  unsigned long bitmaplg;
-}
-PARAMS;
-
 static void
 list_desc (ext2_filsys fs, PARAMS * p)
 {
@@ -162,43 +155,7 @@ list_desc (ext2_filsys fs, PARAMS * p)
 }
 
 
-void
-compress_vol (int fi, unsigned char *nameprefix, PARAMS * p)
-{
-  int i, j, k, nb;
-  IMAGE_HEADER header;
-  COMPRESS *c;
-  unsigned char buffer[TOTALLG], *ptr, *dataptr;
-  unsigned long remaining, used, skip;
-  unsigned long long bytes = 0;
-  unsigned short lg, datalg;
-  FILE *fo, *fs, *index;
-  unsigned char filename[128], firststring[200], *filestring,
-    line[400], empty[] = "", numline[8];
-
-  setblocksize(fi);
-
-  // debug("Compressing Image :\n");
-
-  //debug("- Bitmap lg    : %ld\n",p->bitmaplg);
-  nb = ((p->bitmaplg + ALLOCLG - 1) / ALLOCLG);
-  //debug("- Nb of blocks : %d\n",nb);
-
-  remaining = p->bitmaplg;
-  ptr = p->bitmap;
-
-  skip = 0;
-
-  sprintf (firststring, "E2FS=1|BLOCKS=%d|TYPE=131|", nb);
-
-  sprintf (filename, "%sidx", nameprefix);
-  index = fopen (filename, "wt");
-
-#include "compress-loop.h"
-
-  fclose (index);
-}
-
+/*  */
 int
 main (int argc, char **argv)
 {
@@ -250,7 +207,8 @@ main (int argc, char **argv)
 
   init_newt (argv[1], argv[2], info1, info2, argv[0]);
   fd = open (argv[1], O_RDONLY);
-  compress_vol (fd, argv[2], &p);
+  p.nb_sect = 0;
+  compress_volume (fd, argv[2], &p, "E2FS=1|TYPE=131");
   close (fd);
   stats();
   close_newt ();

@@ -50,17 +50,14 @@
 typedef struct p
 {
   reiserfs_bitmap_t bm;
-  unsigned char *bitmap;
-  unsigned long bitmap_lg;
-  unsigned long nb_sect;
   unsigned long blocks;
 }
-PARAMS;
+CPARAMS;
 
 unsigned long info1, info2;
 
 void
-allocated_sectors (PARAMS * p)
+allocated_sectors (PARAMS * p, CPARAMS *cp)
 {
   unsigned long i, used = 0;
   unsigned long bitmap_lg;
@@ -75,13 +72,13 @@ allocated_sectors (PARAMS * p)
 
   // TODO : check if block is really 4096 byte long...
   //
-  p->nb_sect = p->blocks * 8;
+  p->nb_sect = cp->blocks * 8;
 
   p->bitmap = (unsigned char *) calloc (bitmap_lg = (p->nb_sect + 7) / 8, 1);
-  p->bitmap_lg = bitmap_lg;
+  p->bitmaplg = bitmap_lg;
 
   for (i = 0; i < p->nb_sect; i++)
-    if (reiserfs_bitmap_test_bit (p->bm, i / 8))
+    if (reiserfs_bitmap_test_bit (cp->bm, i / 8))
       {
 	setbit (p->bitmap, i);
 	used++;
@@ -91,48 +88,13 @@ allocated_sectors (PARAMS * p)
   info2 = used;
 }
 
-void
-compress_vol (int fi, unsigned char *nameprefix, PARAMS * p)
-{
-  int i, j, k, nb;
-  IMAGE_HEADER header;
-  COMPRESS *c;
-  unsigned char buffer[TOTALLG], *ptr, *dataptr;
-  unsigned long remaining, used, skip;
-  unsigned long long bytes = 0;
-  unsigned short lg, datalg;
-  FILE *fo, *fs, *index;
-  unsigned char filename[128], firststring[200], *filestring,
-    line[400], empty[] = "", numline[8];
-
-  setblocksize(fi);
-  //debug("Compressing Image :\n");
-
-  //debug("- Bitmap lg    : %ld\n",p->bitmap_lg);
-  nb = ((p->bitmap_lg + ALLOCLG - 1) / ALLOCLG);
-  //debug("- Nb of blocks : %d\n",nb);
-
-  remaining = p->bitmap_lg;
-  ptr = p->bitmap;
-
-  skip = 0;
-
-  sprintf (firststring, "SECTORS=%ld|BLOCKS=%d|", p->nb_sect, nb);
-
-  sprintf (filename, "%sidx", nameprefix);
-  index = fopen (filename, "wt");
-
-#include "compress-loop.h"
-
-  fclose (index);
-}
-
 int
 main (int argc, char *argv[])
 {
   reiserfs_bitmap_t bm;
   reiserfs_filsys_t fs;
   PARAMS params;
+  CPARAMS cp;
   int err = 0;
   int fd;
 
@@ -162,11 +124,11 @@ main (int argc, char *argv[])
 
   reiserfs_fetch_disk_bitmap (bm, fs);
 
-  params.bm = bm;
-  params.blocks = rs_block_count (fs->s_rs);
+  cp.bm = bm;
+  cp.blocks = rs_block_count (fs->s_rs);
   assert (fs->s_blocksize == 4096);
 
-  allocated_sectors (&params);
+  allocated_sectors (&params, &cp);
 
   reiserfs_close (fs);
 

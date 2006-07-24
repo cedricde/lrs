@@ -30,15 +30,6 @@
 #include "compress.h"
 #include "ui_newt.h"
 
-typedef struct p
-{
-  unsigned long nb_sect;
-  unsigned char *bitmap;
-  unsigned long bitmap_lg;
-
-}
-PARAMS;
-
 unsigned long info1, info2;
 
 void
@@ -62,7 +53,7 @@ allocated_sectors (PARAMS * p)
   int i, used;
 
   p->bitmap = (unsigned char *) calloc (8, 1);
-  p->bitmap_lg = 8;
+  p->bitmaplg = 8;
 
   p->nb_sect = 8;
   used = 8;
@@ -74,44 +65,8 @@ allocated_sectors (PARAMS * p)
   info2 = used;
 }
 
-void
-compress_vol (int fi, unsigned char *nameprefix, PARAMS * p)
-{
-  int i, j, k, nb;
-  IMAGE_HEADER header;
-  COMPRESS *c;
-  unsigned char buffer[TOTALLG], *ptr, *dataptr;
-  unsigned long remaining, used, skip;
-  unsigned long long bytes = 0;
-  unsigned short lg, datalg;
-  FILE *fo, *fs, *index;
-  unsigned char filename[128], firststring[200], *filestring,
-    line[400], empty[] = "", numline[8];
-
-  setblocksize(fi);
-  //debug("Compressing Image :\n");
-
-  //debug("- Bitmap lg    : %ld\n",p->bitmap_lg);
-  nb = ((p->bitmap_lg + ALLOCLG - 1) / ALLOCLG);
-  //debug("- Nb of blocks : %d\n",nb);
-
-  remaining = p->bitmap_lg;
-  ptr = p->bitmap;
-
-  skip = 0;
-
-  sprintf (firststring, "SWAP=1|BLOCKS=%d|", nb);
-
-  sprintf (filename, "%sidx", nameprefix);
-  index = fopen (filename, "wt");
-
-#include "compress-loop.h"
-
-  fclose (index);
-}
-
-int
-main (int argc, char *argv[])
+/*  */
+int main (int argc, char *argv[])
 {
   FILE *fi;
   PARAMS params;
@@ -138,7 +93,7 @@ main (int argc, char *argv[])
 
   init_newt (argv[1], argv[2], info1, info2, argv[0]);
   fd = open (argv[1], O_RDONLY);
-  compress_vol (fd, argv[2], &params);
+  compress_volume (fd, argv[2], &params, "SWAP=1");
   close (fd);
   close_newt ();
 

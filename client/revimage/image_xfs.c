@@ -38,15 +38,6 @@
 #include "ui_newt.h"
 #include "image_xfs.h"
 
-typedef struct p
-{
-  unsigned long long nb_sect;
-  unsigned char *bitmap;
-  unsigned long bitmap_lg;
-
-}
-PARAMS;
-
 unsigned long info1, info2;
 
 struct xfs_superblock sb;
@@ -221,7 +212,7 @@ void readsb(PARAMS *p, char *dev)
    /* alloc bitmap */
    /* 1 block = 8 sectors */
    p->bitmap = (unsigned char *) calloc (1, blocks);
-   p->bitmap_lg = blocks;
+   p->bitmaplg = blocks;
    /* fill bitmap */
    memset(p->bitmap, 255, blocks);
    p->nb_sect = blocks * 8;
@@ -255,7 +246,7 @@ void readsb(PARAMS *p, char *dev)
      }
   
    /* count used (verification) */
-   for (i = 0; i < p->bitmap_lg; i++)
+   for (i = 0; i < p->bitmaplg; i++)
      used += (bits[p->bitmap[i] >> 4] + bits[p->bitmap[i] & 15]);
 
    debug ("Used sectors	: %lld (total : %lld)\n", used, p->nb_sect);
@@ -277,39 +268,6 @@ void readsb(PARAMS *p, char *dev)
 }
 
 
-void
-compress_vol (int fi, unsigned char *nameprefix, PARAMS * p)
-{
-  int i, j, k, nb;
-  IMAGE_HEADER header;
-  COMPRESS *c;
-  unsigned char buffer[TOTALLG], *ptr, *dataptr;
-  unsigned long remaining, used, skip;
-  unsigned long long bytes = 0;
-  unsigned short lg, datalg;
-  FILE *fo, *fs, *index;
-  unsigned char filename[128], firststring[200], *filestring,
-    line[400], empty[] = "", numline[8];
-
-  setblocksize(fi);
-
-  nb = ((p->bitmap_lg + ALLOCLG - 1) / ALLOCLG);
-
-  remaining = p->bitmap_lg;
-  ptr = p->bitmap;
-
-  skip = 0;
-
-  sprintf (firststring, "SECTORS=%lld|BLOCKS=%d|XFS|", p->nb_sect, nb);
-
-  sprintf (filename, "%sidx", nameprefix);
-  index = fopen (filename, "wt");
-
-#include "compress-loop.h"
-
-  fclose (index);
-}
-
 int main (int argc, char *argv[])
 {
   int fd;
@@ -329,7 +287,7 @@ int main (int argc, char *argv[])
 
   init_newt (argv[1], argv[2], info1, info2, argv[0]);
   fd = open (argv[1], O_RDONLY);
-  compress_vol (fd, argv[2], &params);
+  compress_volume (fd, argv[2], &params, "XFS");
   close (fd);
   stats();
   close_newt ();

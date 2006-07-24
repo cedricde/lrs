@@ -20,15 +20,17 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-//#include "config.h"
+#include "config.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <linux/fs.h>
+#include <string.h>
 
 #include "compress.h"
+#include "ui_newt.h"
 
 #define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))                 
 
@@ -82,13 +84,23 @@ void
 compress_init (COMPRESS ** c, int block, unsigned long long bytes,
 	       FILE * index)
 {
+  FILE *f;  
+  
   *c = (COMPRESS *) malloc (sizeof (COMPRESS));
   (*c)->zptr = (z_streamp) malloc (sizeof (z_stream));
   (*c)->zptr->zalloc = Z_NULL;
   (*c)->zptr->zfree = Z_NULL;
 
 //      deflateInit((*c)->zptr,Z_BEST_SPEED);
-  deflateInit ((*c)->zptr, 3);
+  if ((f = fopen("/etc/complevel", "r")) != NULL) {
+    int complevel = 3;
+    
+    fscanf(f, "%d", &complevel);
+    fclose(f);
+    deflateInit ((*c)->zptr, complevel);
+  } else {
+    deflateInit ((*c)->zptr, 3);  
+  }
 
   (*c)->crc = adler32 (0L, Z_NULL, 0);
   (*c)->end = 0;
@@ -109,8 +121,9 @@ void
 compress_data (COMPRESS * c, unsigned char *data, int lg, FILE * out,
 	       char end)
 {
-  int ret;
+  int ret, lout = c->outbuff - c->zptr->next_out;
   size_t w;
+  static int nocomp = 0, slg = 0, sout = 0;
 
   c->zptr->next_in = data;
   c->zptr->avail_in = lg;
@@ -142,6 +155,7 @@ compress_data (COMPRESS * c, unsigned char *data, int lg, FILE * out,
       if (c->zptr->avail_out == 0)
 	{
 	  w = fwrite (c->outbuff, OUTBUFF, 1, out);
+	  lout += OUTBUFF;
 	  if (w != 1)
 	    compress_write_error ();
 	  c->crc = adler32 (c->crc, c->outbuff, OUTBUFF);
@@ -165,13 +179,14 @@ compress_data (COMPRESS * c, unsigned char *data, int lg, FILE * out,
       if (ret == Z_STREAM_END)
 	{
 	  w = fwrite (c->outbuff, OUTBUFF - c->zptr->avail_out, 1, out);
+	  lout += OUTBUFF - c->zptr->avail_out;
 	  if ((w != 1) && (OUTBUFF - c->zptr->avail_out != 0))
 	    compress_write_error ();
 	  c->crc = adler32 (c->crc, c->outbuff, OUTBUFF - c->zptr->avail_out);
 	  c->zptr->avail_out = OUTBUFF;
 	  c->zptr->next_out = c->outbuff;
 	  //printf("e");
-	  return;
+	  break;
 	}
 
       if (ret != Z_OK)
@@ -182,6 +197,24 @@ compress_data (COMPRESS * c, unsigned char *data, int lg, FILE * out,
 
     }
   while ((c->zptr->avail_in) || (end));
+#if 0
+  lout += c->zptr->next_out - c->outbuff;
+  debug("%d:%d %d %d\n", lg, lout, nocomp, c->zptr->next_out - c->outbuff);
+  if (nocomp <= 0) {
+	debug("comp\n");
+	deflateParams(c->zptr, 3, Z_DEFAULT_STRATEGY);
+	nocomp = 6; 
+	slg = sout = 0;
+  } else {
+  	if (sout > slg && nocomp != 5) {
+		debug("no comp\n");
+		deflateParams(c->zptr, 0, Z_DEFAULT_STRATEGY);
+	}
+  }
+  nocomp--;
+  slg += lg;
+  sout += lout;
+#endif
 }
 
 unsigned long long
@@ -215,4 +248,45 @@ compress_write_error (void)
   // loop foreever
   while (1)
     sleep (1);
+}
+
+/* 
+ * main compression loop 
+ */
+void
+compress_volume (int fi, unsigned char *nameprefix, PARAMS * p, char *info)
+{
+  int i, j, k, nb;
+  IMAGE_HEADER header;
+  COMPRESS *c;
+  unsigned char buffer[TOTALLG], *ptr, *dataptr;
+  unsigned long remaining, used, skip;
+  unsigned long long bytes = 0;
+  unsigned short lg, datalg;
+  FILE *fo, *fs, *index;
+  unsigned char filename[128], firststring[200], *filestring,
+    line[400], empty[] = "", numline[8];
+
+  setblocksize(fi);
+
+  // debug("Compressing Image :\n");
+
+  //debug("- Bitmap lg    : %ld\n",p->bitmaplg);
+  nb = ((p->bitmaplg + ALLOCLG - 1) / ALLOCLG);
+  //debug("- Nb of blocks : %d\n",nb);
+
+  remaining = p->bitmaplg;
+  ptr = p->bitmap;
+
+  skip = 0;
+
+  sprintf (firststring, "SECTORS=%ld|BLOCKS=%d|%s", p->nb_sect, nb, info);
+
+  sprintf (filename, "%sidx", nameprefix);
+  index = fopen (filename, "w");
+
+#include "compress-loop.h"
+
+  fclose (index);
+
 }
