@@ -72,6 +72,8 @@ int dnum;
 int rsize = 8192;
 /* hd space checks enabled ? */
 int revonospc = 0;
+/* cdrom restoration ? */
+int cdrom = 0;
 
 unsigned char buf[512];
 
@@ -215,7 +217,7 @@ void restore_raw(char *device, char *fname)
     sect = *(__u32 *) buffer;
     if (lseek64(fo, (__u64)512 * (__off64_t) sect, SEEK_SET) == -1) {
       DEBUG(printf("restore_raw: seek error\n"));
-      ui_write_error(device, __LINE__, errno, fo);
+      ui_seek_error(device, __LINE__, errno, fo, (__u64)512 * (__off64_t) sect);
     }
     if (write(fo, buffer+4, 512) != 512) {
       DEBUG(printf("restore_raw: write error\n"));
@@ -237,19 +239,34 @@ int file_get(char *fname, int filenum)
 {
   char f[64];
   struct stat st;
+  int ret;
 
   sprintf(f, "%s%03d", fname, filenum);
   DEBUG (printf ("** File: %s **", f));
+retry:
   chdir("/revosave");
-  return (stat(f, &st));
+  ret = stat(f, &st);
+  if (ret == -1 && cdrom) {
+	/* ask to swap the media*/
+	chdir("/");
+	system("umount /revosave");
+	/* wait */
+	system("/revobin/image_error \"Please insert the next CD, and press a key\"");
+	getchar();
+	system("mount -t iso9660 /dev/cdrom /revosave");
+	goto retry;
+  }
+  return (ret);
 }
 
 FILE *file_open(char *fname, int filenum)
 {
   char f[64];
+  FILE *fid;
   
   sprintf(f, "%s%03d", fname, filenum);
-  return (fopen(f, "r"));
+  fid = fopen(f, "r");
+  return (fid);
 }
 
 int file_close(FILE *stream)
@@ -410,7 +427,7 @@ void restore(char *device, unsigned int sect, char *fname)
   DEBUG(printf ("Seeking to : %lld\n", currentparams.offset));
   i = lseek64 (currentparams.fo, currentparams.offset, SEEK_SET);
   if (i != currentparams.offset) {
-    ui_write_error(__FILE__, __LINE__, errno, currentparams.fo);
+    ui_seek_error(__FILE__, __LINE__, errno, currentparams.fo, currentparams.offset);
   }
 
   // open the data directory
@@ -902,15 +919,20 @@ int main(int argc, char *argv[])
 
   if (argc > 1) nonewt = 1;
 
+  
   // mount nfs dirs
 #ifndef TEST
-  do {
-    sprintf(command,
+  if (strcmp(storagedir, "/cdrom")) {
+    do {
+	sprintf(command,
 	    "/bin/autosave.sh \"%s\" \"%s\" \"%s\" %d",
 	    servip, servprefix, storagedir, rsize);
-    printf("Mounting Storage directory...%s\n", command);
+	printf("Mounting Storage directory...%s\n", command);
+    }
+    while (mysystem(command) != 0);
+  } else {
+    cdrom = 1;
   }
-  while (mysystem(command) != 0);
 #endif
 
   // some logging

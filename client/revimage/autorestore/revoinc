@@ -9,6 +9,8 @@ MAC=`cat /etc/mac`
 SRV=$Next_server
 [ -n "$Option_177" ] && SRV=`echo $Option_177|cut -d : -f 1`
 
+echo "*** Checking that the server is reachable (4 pings) ***"
+ping -c 4 $SRV
 echo "*** Creating backup directory ***"
 
 # shared or not ?

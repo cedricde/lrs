@@ -159,6 +159,22 @@ do_cdrom()
     exit    
 }
 
+# mount a CDROM drive for restoration
+mount_cdrom()
+{
+    cd /lib/modules/cd/
+    for i in *; do insmod $i; done
+    sleep 5
+    for i in hdc hda hdb hdd scd0 scd1
+    do
+	wecho "Trying to find CDROM on $i"
+	ln -sf /dev/$i /dev/cdrom
+	mount -t iso9660 /dev/$i /revosave
+	[ -r /revosave/conf.txt ] && break
+	sleep 2
+    done
+}
+
 #
 # Env Set-up
 #
@@ -204,6 +220,9 @@ grep -q revodebug /etc/cmdline && exit 0
 
 # CDROM boot ?
 grep -q revocdrom /etc/cmdline && do_cdrom
+
+# Restore from CDROM ?
+grep -q revosavedir=/cdrom /etc/cmdline && mount_cdrom
 
 # Backup / Restore
 if grep -q revosavedir /etc/cmdline ;then

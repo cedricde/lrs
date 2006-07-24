@@ -230,10 +230,10 @@ void ui_zlib_error(int err)
 }
 
 /* fatal write error */
-void ui_write_error(char *s, int l, int err, int fd)
+void ui_seek_error(char *s, int l, int err, int fd, off64_t seek)
 {
     char tmp[256];
-    int bs=0;
+    int bs=0, mb=0;
     off64_t offset;
     newtComponent myForm, t1;
 
@@ -247,10 +247,16 @@ void ui_write_error(char *s, int l, int err, int fd)
     myForm = newtForm(NULL, NULL, 0);
     t1 = newtTextbox(1, 0, 55, 4, 0);
     
+    if (seek != 0) {
+	offset = seek;
+    }
+    mb = (int)(offset/1024/1024);
     snprintf(tmp, 255, "Hard Disk Write Error ! Bad or too small hard disk !\n"
 	"errno %d (%s)\n"
 	"file %s, line %d \n"
-	"bs=%d offset=%08lx%08lx ", err, strerror(err), s, l, bs, (long)((long long)offset>>32), (long)offset);
+	"bs=%d  %s=%08lx%08lx (%d MiB)", 
+	err, strerror(err), s, l, bs, (seek!=0?"seek":"offset"),
+	(long)((long long)offset>>32), (long)offset, mb);
     fprintf(stderr, "ERROR: %s\n", tmp);
 
     newtTextboxSetText(t1, tmp);
@@ -262,4 +268,9 @@ void ui_write_error(char *s, int l, int err, int fd)
     system("/bin/revosendlog 8");
     getchar();
     //while (1) sleep(1);
+}
+
+void ui_write_error(char *s, int l, int err, int fd)
+{
+    ui_seek_error(s, l, err, fd, 0);
 }
