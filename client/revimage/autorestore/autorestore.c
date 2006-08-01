@@ -721,8 +721,10 @@ void restoreimage(void)
     FILE *f;
     char buf[255], buf2[255], lvm[255];
     int vgscan = 0;
+    char *conftxt = "/revosave/conf.txt";
 
-    if ((f = fopen("/revosave/conf.txt", "r")) == NULL) return;    
+    if (cdrom) conftxt = "/tmp/conf.txt";
+    if ((f = fopen(conftxt, "r")) == NULL) return;    
     while (!feof(f)) {
       fgets(buf, 250, f);
       if (sscanf(buf, "%s", buf2) == 1) {

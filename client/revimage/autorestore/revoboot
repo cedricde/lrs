@@ -173,6 +173,7 @@ mount_cdrom()
 	[ -r /revosave/conf.txt ] && break
 	sleep 2
     done
+    cp /revosave/conf.txt /tmp
 }
 
 #
@@ -215,14 +216,14 @@ grep -q revorestore /etc/cmdline && mount -t tmpfs -o size=96M tmpfs /tmpfs
 # compression level
 grep -q revonocomp /etc/cmdline && echo 0 >/etc/complevel
 
+# Restore from CDROM ?
+grep -q revosavedir=/cdrom /etc/cmdline && mount_cdrom
+
 # Debug ?
 grep -q revodebug /etc/cmdline && exit 0
 
 # CDROM boot ?
 grep -q revocdrom /etc/cmdline && do_cdrom
-
-# Restore from CDROM ?
-grep -q revosavedir=/cdrom /etc/cmdline && mount_cdrom
 
 # Backup / Restore
 if grep -q revosavedir /etc/cmdline ;then
