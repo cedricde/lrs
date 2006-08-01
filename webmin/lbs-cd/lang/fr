@@ -6,7 +6,7 @@ ConfigFileContains=Le fichier de configuration de l'image contient
 ConfigFileDoesNotContainBasedir=Le fichier de configuration ne contient pas de ligne "basedir=".
 ConfigFileNotFound=Fichier de Configuration /etc/lbs.conf Absent. Vérifier la configuration du Module.
 Copying=Copie le fichier
-DirectorySize=Taille du répertoire (Koctets) 
+DirectorySize=Taille du répertoire en Ko
 DirMachine=Répertoire / machine
 generate=Générer les images ISO
 GenerateImageFor=Générer une image ISO pour 

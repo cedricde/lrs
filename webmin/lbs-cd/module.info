@@ -1,5 +1,5 @@
--e name=lbs-cd
+name=lbs-cd
 desc=LRS : Bootable CD generation
 desc_fr=LRS : Génération de CD bootable
 depends=0.92 lbs_common 
-version=1.6.1
+version=1.7.0

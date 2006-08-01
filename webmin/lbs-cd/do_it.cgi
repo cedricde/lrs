@@ -81,7 +81,7 @@ sub copy_images {
 		
 		($size,$dir)=split ' ',`du -k $to/lbltmp`;
 		
-		if ( $size < $config{'CDSize'} ) {
+		if ( $size < $config{'CDSize'} - 4096 ) {
 			shift @$fileref;
 		} else {
 			system("rm -f $to/lbltmp/$file");
@@ -106,14 +106,27 @@ sub do_mkisofs
 	my $cdname = shift;
 	
 	my $opt;	
+	my $linuxrestore = 0;
 	
+	if ( -f "$basedir/bin/initrdcd.gz" ) { $linuxrestore = 1; }
+	 
 	if ($num == 1) {
 	    if (-f "$basedir/bin/grub.cdrom") {
 		$opt = "-b grub.cdrom -no-emul-boot -boot-load-size 4 -boot-info-table"; 
 		system("cp $basedir/bin/grub.cdrom $from/lbltmp/");
-		system("mkdir -p $from/lbltmp/boot/grub/;
-cp menu.lst.tmpl $from/lbltmp/boot/grub/menu.lst;
-cat $from/lbltmp/conf.txt >>$from/lbltmp/boot/grub/menu.lst");
+		system("mkdir -p $from/lbltmp/boot/grub/");
+		system("cp menu.lst.tmpl $from/lbltmp/boot/grub/menu.lst;");
+		if ($linuxrestore) {
+			system("grep '^title\\|^desc' $from/lbltmp/conf.txt >> $from/lbltmp/boot/grub/menu.lst;
+			echo 'kernel (cd)/bzImage revorestorenfs revosavedir=/cdrom quiet ' >> $from/lbltmp/boot/grub/menu.lst;
+			echo 'initrd (cd)/initrd' >> $from/lbltmp/boot/grub/menu.lst;
+			");
+			system("cp -L $basedir/bin/bzImage.initrd $from/lbltmp/bzImage");
+			system("cp -L $basedir/bin/initrd.gz $from/lbltmp/initrd");
+			system("cat $basedir/bin/initrdcd.gz >> $from/lbltmp/initrd");		
+		} else {
+			system("cat $from/lbltmp/conf.txt >>$from/lbltmp/boot/grub/menu.lst");
+		}
 	    } else {
 		$opt = "-b lbl.cdrom -no-emul-boot -boot-load-size 4 -boot-info-table"; 
 		system("cp $basedir/bin/lbl.cdrom $from/lbltmp/");

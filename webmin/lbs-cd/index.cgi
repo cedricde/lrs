@@ -188,7 +188,8 @@ if (!defined $in{'dir'}) {
 	my ($size,$dir)=split ' ',`du -k $in{'dir'}`;
 	my $cd=int($size/$config{'CDSize'})+1;
 
-	if (system("grep -q \"0 PATH/Lvm\" ".$in{'dir'}."/conf.txt") == 0) {
+	if ((system("grep -q \"0 PATH/Lvm\" ".$in{'dir'}."/conf.txt") == 0) && 
+	    ( ! -f "$basedir/bin/initrdcd.gz" )) {
 	    print "<h2>".text('err_lvm')."</h2>";
 	    
 	    lbs_common::print_end_menu();

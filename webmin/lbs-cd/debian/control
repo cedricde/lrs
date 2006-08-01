@@ -9,6 +9,7 @@ Package: webmin-lbs-cd
 Section: utils
 Architecture: all
 Depends: webmin, cdrecord, mkisofs, webmin-lbs-common
+Recommends: cdlabelgen
 Description: Webmin CD burner module for the LRS
  This package contains a Webmin module to generate bootables CDs with the 
  images made by the Linux Backup System.

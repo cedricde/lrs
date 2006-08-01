@@ -1,4 +1,4 @@
-CDSize=Maximum Image Size,1,656000-CD 74min,710000-CD 80min,800000-CD 90min,4586800-DVD
+CDSize=Maximum Image Size,1,656000-CD 74min,710000-CD 80min,800000-CD 90min,4586800-DVD,8330000-DVD dual layer
 TempDir=Temporary storage for ISO creation
 StoreDir=Storage directory for ISO images
 cdburner=Location of CD-Burner Module

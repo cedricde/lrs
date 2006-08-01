@@ -6,7 +6,7 @@ ConfigFileContains=Image Configuration File contains
 ConfigFileDoesNotContainBasedir=Configuration File Does Not Contain a "basedir=" section.
 ConfigFileNotFound=Configuration File /etc/lbs.conf not found. Check Module configuration.
 Copying=Copying file
-DirectorySize=Size of directory (Kbytes) 
+DirectorySize=Directory size in KiB
 DirMachine=Dir / Computer
 ImageDesc=Description
 ImageSize=Size (MB)
