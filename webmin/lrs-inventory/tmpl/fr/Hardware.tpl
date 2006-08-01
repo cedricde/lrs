@@ -12,7 +12,7 @@
 			</a>
 		</div>
 	
-		<h3>Processeur</h3>
+		<h3>Processeur (OCS)</h3>
 		
 		<table>
 		

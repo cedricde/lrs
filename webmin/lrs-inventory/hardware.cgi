@@ -11,8 +11,7 @@ include_once('filters.php');
 
 print perl_exec("./lbs_header.cgi", array("lrs-inventory hardware", $text{'title_hard'}, "hardware"));
 
-$data = & $datasource->read('BootGeneral', $machines);
-if ($data == null) {
+if ($config['genfromocs'] == "1") {
 	renderTable('Hardware', null);
 } else {
 	renderTable('BootGeneral', 'BootCPU.tpl');
