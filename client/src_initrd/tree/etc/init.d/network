@@ -5,8 +5,11 @@ echo -n "Configuring and Starting Network..."
 # Localhost
 ifconfig lo 127.0.0.1 && echo -n "lo "                                       
 
-ETH=eth0
+# CDROM restore ?
+grep -q revosavedir=/cdrom /proc/cmdline && CDROM=1
 
+#
+ETH=eth0
 # If revomac is found try to find the linux interface which corresponds to the
 # pxe interface
 if grep -q revomac= /proc/cmdline
@@ -38,9 +41,9 @@ esac
 echo $ETH >/etc/eth
 # dhcp
 ifconfig $ETH up && echo "$ETH"
-pump -i $ETH -h lrsclient --win-client-ident
+[ -z $CDROM ] && pump -i $ETH -h lrsclient --win-client-ident
 # multicast
-route add -net 224.0.0.0 netmask 240.0.0.0 dev $ETH
+[ -z $CDROM ] && route add -net 224.0.0.0 netmask 240.0.0.0 dev $ETH
 # save the mac address
 ifconfig $ETH|grep HWaddr|sed 's/.*HWaddr //'|sed 's/[ ]//g' >/etc/mac
 sed 's/[: ]//g'</etc/mac >/etc/shortmac
