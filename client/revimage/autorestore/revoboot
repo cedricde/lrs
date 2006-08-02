@@ -8,6 +8,9 @@
 # Wait for the interface to be configured
 checkip()
 {
+# CDROM restore ?
+grep -q revosavedir=/cdrom /proc/cmdline && return
+
 SEC=0
 # check if eth0 is up
 while true                                                                      
