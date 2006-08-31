@@ -118,7 +118,7 @@ sub do_mkisofs
 		system("cp menu.lst.tmpl $from/lbltmp/boot/grub/menu.lst;");
 		if ($linuxrestore) {
 			system("grep '^title\\|^desc' $from/lbltmp/conf.txt >> $from/lbltmp/boot/grub/menu.lst;
-			echo 'kernel (cd)/bzImage revorestorenfs revosavedir=/cdrom quiet ' >> $from/lbltmp/boot/grub/menu.lst;
+			echo 'kernel (cd)/bzImage revorestorenfs revosavedir=/cdrom quiet revonospc ' >> $from/lbltmp/boot/grub/menu.lst;
 			echo 'initrd (cd)/initrd' >> $from/lbltmp/boot/grub/menu.lst;
 			");
 			system("cp -L $basedir/bin/bzImage.initrd $from/lbltmp/bzImage");
@@ -180,19 +180,18 @@ if (!$in{'yesimsure'}) {
 
 print "<h1 id=\"lrscd_title\">$text{'PleaseWait'}</h1>\n";
 
-my $root=$in{'dir'};
+my $root=html_escape($in{'dir'});
 my $num=1;
 my $basedir=$lbs_common::lbsconf{"basedir"};
-my $cdname=$in{'cdname'};
+my $cdname=html_escape($in{'cdname'});
 
+$root =~ s/[^a-z0-9_\/-]/_/gi;
+$cdname =~ s/[^a-z0-9]/_/gi ;
 
 my @files=get_files($root);
 
 system("sleep 4");
-
 system("rm -f $config{'StoreDir'}/*.iso");
-
-$cdname =~ s/[^a-z0-9]/_/gi ;
 do {
 	copy_images($root,$config{'TempDir'},\@files);
 	do_mkisofs($basedir,$config{'TempDir'},$config{'StoreDir'},$num,$cdname);

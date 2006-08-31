@@ -14,8 +14,9 @@ Generating=En cours de génération...
 ImageDesc=Description
 ImageSize=Taille (Mo)
 ImageTitle=Titre
-LaunchMkisofs=Lancer la création d'ISO
+LaunchMkisofs=Lancer la création de l'ISO
 ListofImages=Liste des images
+oldcd=Utiliser un format de CD ancien pour améliorer la compatibilité
 PleaseWait=Attendez, SVP
 title=Créer un CD LRS
 
@@ -27,3 +28,5 @@ lbl_ListofIsoImages=Liste des images ISO
 lbl_NotAvailable=Non disponible
 
 err_lvm=Désolé, impossible de créer un CD pour une image contenant des partitions LVM complexes.
+err_CantReadIso=Cannot read iso file $1
+err_NoIsoSelected=No iso selected

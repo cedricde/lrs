@@ -135,6 +135,9 @@ my @isolist=lbl_ParseIsoDir("$basedir/iso");
 
 my @dirs=lbl_ParseImageDirs($basedir);
 
+$in{'dir'} = html_escape($in{'dir'});
+$in{'dir'} =~ s/[^a-z0-9_\/-]/_/gi;
+
 if (!defined $in{'dir'}) {
 	
 	my $t=lbs_common::get_template('templates/lbs-cd.tmpl');
@@ -158,6 +161,7 @@ if (!defined $in{'dir'}) {
 	$t->assign('SIZE', text('ImageSize'));
 	$t->parse('isolist');
 	$t->out('isolist');
+
 	
 	foreach $i (@dirs) {
 		my ($size,$dir)=split ' ',`du -m $i`;
@@ -214,7 +218,7 @@ if (!defined $in{'dir'}) {
 	$t->parse('hugelist');
 	$t->out('hugelist');
 
-	$t->assign('SIZE', "$text{'DirectorySize'} : $size ($cd CD(s))");
+	$t->assign('SIZE', "$text{'DirectorySize'} : $size = $cd CD/DVD");
 	$t->assign('CONFFILECONTAINS', "$text{'ConfigFileContains'} :");
 	
 	my $buff;
@@ -222,6 +226,9 @@ if (!defined $in{'dir'}) {
 	open F,$in{'dir'}."CONF";
 	while (<F>) {$buff .= $_;}
 	close(F);
+
+	$t->assign('OLDCD', $text{'oldcd'});
+	$t->parse('form.oldcd');
 
 	$t->assign('CONTAIN', $buff);
 	$t->assign('URL', $in{'dir'});

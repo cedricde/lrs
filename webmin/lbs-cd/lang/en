@@ -16,6 +16,7 @@ GenerateImageFor=Generate ISO image for
 Generating=Generating...
 LaunchMkisofs=Launch ISO creation
 ListofImages=List of images
+oldcd=Use old CD format for maximum compatibility
 PleaseWait=Please Wait
 title=Create LRS CD-iso 
 
@@ -27,3 +28,5 @@ lbl_ListofIsoImages=ISO images list
 lbl_NotAvailable=Not Available
 
 err_lvm=Sorry, cannot create a CD from images containing complex LVM volumes.
+err_CantReadIso=Cannot read iso file $1
+err_NoIsoSelected=No iso selected

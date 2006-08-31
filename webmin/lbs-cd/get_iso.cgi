@@ -33,6 +33,7 @@ foreign_require("lbs_common", "lbs_common.pl");
 # get HTTP args
 ReadParse();
 
+$in{'iso'} =~ s/[^a-z0-9-\.]/_/gi;
 if (!$in{'iso'}) {
         error(text("err_NoIsoSelected"));
         die();
