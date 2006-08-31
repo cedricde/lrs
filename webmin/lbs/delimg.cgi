@@ -80,6 +80,7 @@ error(text("err_dnf",$lbs_home)) if (not -d $lbs_home) ;
 error(text("err_fnf",$etherfile)) if (not -f $etherfile) ;
 
 ReadParse() ;
+lbs_common::InClean();
 
 # L'utilisateur a t-il le droit d'effectuer des modifs?
 if ($access{'modify'}) {
@@ -103,7 +104,8 @@ if (exists $in{'cancel'}) {
 }
 elsif (exists $in{'apply'}) {
 	$image = $in{'img'} ;
-
+	$image =~ s/[^a-z0-9_-]//gi
+	
 	imgDeleteLocal($lbs_home,$mac,$image) or error( lbsGetError() ) ;
 	redirect("move.cgi?mac=$umac") ;
 	exit(0) ;

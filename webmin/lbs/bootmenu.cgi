@@ -52,6 +52,7 @@ error( text( "err_fnf", $etherfile ) ) if ( not -f $etherfile );
 
 # Resultat dans %in:
 ReadParse();
+lbs_common::InClean();
 
 etherLoad( $etherfile, \%einfo ) or error( lbsGetError() );
 
@@ -276,7 +277,7 @@ if ( exists( $in{'cancel'} ) ) {			# back to the main menu
         } else {
                 $profile = $in{'profile'};
                 $group = $in{'group'};
-                $cfgpath="$lbs_home/imgprofiles/$in{'profile'}/$in{'group'}";
+                $cfgpath="$lbs_home/imgprofiles/$profile/$group";
                 $cfgfile = "$cfgpath/header.lst";
         }
 
@@ -339,7 +340,7 @@ my $mode = "";                                                  # describe how t
                         $name = etherGetNameByMac( \%einfo, $macaddr );
                         error( lbsGetError() ) if ( lbsErrorFlag() );
                 } elsif ( exists ($in{'name'}) ) {
-                        $name = $in{'name'};
+                        $name = html_escape($in{'name'});
                         $macaddr = etherGetMacByName( \%einfo, $name );
                         error( lbsGetError() ) if ( lbsErrorFlag() );
                 }
@@ -361,6 +362,7 @@ my $mode = "";                                                  # describe how t
 	@menus = hdrGetMenuNames( \%hdr );
 
         # load the needed header.lst.$WOL_EXTENSION (schedule mode), create it if needed
+	$cfgfile =~ s/[^a-z0-9\.\/_-]//gi;
         system("cp -a $cfgfile $cfgfile.$WOL_EXTENSION") unless -f "$cfgfile.$WOL_EXTENSION";
 	hdrLoad( "$cfgfile.$WOL_EXTENSION", \%schedhdr ) or error( lbsGetError() );
 	# and parse it

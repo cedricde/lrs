@@ -42,7 +42,8 @@ my $redir = "";
 error(text("err_dnf",$lbs_home)) if (not -d $lbs_home) ;
 error(text("err_fnf",$etherfile)) if (not -f $etherfile) ;
 
-ReadParse() ;
+ReadParse();
+lbs_common::InClean();
 
 # L'utilisateur a t-il le droit d'effectuer des modifs?
 if ($access{'modify'}) {

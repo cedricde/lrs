@@ -357,6 +357,7 @@ my $lbs_home = $lbs_common::lbsconf{'basedir'};
 
 # Resultat dans %in:
 ReadParse();
+lbs_common::InClean();
 
 my $file=$in{'file'};
 

@@ -27,7 +27,9 @@ use vars qw (%access %config %in %lbsconf %text $VERSION $POSTINST_PATH);
 require "lbs.pl";
 
 lbs_common::init_lbs_conf() or exit(0) ;
+
 ReadParse() ;
+lbs_common::InClean();
 
 my $lbs_home = $lbs_common::lbsconf{'basedir'};
 my $redir;
@@ -48,7 +50,8 @@ redirect("postinst.cgi") if (exists $in{'editconfpost'});
 
 lbs_common::print_header( $text{'tit_details'}, "index", $VERSION);
 
-if ($in{'conf'} =~ /imgbase/) {
+$conf =~ s/[^a-z0-9_\/-]//gi;
+if ($conf =~ /imgbase/) {
 	lbs_common::print_html_tabs(['system_backup', 'details']);
 } else {
 	lbs_common::print_html_tabs(['system_backup', 'details']);

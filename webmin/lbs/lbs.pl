@@ -1068,7 +1068,7 @@ my (@curp, @row);
 		if (length $row[0] >0) {
 			@curp = map { $_.$i } @$params ;
 			@row = iniGetValues($ini, $disk, @curp ) ;
-			$row[1] = parttype("0x$row[1]");
+			$row[1] = parttype(hex "0x$row[1]");
 																     
 			push @$lol, [ @row ] ;
 		} else {
@@ -1209,9 +1209,12 @@ print $buff;
 sub create_group_dir() {
         my ($cfgpath) = shift;
         my $lbs_home  = $lbs_common::lbsconf{'basedir'};
+	
+	$cfgpath =~ s/[^a-z0-9\/_-]//gi;
+	
         my $cfgfile="$cfgpath/header.lst";
         
-        if (not -e $cfgfile) {          # FIXME: well, could someone please fix the following lines ?
+        if (not -e $cfgfile) {
                 `mkdir -p $cfgpath`;
                 `cp -a $lbs_home/imgskel/header.lst $cfgpath`;
                 `cp -a $lbs_home/imgskel/COPYNUM $cfgpath`;

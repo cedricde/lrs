@@ -31,6 +31,8 @@ require '../lbs_common/lbs_common_priv.pl';
 
 # ... and vars
 ReadParse();
+lbs_common::InClean();
+
 use vars qw (%in %text $root_directory %gconfig $VERSION $LRS_HERE @LRS_MODULES %config %lbsconf $lbs_home $current_lang);
 
 cookie_send_group(%in);

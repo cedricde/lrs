@@ -29,6 +29,7 @@ use vars qw (%access %config %in %lbsconf %text $VERSION $current_lang);
 lbs_common::init_lbs_conf() or exit(0) ;
 
 ReadParse();
+lbs_common::InClean();
 
 my $decor = 'style="text-decoration:none"' ;
 my $lbs_home = $lbs_common::lbsconf{'basedir'};
@@ -39,6 +40,8 @@ my (%busage,%bdesc,%btitle,%bstat) ;
 my @names ;
 
 error(text("err_dnf",$lbs_home)) if (not -d $lbs_home);
+
+
 
 # L'utilisateur a t-il le droit d'effectuer des modifs?
 error( $text{'acl_error'} ) if ($access{'modify'});
@@ -51,13 +54,15 @@ if (exists $in{'cancel'}) {     					# CANCEL button pressed
 } elsif (exists($in{'imgbase'}) and exists($in{'apply'})) {     	# APPLY button pressed
 
 	$image = $in{'imgbase'} ;
+	$image =~ s/[^a-z0-9_-]//gi;	
 	imgDeleteBase($lbs_home,$image) or error( lbsGetError() ) ;
 	redirect("imgbase.cgi") ;
 	exit(0) ;
 
 } elsif (exists($in{'imgbase'})) {
 
-	$image = $in{'imgbase'} ;
+	$image = $in{'imgbase'};
+	$image =~ s/[^a-z0-9_-]//gi;
 	imgBaseUsage($lbs_home, \%busage) or error(lbsGetError()) ;
 	
 	if ( (exists($busage{$image})) and (scalar(@{$busage{$image}})) ) {     # when some images are still in use
@@ -87,6 +92,8 @@ if (exists $in{'cancel'}) {     					# CANCEL button pressed
 } elsif (exists($in{'imgtolocal'}) and exists($in{'apply'}) and exists($in{'image'})) {
 
 	# move the data
+	$in{'image'} =~ s/[^a-z0-9_-]//gi;
+	
 	my $from = $lbs_home . "/imgbase/". $in{'image'};
 	my $to = $lbs_home . "/images/". lbs_common::mac_remove_columns($in{'imgtolocal'});
 
@@ -146,15 +153,15 @@ if (exists $in{'cancel'}) {     					# CANCEL button pressed
 	
 	# then the main part
 	my $t = new Qtpl("./tmpl/$current_lang/basetolocal.tpl");
-	$t->assign('IMAGE', $in{'imgtolocal'});
+	$t->assign('IMAGE', html_escape($in{'imgtolocal'}));
 	$t->assign('OPTIONS', $options);
         $t->parse('all');
         $t->out('all');
 	
-        # end of tabs                                                           
-        lbs_common::print_end_menu();                                           
-        lbs_common::print_end_menu();                                           
-        # footer                                                                
+        # end of tabs                      
+        lbs_common::print_end_menu();
+        lbs_common::print_end_menu();
+        # footer
         lbs_common::footer("", $text{'index'}) ;
 
 } else {								# show images array

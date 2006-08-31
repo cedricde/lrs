@@ -147,6 +147,7 @@ error( text( "err_fnf", $etherfile ) ) if ( not -f $etherfile );
 
 # Resultat dans %in:
 ReadParse();
+lbs_common::InClean();
 
 etherLoad( $etherfile, \%einfo ) or error( lbsGetError() );
 

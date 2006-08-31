@@ -53,6 +53,7 @@ error(text("err_fnf",$etherfile)) if (not -f $etherfile) ;
 
 # Resultat dans %in:
 ReadParse() ;
+lbs_common::InClean();
 
 # make sure to use the 'all' directory when any profile is requested
 my $oprofile = $in{'profile'};
@@ -70,7 +71,7 @@ if ($mode eq "MONO") {
         }
         
         etherLoad($etherfile, \%einfo) or error( lbsGetError() ) ;
-        $macaddr = $in{'mac'} ;
+        $macaddr = $in{'mac'};
         $macfile = toMacFileName($macaddr) ;
         $umac = urlize($macaddr) ;
         $name = etherGetNameByMac(\%einfo, $macaddr) ;
@@ -110,7 +111,8 @@ if (exists($in{'cancel'})) {
 	
 	$op = $in{'op'} ;
 	$img = $in{'img'} ;
-	
+	$img =~ s/[^a-z0-9_-]//gi;
+
 	if ($op eq "h2l") {     				# from host to local
                 if ($mode eq "MONO") {
         		moveHdr2Local($lbs_home, $macaddr, $img);
@@ -291,8 +293,8 @@ if (exists($in{'cancel'})) {
         } elsif ($mode eq "MULTI") {
                 my @local_title;
 	        print "<h2 align=center>";
-                push @local_title, "$text{'lab_group'} $in{'group'}"            if $in{'group'};
-                push @local_title, "$text{'lab_profile'} $in{'profile'}"        if $in{'profile'};
+                push @local_title, "$text{'lab_group'} $in{'group'}"       if $in{'group'};
+                push @local_title, "$text{'lab_profile'} $in{'profile'}"   if $in{'profile'};
                 print join ', ', @local_title;
                 print "</h2>";
         }
