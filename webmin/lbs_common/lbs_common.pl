@@ -227,10 +227,12 @@ ReadParse()     	if !%in;
 $in{'host'}     	= $params->{'host'}     if !$in{'host'};
 $in{'mac'}     	 	= $params->{'mac'}      if !$in{'mac'};
 
-my $host                = $in{'host'};
-my $group               = $in{'group'};
-my $profile             = $in{'profile'};
+my $host                = html_escape($in{'host'});
+my $group               = html_escape($in{'group'});
+my $profile             = html_escape($in{'profile'});
 my %menu;
+
+$in{'mac'} = html_escape($in{'mac'});
 
         # when coming from some modules (backuppc f.ex.), the mac adress
         # can *not* be given: in this case we count on the hostname to

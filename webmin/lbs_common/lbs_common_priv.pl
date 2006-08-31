@@ -16,7 +16,7 @@ sub cookie_send_group($)
 
     if ($in{group}) {
       my $c = new CGI::Cookie(-name => 'group',
-				  -value => "$in{group}",
+				  -value => html_escape($in{group}),
 				  -expires => '+1M'
 				 );
       print "Set-Cookie: $c\n";
@@ -24,7 +24,7 @@ sub cookie_send_group($)
 
     if ($in{profile} || $in{profile} eq "") {
       my $c = new CGI::Cookie(-name => 'profile',
-				  -value => "$in{profile}",
+				  -value => html_escape($in{profile}),
 				  -expires => '+1M'
 				 );
       print "Set-Cookie: $c\n";
@@ -41,12 +41,12 @@ sub cookie_get_group($)
 
   if (!$in{'group'}) {
     if ( defined($cookies{'group'}) ) {
-      $in{'group'} = $cookies{'group'}->value;
+      $in{'group'} = html_escape($cookies{'group'}->value);
     }
   }
   if (! defined($in{'profile'}) ) {
     if ( defined($cookies{'profile'}) ) {
-      $in{'profile'} = $cookies{'profile'}->value;
+      $in{'profile'} = html_escape($cookies{'profile'}->value);
     }
   }
 }
