@@ -988,7 +988,7 @@ sub get_language() {
 # return : the mac address without any column
 sub mac_remove_columns($) {
 my $mac=shift;
-        $mac =~ tr/://d if $mac;
+        $mac =~ s/[^a-f0-9]//gi if $mac;
         return $mac;
 }
 
@@ -1546,6 +1546,19 @@ sub dup_machines_list {
         }
         
         return %newhash;
+}
+
+# cleanup common get/post variables
+sub InClean() {
+	if (exists($main::in{'profile'})) {
+		$main::in{'profile'} =~ s/[^a-z0-9_-]//gi;
+	}
+	if (exists($main::in{'group'})) {
+		$main::in{'group'} =~ s/[^a-z0-9_\/-]//gi;
+	}
+	if (exists($main::in{'mac'})) {
+		$main::in{'mac'} =~ s/[^a-f0-9:]//gi;
+	}
 }
 
 1;
