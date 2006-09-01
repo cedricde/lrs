@@ -104,7 +104,7 @@ if (exists $in{'cancel'}) {
 }
 elsif (exists $in{'apply'}) {
 	$image = $in{'img'} ;
-	$image =~ s/[^a-z0-9_-]//gi
+	$image =~ s/[^a-z0-9_-]//gi;
 	
 	imgDeleteLocal($lbs_home,$mac,$image) or error( lbsGetError() ) ;
 	redirect("move.cgi?mac=$umac") ;
