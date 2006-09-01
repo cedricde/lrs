@@ -1,5 +1,9 @@
 <BR>
 <FORM METHOD="post" ACTION="host_config.cgi{GET_DATA}">
+  <INPUT TYPE="hidden" NAME="username" VALUE="{USERNAME}">
+  <INPUT TYPE="hidden" NAME="passwd" VALUE="{PASSWD}">
+  <INPUT TYPE="hidden" NAME="mac" VALUE="{MAC}">
+  <INPUT TYPE="hidden" NAME="host" VALUE="{HOST}">
 
   <TABLE BORDER=1 CELLPADDING=5 ALIGN="center">
     <TR BGCOLOR="#e2e2e2">

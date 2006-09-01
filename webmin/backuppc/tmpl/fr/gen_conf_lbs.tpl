@@ -22,6 +22,10 @@
         Nombre max. de sauvegardes simultanés : <INPUT TYPE="text" NAME="maxbackups" VALUE="{MAXBACKUPS}" SIZE="2"
                                                  style="vertical-align:middle;">
      </li>
+     <li>Nombre de sauvegardes &agrave; garder. 
+       Compl&egrave;tes: <INPUT TYPE="text" NAME="FullKeepCnt" VALUE="{FULLKEEPCNT}" SIZE="3" style="vertical-align:middle;">
+       Incr&eacute;mentales: <INPUT TYPE="text" NAME="IncrKeepCnt" VALUE="{INCRKEEPCNT}" SIZE="3" style="vertical-align:middle;">
+     </li>
      <li>
        <A HREF="" onClick="window.open('/help.cgi/backuppc/index#blackout','help','width=450,height=250,scrollbars=yes')"
           ALT="Aide" TITLE="Aide"><IMG SRC="images/qm.png" BORDER="0"></A>

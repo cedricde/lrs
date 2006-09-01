@@ -3,4 +3,4 @@ desc_fr=LRS : Sauvegarde Fichiers
 name=BackupPC
 category=Webmin
 depends=0.94 lbs_common
-version=0.8.4
+version=0.9.0

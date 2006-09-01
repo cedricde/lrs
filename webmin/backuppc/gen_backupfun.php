@@ -27,8 +27,9 @@ $conf_filename = '/etc/backuppc/config.pl';
  * $blackoutend - BlackoutHourEnd - string / real
  * $blackoutdays - BlackoutWeekDays - array[1..7] of booleans == true if the day is a blackout day
  * $dhcps - DHCPAddrRanges - array of string - addresses ranges (eg. 192.168.0.20-60)
+ * $opts - other config params in an array
 */
-function readGenConfFile(&$wakeup, &$maxbackups, &$blackoutbegin, &$blackoutend, &$blackoutdays, &$dhcps) {
+function readGenConfFile(&$wakeup, &$maxbackups, &$blackoutbegin, &$blackoutend, &$blackoutdays, &$dhcps, &$opts) {
 // values from config.pl
   global $conf_filename;
   
@@ -65,6 +66,14 @@ function readGenConfFile(&$wakeup, &$maxbackups, &$blackoutbegin, &$blackoutend,
   preg_match($reg, $filestr, $m); 
   $blackoutend = $m[1];
   
+  // other opts
+  // todo: need to parse previous options here
+  foreach (array("FullKeepCnt", "IncrKeepCnt") as $o) {
+	$reg = "/[\$]Conf\{".$o."\}\s*=\s*(.+);/";
+	preg_match($reg, $filestr, $m);
+	$opts[$o] = $m[1];
+  }
+  
   $reg = "/[\$]Conf\{BlackoutWeekDays\}\s*=\s*\[(.+)\];/";
   preg_match($reg, $filestr, $m); 
   $blackoutdays_tmp = array_map("trim", explode(",", $m[1]));
@@ -100,10 +109,11 @@ function readGenConfFile(&$wakeup, &$maxbackups, &$blackoutbegin, &$blackoutend,
  * $blackoutend - BlackoutHourEnd 
  * $blackoutdays - BlackoutWeekDays
  * $dhcps - DHCPAddrRanges
+ * $opts - other options in a array (why not everything is in the array ? Ask the trainee...)
  * all variables are preformated strings that need no additional change before inserting them to the file.
 */
 
-function writeGenConfFile($wakeup, $maxbackups, $blackoutbegin, $blackoutend, $blackoutdays, $dhcps) {
+function writeGenConfFile($wakeup, $maxbackups, $blackoutbegin, $blackoutend, $blackoutdays, $dhcps, $opts) {
   global $conf_filename;
   $filelines = @file($conf_filename);
   if (empty($filelines)) {
@@ -112,7 +122,7 @@ function writeGenConfFile($wakeup, $maxbackups, $blackoutbegin, $blackoutend, $b
   }
   
   $new_filelines=array();
-  $comment_reg = "/^#.*$/";
+  $comment_reg = "/^#/";
   $wakeup_reg = "/\s*[\$]Conf\{WakeupSchedule\}\s*=\s*\[.*\];/";
   $maxbackups_reg = "/[\$]Conf\{MaxBackups\}\s*=\s*.+;/";
   $blackoutbegin_reg = "/[\$]Conf\{BlackoutHourBegin\}\s*=\s*.+;/";
@@ -122,7 +132,8 @@ function writeGenConfFile($wakeup, $maxbackups, $blackoutbegin, $blackoutend, $b
   $j = 0;
   $dhcps_str=$dhcps;
   
-  for ($i=0; $i<count($filelines); $i++) {
+  for ($i=0; $i<count($filelines); $i++, $j++) {
+    $new_filelines[$j] = $filelines[$i];
    
     if (preg_match($comment_reg, $filelines[$i], $m)) 
       $new_filelines[$j] = $filelines[$i];
@@ -138,11 +149,20 @@ function writeGenConfFile($wakeup, $maxbackups, $blackoutbegin, $blackoutend, $b
       $new_filelines[$j] = '$Conf{BlackoutWeekDays} = ['.$blackoutdays."];\n";
     else if (preg_match($dhcps_reg, $filelines[$i], $m)) {
       while (!preg_match("/\]/", $filelines[$i], $m)) $i++;
-      $new_filelines[$j] = '$Conf{DHCPAddressRanges} = ['.$dhcps_str."];\n";
-    } else 
-      $new_filelines[$j] = $filelines[$i];
-    $j++;
+      $new_filelines[$j] = '$Conf{DHCPAddressRanges} = ['.$dhcps_str."];\n";      
+    }
+    // other opts
+    // todo: need to parse follwing options here
+    foreach (array("FullKeepCnt", "IncrKeepCnt") as $o) {
+      if (isset($opts[$o])) {
+	if (preg_match("/[\$]Conf\{$o\}\s*=\s*(.+);/", $filelines[$i], $m)) {// could use a regsub
+    	  $new_filelines[$j] = "\$Conf{".$o."} = ".$opts[$o].";\n";
+	  continue;
+	}
+      }
+    }    
   } 
+  
   $file_str=implode("", $new_filelines);
   $file=fopen($conf_filename, 'w');
   fwrite($file, $file_str);

@@ -1,11 +1,5 @@
-webmin-backuppc (0.8.4) stable; urgency=low
+webmin-backuppc (0.9.0) stable; urgency=low
 
-  * New release.
+  * See SVN history.
 
  -- Linbox Team <libre@linbox.com>  Tue, 29 Jun 2004 10:32:37 +0200
-
-webmin-backuppc (0.1) stable; urgency=low
-
-  * First package
-
- -- Linbox Team <libre@linbox.com>  Fri, 16 Apr 2004 15:59:50 +0200

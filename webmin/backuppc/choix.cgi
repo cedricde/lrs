@@ -1,4 +1,4 @@
-#! /var/lib/lrs/php
+#!/var/lib/lrs/php
 <?
 #
 # Choosing shared folders to backup
@@ -41,29 +41,29 @@ function showMain($get_data)
   global $t, $text, $lbs;
 
   if ($lbs)
-    $get_data = "?mac=".$_GET['mac']."&host=".$_GET['host'];
+    $get_data = "?mac=".$_REQUEST['mac']."&host=".$_REQUEST['host'];
   else {
-    $host=$_GET['host'];
-    $get_data = "?host=".$_GET['host'];
+    $host=$_REQUEST['host'];
+    $get_data = "?host=".$_REQUEST['host'];
   }
   
 # configuration variables ---------------------
-  if ( isset($_GET['xfermethod']) ) { // transport method was changed
-   $xfermethod = $_GET['xfermethod'];
+  if ( isset($_REQUEST['xfermethod']) ) { // transport method was changed
+   $xfermethod = $_REQUEST['xfermethod'];
    $get_data = $get_data . "&xfermethod=$xfermethod";
   }
 
   $t->set_var("GET_DATA_BREF", $get_data);  // needed for the cancel button
 
-  if (isset($_GET['username']) && isset($_GET['passwd'])) { // needed for smbclient
-    $username = $_GET['username'];
-    $get_data = $get_data . "&username=$username";
-    $passwd = $_GET['passwd'];
-    $get_data = $get_data . "&passwd=$passwd"; 
+  if (isset($_REQUEST['username']) && isset($_REQUEST['passwd'])) { // needed for smbclient
+    //$username = $_REQUEST['username'];
+    //$get_data = $get_data . "&username=$username";
+    //$passwd = $_REQUEST['passwd'];
+    //$get_data = $get_data . "&passwd=$passwd"; 
   }
  
-  if (isset($_GET['shares']) && $_GET['shares'] != "") { // shares after multiple modifications
-    $str = $_GET['shares'];
+  if (isset($_REQUEST['shares']) && $_REQUEST['shares'] != "") { // shares after multiple modifications
+    $str = $_REQUEST['shares'];
     if ($str != "") {
       $shares = explode("|", $str);
       if ($shares[count($shares) - 1] == "")
@@ -73,43 +73,46 @@ function showMain($get_data)
     $shares = array();
  
   // now read the missing data
-  readConfFile($_GET['host'], $xfermethod, $shares, $username, $passwd, $full, $incr, $blackout_begin, $blackout_end, $blackout_days);
+  readConfFile($_REQUEST['host'], $xfermethod, $shares, $username, $passwd, $full, $incr, $blackout_begin, $blackout_end, $blackout_days);
 
-  if (isset($_GET['delete']))          // delete a share from the list
-    if (in_array($_GET['delete'], $shares)) {
-      $i = array_search($_GET['delete'], $shares);
+  if (isset($_REQUEST['delete']))          // delete a share from the list
+    if (in_array($_REQUEST['delete'], $shares)) {
+      $i = array_search($_REQUEST['delete'], $shares);
       array_splice($shares, $i, 1);
     }
-  if (isset($_GET['found_name']) && ($_GET['found_change']) == "false") {
-    if (in_array($_GET['found_name'], $shares)) {
-      $i = array_search($_GET['found_name'], $shares);
+  if (isset($_REQUEST['found_name']) && ($_REQUEST['found_change']) == "false") {
+    if (in_array($_REQUEST['found_name'], $shares)) {
+      $i = array_search($_REQUEST['found_name'], $shares);
       array_splice($shares, $i, 1);
     }
   }
- // add shares to $_GET array  
+ // add shares to $_REQUEST array  
   $get_data = $get_data . "&shares="; 
   for ($i=0; $i<count($shares); $i++) 
     if ($shares[$i] != "")
       $get_data = $get_data . $shares[$i] . "|";
 
-  if ( isset($_GET['add']) && $_GET['add'] != "") { // rsync - eventually add another folder
-    array_push($shares, $_GET['add']);
-    $get_data = $get_data . $_GET['add'] . "|"; 
+  if ( isset($_REQUEST['add']) && $_REQUEST['add'] != "") { // rsync - eventually add another folder
+    array_push($shares, $_REQUEST['add']);
+    $get_data = $get_data . $_REQUEST['add'] . "|"; 
   }
-  if (isset($_GET['found_name']) && ($_GET['found_change'] == "true")) {
-    array_push($shares, $_GET['found_name']);
-    $get_data = $get_data . $_GET['found_name'];   
+  if (isset($_REQUEST['found_name']) && ($_REQUEST['found_change'] == "true")) {
+    array_push($shares, $_REQUEST['found_name']);
+    $get_data = $get_data . $_REQUEST['found_name'];   
   }
  
   $t->set_var("GET_DATA", $get_data);  
   
-  $t->set_var("HOST", $_GET['host']);
+  $t->set_var("HOST", $_REQUEST['host']);
   $t->set_var("XFERMETHOD_NAME", $text{$xfermethod."_name"});
+  $t->set_var("USERNAME", $_REQUEST['username']);
+  $t->set_var("PASSWD", $_REQUEST['passwd']);
+  $t->set_var("MAC", $_REQUEST['mac']);
 
     if ($xfermethod == 'smb') 
-      $shares_all = getSmbShares($_GET['host'], $username, $passwd);
+      $shares_all = getSmbShares($_REQUEST['host'], $username, $passwd);
     else if ($xfermethod == 'tar') 
-      $shares_all = getTarShares($_GET['host']);
+      $shares_all = getTarShares($_REQUEST['host']);
     else
       $shares_all = array();
  

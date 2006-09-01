@@ -1,7 +1,10 @@
+<script type="text/javascript" language="JavaScript" src="backuppc.js"></script>
+
 <BR>
 <FORM METHOD="post" ACTION="affiche.cgi{GET_DATA}" name="backuppc_configform">
-
-
+  <input type="hidden" name="host" value="{HOST}">
+  <input type="hidden" name="mac" value="{MAC}">
+  <input type="hidden" name="shares" value="{SHARES}">
   <table cellpadding="2" cellspacing="0" border="0" width="100%" class="cadre">
     <tr>
       <td bgcolor="#e2e2e2">&nbsp;<font face="arial" size="3"><b>Configuration de la sauvegarde</b></font></td>
@@ -28,19 +31,13 @@
       <li>
         <a HREF="" onClick="window.open('/help.cgi/backuppc/index#shares','help','width=450,height=250,scrollbars=yes')" ALT="Aide" TITLE="Aide"><IMG SRC="images/qm.png" BORDER="0"></A> Dossiers partag&eacute;s :
 	  <UL>
-            <li>
               <!-- BEGIN share_row -->
-                 {SHARE},
-              <!-- END share_row -->
-              ... 
-              <!-- BEGIN user_pass_configure -->
-              <a href="#" onClick="window.location.href='choix.cgi{GET_DATA}&username='+document.backuppc_configform.username.value+'&passwd='+document.backuppc_configform.passwd.value">( Configurer )</a>
-              <!-- END user_pass_configure -->
-              <!-- BEGIN configure -->
-              <a href="#" onClick="window.location.href='choix.cgi{GET_DATA}'">( Configurer )</a>
-              <!-- END configure -->
+            <li>
+                 {SHARE}
             </li>
-          </UL>
+              <!-- END share_row -->
+	  </UL>
+            <input type="submit" onClick="ChangeActionChoix('');" value="Ajouter">
       </li>
       <!-- BEGIN auth_ssh -->
       <li>
@@ -87,7 +84,7 @@
   </p>
   <table cellpadding="2" cellspacing="0" border="0" width="100%" class="cadre">
     <tr>
-      <td bgcolor="#e2e2e2">&nbsp;<font face="arial" size="3"><b>{HOST} : Configurer en DHCP</b></font>
+      <td bgcolor="#e2e2e2">&nbsp;<font face="arial" size="3"><b>{HOST} : IP dynamique</b></font>
         <a HREF="" onClick="window.open('/help.cgi/backuppc/index#dhcp','help','width=450,height=250,scrollbars=yes')" ALT="Aide" TITLE="Aide"><IMG SRC="images/qm.png" BORDER="0"></A>
       </td>
     </tr>

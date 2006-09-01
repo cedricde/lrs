@@ -61,8 +61,9 @@ function showMain()
   global $t, $text, $lbs;
 
 # gather the configuration variables ---------------------
+  $opts = array();
   if (!isset($_POST["submitted"]))
-    readGenConfFile($wakeup, $maxbackups, $blackoutbegin, $blackoutend, $blackoutdays, $dhcps);
+    readGenConfFile($wakeup, $maxbackups, $blackoutbegin, $blackoutend, $blackoutdays, $dhcps, $opts);
   else {
     $wakeup=$_POST["wakeup"];
     $maxbackups=$_POST["maxbackups"];
@@ -117,9 +118,9 @@ function showMain()
     $first = $m[4];
     $last = $m[5];
   } else {
-    $t->set_var("DHCP_BASE1", "");   
-    $t->set_var("DHCP_BASE2", "");   
-    $t->set_var("DHCP_BASE3", "");   
+    $t->set_var("DHCP_BASE1", "");
+    $t->set_var("DHCP_BASE2", "");
+    $t->set_var("DHCP_BASE3", "");
     $first=-1;
     $last=-1;
   }
@@ -158,6 +159,14 @@ function showMain()
       $t->parse("dhcp_rows", "dhcp_row", true);
       $t->parse("dhcp_hidden_rows", "dhcp_hidden_row", true);
     }
+
+   # misc options
+   foreach (array("FullKeepCnt", "IncrKeepCnt") as $o) {
+	if (isset($opts[$o])) {
+	  $t->set_var(strtoupper($o), $opts[$o]);
+	}
+   }
+
   
 # --------------------------------------------
 
@@ -211,7 +220,9 @@ if (isset($_POST['register']) && $_POST['register']==1) {
         $blackoutdays .= ",".$_POST["blackout"][$i];
     } else 
       $blackoutdays="";
-      
+    $opts['FullKeepCnt'] = $_POST["FullKeepCnt"];
+    $opts['IncrKeepCnt'] = $_POST["IncrKeepCnt"];
+    
     $i=0;
     $dhcps_str="";
     $reg="/([0-9]+\.[0-9]+\.[0-9]+)\.([0-9]+)\-([0-9]+)/";
@@ -225,8 +236,10 @@ if (isset($_POST['register']) && $_POST['register']==1) {
     }
     if ($dhcps_str != "")
       $dhcps_str = "\n   ".$dhcps_str;
-    writeGenConfFile($wakeup, $maxbackups, $blackoutbegin, $blackoutend, $blackoutdays, $dhcps_str);
+    writeGenConfFile($wakeup, $maxbackups, $blackoutbegin, $blackoutend, $blackoutdays, $dhcps_str,
+    		$opts);
     
+    // todo: remove this information
     $t->set_var("WAKEUP", $wakeup);
     $t->set_var("MAXBACKUPS", $maxbackups);
     $t->set_var("BLACKOUT_BEGIN", $blackoutbegin);

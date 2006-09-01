@@ -136,7 +136,7 @@ err_basedirnf=Le répertoire racine LRS <b>$1</b> est inaccessible. Veuillez véri
 err_cantlink=Impossible détablir un lien <tt>$1</tt> avec <tt>$2</tt> .
 err_gcr_not_running=The 'getClientResponse' daemon is not running. You probably have a license problem. Check that your licences are correct and then restart the lbs service by clicking <a href="restart.cgi">here</a>.
 
-backup_empty_share=La liste de dossiers partag&eacute;s de cette machine  est vide.<BR>Verifiez le nom d'utilisateur et le mot de passe.
+backup_empty_share=La liste de dossiers partag&eacute;s de cette machine est vide.<BR>V&eacute;rifiez le nom d'utilisateur et le mot de passe.
 backup_reg=Cette machine n'est pas sauvegardée. Ajouter cette machine au fichier '/etc/backuppc/hosts'?
 
 smb_name=Windows (smb)

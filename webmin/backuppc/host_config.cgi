@@ -101,9 +101,7 @@ function showMain($ether)
     }
     if (isset($_GET['username']) && isset($_GET['passwd'])) { // needed by smbclient in choix.php
       $username = $_GET['username'];
-      $get_data = $get_data . "&username=$username";
       $passwd = $_GET['passwd'];
-      $get_data = $get_data . "&passwd=$passwd"; 
     }
     if (isset($_GET['shares'])) { // got share from rsync or from multiple changes
       $shares = explode("|", $_GET['shares']);
@@ -115,14 +113,19 @@ function showMain($ether)
   // now read the file for the missing variables
   readConfFile($host, $xfermethod, $shares, $username, $passwd, $full, $incr, $blackout_begin, $blackout_end, $blackout_days);
 
-  $get_data = $get_data . "&shares="; 
+  $get_data = $get_data . "&shares=";
+  $fshares = "";
   for ($i=0; $i<count($shares); $i++) 
-    if ($shares[$i] != "")
+    if ($shares[$i] != "") {
       $get_data = $get_data . $shares[$i] . "|";
+      $fshares .= $shares[$i] . "|";
+    }
  
 # set the configuration variables in the template ---------------------
   $t->set_var("GET_DATA", $get_data);  
   $t->set_var("HOST", $host);
+  $t->set_var("MAC", $_REQUEST['mac']);
+  $t->set_var("SHARES", $fshares);
  
   if (getDHCP($host) == 1) {
     $t->set_var("0_SELECTED", "");
@@ -143,13 +146,6 @@ function showMain($ether)
       $t->parse("share_rows", "share_row", true);
     }
   
-  if ($xfermethod == "smb" || $xfermethod == "rsyncd") { 
-    $t->set_block("main", "configure", "configure_full");
-    $t->set_var("configure_full", "");
-  } else {
-    $t->set_block("main", "user_pass_configure", "user_pass_configure_full");
-    $t->set_var("user_pass_configure_full", "");
-  }
   if ($xfermethod == "smb") {
     $t->set_block("main", "auth_ssh", "auth_ssh_full");
     $t->set_var("auth_ssh_full");
@@ -230,7 +226,7 @@ if ($lbs) {
   }
 }
 
-$t = tmplInit( array( "main" => "main.tpl" ) );
+$t = tmplInit( array("main" => "main.tpl" ) );
 
 # insertion of menu header
 $t->set_block("main", "menu", "menu_block");
