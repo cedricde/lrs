@@ -17,7 +17,7 @@ POSTINST_DIR=../../postinst
 
 DEVMAP=$(shell pwd)/devmapper/
 
-all: initrd
+all: initrd initrdcd
 
 initrd: Makefile MAKEDEV pump/pump $(IMAGE_DIR)/autorestore/revoboot
 	#-umount $(LOOP)
