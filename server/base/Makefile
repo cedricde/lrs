@@ -33,6 +33,7 @@ update_build:
 	    cp -f $$i.$(BUILD) $(BASE); \
 	done
 	cp -f ../../client/src_revoboot/revoboot.pxe.$(BUILDRB) $(BASE)
+	cp -f ../lbl/src_initrd/initrdcd.gz $(BASE)
 	(cd $(BASE);\
 	ln -sf bzImage.$(BUILD) bzImage.initrd;\
 	ln -sf initrd.gz.$(BUILD) initrd.gz;\
