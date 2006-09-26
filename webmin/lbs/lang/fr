@@ -98,6 +98,7 @@ lab_kernel_revodebug=Sauvegarde: debug
 lab_kernel_revonocomp=Sauvegarde: pas de compression
 lab_kernel_revoraw=Sauvegarde en RAW
 lab_kernel_revonospc=Sauvegarde: pas de vérif de la taille du DD
+lab_kernel_revontblfix=Restauration: ajuster le boot loader NT si DD différent
 lab_lastrestore=Dernière image<br>restaurée
 lab_macaddr=Adresse MAC
 lab_menu=Menu

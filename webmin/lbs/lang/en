@@ -97,6 +97,7 @@ lab_kernel_revodebug=Backup: debug
 lab_kernel_revonocomp=Backup: no compression
 lab_kernel_revoraw=Backup everything as RAW
 lab_kernel_revonospc=Backup: do not check the HD size
+lab_kernel_revontblfix=Restoration: update the NT boot loader if the HD has changed
 lab_lastrestore=Last image<br>restored
 lab_macaddr=MAC address
 lab_menu=Menu
