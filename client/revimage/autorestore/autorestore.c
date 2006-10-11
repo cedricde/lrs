@@ -953,7 +953,7 @@ int main(int argc, char *argv[])
 #endif
 
   // some logging
-  system ("rm -f " LOGTXT );
+  system ("echo \"\"> " LOGTXT );
   mysystem1 ("cat /etc/cmdline");
   mysystem1 ("cat /proc/cmdline");
   mysystem1 ("cat /proc/version");
@@ -974,7 +974,7 @@ int main(int argc, char *argv[])
   system("echo \"\">/revoinfo/progress.txt");
   restoreimage();
   system("/bin/revosendlog 3");
-  system("rm /revoinfo/progress.txt");
+  system("echo \"\">/revoinfo/progress.txt");
 
   mysystem1 ("cat /var/log/messages");
 
