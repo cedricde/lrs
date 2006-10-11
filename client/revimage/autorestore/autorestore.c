@@ -1,5 +1,7 @@
 /*
- * Program launched to restore all partitions
+ * Autorestore: Program launched to restore all partitions
+ *
+ * Copyright (C) 2003-2006 Ludovic Drolez, Linbox FAS
  */
 /*
  *  Linbox Rescue Server
@@ -72,6 +74,8 @@ int dnum;
 int rsize = 8192;
 /* hd space checks enabled ? */
 int revonospc = 0;
+/* hd fix the NT boot loader ? */
+int revontblfix = 0;
 /* cdrom restoration ? */
 int cdrom = 0;
 
@@ -147,7 +151,7 @@ void myprintf( const char *format_str, ... )
 int mysystem(const char *s)
 {
     char cmd[1024];
-    char *redir = " 2>> " LOGTXT;
+    char *redir = " >> " LOGTXT " 2>&1";
     FILE *foerr;
 
     strncpy(cmd, s, 1024 - strlen(redir) - 1);
@@ -687,6 +691,11 @@ void commandline(void)
 	revonospc = 1;
     }
 
+    if ((ptr = find("revontblfix", "/etc/cmdline"))) {
+	/* do not check the HD size */
+	revontblfix = 1;
+    }
+
     /* default: mtftp restore */
     fops.open = tftp_open;
     fops.close = tftp_close;
@@ -775,6 +784,12 @@ void restoreimage(void)
 #else
 	      restore(hdmap[d1], sect, buf2);
 #endif	    
+	      // fix the NT Bootloader if needed
+	      if (sect == 63 && revontblfix == 1) {
+		char command[255];
+	        sprintf(command, "ntblfix %s %d", hdmap[d1], d1+1);
+    		mysystem(command);
+	      }
 	    }
 	  }
 	} else if (!strcmp("setdefault", buf2)) {

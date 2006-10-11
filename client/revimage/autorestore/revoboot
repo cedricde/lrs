@@ -12,26 +12,43 @@ checkip()
 grep -q revosavedir=/cdrom /proc/cmdline && return
 
 SEC=0
+MAXSEC=45
+# if CDROM boot, then be less patient
+grep -q revocdrom /etc/cmdline && MAXSEC=5
+
 # check if eth0 is up
-while true                                                                      
-do                                                                              
-    sleep 1                                                                     
-    if ifconfig $ETH|grep RUNNING >/dev/null ;then                              
+while true
+do
+    sleep 1
+    if ifconfig $ETH|grep RUNNING >/dev/null ;then
 	break
     else
         echo "*** $ETH: not yet configured ($SEC) ***"
 	SEC=$(($SEC+1))
-	if [ $SEC -gt 45 ]; then
-	    whiptail --title "Fatal Error" --backtitle "Linbox Rescue Server" --yesno "I cannot configure the NIC
+	if [ $SEC -gt $MAXSEC ]; then
+	    whiptail --title "Fatal Error" --backtitle "Linbox Rescue Server" --menu "I cannot configure the NIC
 
 Possible causes:
-1- More than one NIC and DHCP requests are sent on the wrong NIC
-2- No suitable driver found for the NIC
+1- No DHCP server has responded
+2- More than one NIC and DHCP requests are sent on the wrong NIC
+3- No suitable driver found for the NIC
 
-Do you want to put some log files on a floppy disk ?" 15 70
-	    [ "$?" = "0" ] && floppysave
+What should I do ?" 20 70 4 1 "Retry to configure the NIC via DHCP" 2 "Manualy set the IP address" 3 "Put some log files on a floppy disk to Debug the problem" 2>/tmp/res
+	    case "`cat /tmp/res`" in
+	    1)
+	    	/etc/init.d/network start
+		;;
+	    2)
+	    	staticip
+		;;
+	    3)	
+	    	wechow "Insert a blank MSDOS formatted floppy and press Enter"
+		floppysave
+		sleep 3
+		wechow "Now you can send the 'messages' file to support@linbox.com"
+		;;
+	    esac
 	    SEC=0
-	    /etc/init.d/network start
 	fi
 	continue
     fi
@@ -44,6 +61,36 @@ Do you want to put some log files on a floppy disk ?" 15 70
     fi
 done
 sleep 1
+}
+
+# static ip configuration
+staticip()
+{
+    IP=192.168.0.100
+    NM=255.255.255.0
+    while true; do
+	whiptail --title "Static IP" --backtitle "Linbox Rescue Server" --inputbox "Please enter the IP address below" 10 70 "$IP" 2>/tmp/res
+	IP=`cat /tmp/res`
+	whiptail --title "Static IP" --backtitle "Linbox Rescue Server" --inputbox "Please enter the netmask below" 10 70 "$NM" 2>/tmp/res
+	NM=`cat /tmp/res`
+	DEFGW=`echo $IP|cut -d. -f1-3`".1"
+	whiptail --title "Static IP" --backtitle "Linbox Rescue Server" --inputbox "Please enter the default gateway below" 10 70 "$DEFGW" 2>/tmp/res
+	GW=`cat /tmp/res`
+	whiptail --title "Static IP" --backtitle "Linbox Rescue Server" --inputbox "Please enter the LRS IP address below" 10 70 "$DEFGW" 2>/tmp/res
+	LRS=`cat /tmp/res`
+	ifconfig $ETH $IP netmask $NM
+	route add default gw $DEFGW
+	ping -c 1 $LRS >/dev/null && break 
+	wecho "Cannot reach \"$LRS\". Please check the network configuration again."
+	sleep 10
+    done
+    echo "Device $ETH
+	IP: $IP
+	Netmask: $NM
+	Boot server: $LRS
+	Next server: $LRS
+	Boot file: /tftpboot/revoboot/bin/revoboot.pxe
+" > /etc/netinfo.fake
 }
 
 # get the warning message
@@ -81,7 +128,6 @@ do_backup()
 {
     /bin/revoinc
     /bin/autosave
-    du -k /revosave > /revosave/size.txt
 }
 
 # Post-install
@@ -101,7 +147,17 @@ do_postinst()
 # whiptail echo
 wecho()
 {
-    whiptail --title "Info" --backtitle "Linbox Rescue Server" --infobox "$1" 10 70
+    LINES=10
+    [ `echo -e "$1" | wc -l` -gt 8 ] && LINES=20
+    whiptail --title "Info" --backtitle "Linbox Rescue Server" --infobox "$1" $LINES 70
+}
+
+# whiptail echo with wait
+wechow()
+{
+    LINES=10
+    [ `echo -e "$1" | wc -l` -gt 8 ] && LINES=20
+    whiptail --title "Info" --backtitle "Linbox Rescue Server" --msgbox "$1" $LINES 70
 }
 
 # print the menu
@@ -142,24 +198,64 @@ do_cdrom()
     # tell the LRS we have booted
     /bin/revoinv
     /bin/revosendlog 0
-    # get the menu
-    wecho "Downloading menu for `cat /etc/lbxname`"
-    cd /tmp
-    rm -f menu
-    /bin/atftp --tftp-timeout 1 -g -r $BASE/cfg/$MAC -l menu $SRV 69 2>/dev/null
-    wecho "Downloaded"
-    # no menu => stop
-    [ ! -f menu -o -z "`cat menu`" ] && wecho "No menu available. Cannot continue. Did you add the client using the LRS administration interface ?" && sleep 3 && return
-    parse_menu
-    eval CMDLINE=\$LKERN_`cat /tmp/ret`
-    [ "$CMDLINE" ] || return
-
+    # tftp test
+    while true
+    do
+	cd /tmp
+	rm -f default
+	/bin/atftp --tftp-timeout 1 -g -r $BASE/cfg/default -l default $SRV 69 2>/dev/null
+	[ -f default -a -n "`cat default`" ] && break
+	whiptail --title "TFTP problem" --backtitle "Linbox Rescue Server" --inputbox "Possible DHCP server configuration problem. Cannot download the boot menu over TFTP. Got $SRV as the LRS server.\n\n`cat /etc/netinfo.log|grep -v time:`\n\nPlease enter the LRS IP address below:" 22 70 2>/tmp/res
+        SRV=`cat /tmp/res`
+	echo -e "\n\tOption_177: $SRV:/tftpboot/revoboot" >>/etc/netinfo.log
+	echo -e "\nOption_177=$SRV:/tftpboot/revoboot" >>/etc/netinfo.sh
+    done
+    while true
+    do
+	# get the menu
+	wecho "Downloading menu for `cat /etc/lbxname`"
+	cd /tmp
+	rm -f menu
+	/bin/atftp --tftp-timeout 1 -g -r $BASE/cfg/$MAC -l menu $SRV 69 2>/dev/null
+	wecho "Downloaded the menu"
+	# no menu => stop
+	[ ! -f menu -o -z "`cat menu`" ] && identify
+	[ -f menu -a -n "`cat menu`" ] && break
+    done
+    while true
+    do
+	parse_menu
+	eval CMDLINE=\$LKERN_`cat /tmp/ret`
+	# check if this action can be done
+	[ "$CMDLINE" ] && break
+	wechow "Sorry this entry can only be used with a PXE boot.\n\nBecause you are booting from a CDROM, not all LRS features are available. To set-up a PXE network boot, please refer the the LRS manual."
+    done
     # fake /proc/cmdline 
     echo $CMDLINE | cut -f 2- -d " "> /etc/cmdline
 
     # recurse
     $0
     exit    
+}
+
+# Send the identify command
+identify()
+{
+    cd /tmp
+    rm -f default res
+    /bin/atftp --tftp-timeout 1 -g -r $BASE/cfg/default -l default $SRV 69 2>/dev/null
+    [ ! -f default -o -z "`cat default`" ] && wechow "Cannot download the boot menu over TFTP. Cannot continue." && reboot
+    # enter the client name
+    whiptail --title "Client name" --backtitle "Linbox Rescue Server" --inputbox "Please enter client name:" 10 70 2>/tmp/res
+    NAME=`cat /tmp/res|tr ' ' _`
+    # enter the password
+    whiptail --title "Password" --backtitle "Linbox Rescue Server" --passwordbox "Please enter LRS password" 10 70 2>/tmp/res
+    PASS=`cat /tmp/res`
+    # send the packet
+    echo -en "\255ID$NAME:$PASS\00Mc:`cat /etc/mac`" | nc -p 1001 -w 1 $SRV 1001 
+    # resend the inventory
+    /bin/revoinv
+    
 }
 
 # mount a CDROM drive for restoration
@@ -187,7 +283,8 @@ ETH=`cat /etc/eth`
 BASE="/tftpboot/revoboot"
 grep -q revodebug /etc/cmdline || checkip
 MAC=`cat /etc/shortmac`
-pump -i $ETH -s >/etc/netinfo.log
+[ ! -f /etc/netinfo.log ] && pump -i $ETH -s >/etc/netinfo.log
+[ -f /etc/netinfo.fake ] && mv -f /etc/netinfo.fake /etc/netinfo.log
 sed -e "s/Device/#/" -e "s/: */=/" -e "s/	//" -e "s/ /_/g" </etc/netinfo.log >/etc/netinfo.sh
 . /etc/netinfo.sh
 
@@ -197,15 +294,13 @@ SRV=$Next_server
 
 # IP check
 if [ "$SRV" = "0.0.0.0" ]; then
-    echo "*** Possible DHCP server configuration problem !"
-    echo "*** Got $SRV as boot server !"
-    cat /etc/netinfo.log
-    sleep 60
+    whiptail --title "DHCP problem" --backtitle "Linbox Rescue Server" --inputbox "Possible DHCP server configuration problem !\nGot $SRV as the LRS server !\n\n`cat /etc/netinfo.log`\n\nPlease enter the LRS IP address below:" 22 70 2>/tmp/res
+    SRV=`cat /tmp/res`
 fi
 
 # date
-echo -n "*** Getting current time from $SRV..."
-rdate $SRV
+echo -n "*** Getting current time from \"$SRV\"..."
+[ -n "$SRV" ] && rdate $SRV
 
 # try to get the name
 revogetname >/etc/lbxname

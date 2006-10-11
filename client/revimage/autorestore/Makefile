@@ -1,4 +1,4 @@
-CFLAGS=-I../zlib-1.2.1  -Wall -DLBLIMAGEVER=\"1.2\"  -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -pedantic
+CFLAGS=-I../zlib-1.2.1  -Wall -DLBLIMAGEVER=\"1.3\"  -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -pedantic
 LIBS=-L../zlib-1.2.1/ -lz -lnewt -s
 CC=gcc
 
