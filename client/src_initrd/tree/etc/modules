@@ -23,14 +23,15 @@ natsemi
 sundance
 tulip
 de4x5
-bcm5700
+bnx2
 tg3
+bcm5700
 forcedeth
+r1000
 r8169
 tlan
 epic100
 sis190
-
 # cannot autoprobe...
 # cs89x0
 # lance

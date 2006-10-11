@@ -47,7 +47,6 @@ ln -sf busybox ./bin/dmesg
 ln -sf busybox ./bin/dutmp
 ln -sf busybox ./bin/false
 ln -sf tinylogin ./bin/login
-ln -sf busybox ./bin/lsmod
 ln -sf busybox ./bin/mkdir
 ln -sf busybox ./bin/mknod
 ln -sf busybox ./bin/mount
@@ -125,7 +124,6 @@ ln -sf ../../bin/busybox ./usr/bin/whoami
 ln -sf /usr/share/terminfo/ ./usr/lib/terminfo
 ln -sf ../bin/tinylogin ./sbin/getty
 ln -sf ../bin/busybox ./sbin/klogd
-ln -sf ../bin/busybox ./sbin/lsmod
 ln -sf ../bin/busybox ./sbin/route
 ln -sf ../bin/busybox ./sbin/telinit
 ln -sf ../bin/busybox ./sbin/chroot
