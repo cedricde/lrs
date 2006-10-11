@@ -121,7 +121,7 @@ if ($opt_copynum eq 'C') {
 	}
 	
 	$newimg = "Local-$num" ;
-	$bidon = `mkdir -p "$hostdir/$newimg"` ;
+	$bidon = `mkdir -p "$hostdir/$newimg"; chown 65534 "$hostdir/$newimg"`;
 	$num += 1 ; 
 
 	open(HOST,">$hostdir/hostname") or badExit("open: $!") ;
@@ -151,7 +151,7 @@ else {
 	}
 
 	$newimg = "Base-$num";
-	$bidon = `mkdir -p "$basedir/imgbase/$newimg"` ;
+	$bidon = `mkdir -p "$basedir/imgbase/$newimg"; chown 65534 "$basedir/imgbase/$newimg"` ;
 	$num += 1 ; 
 	
 	open(NUM,">$basedir/imgbase/BASENUM") or badExit("open: $!") ;

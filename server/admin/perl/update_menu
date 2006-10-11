@@ -45,4 +45,8 @@ $macfile=$ARGV[0];
 
 updateEntry($home, $macfile) or lbsDieError();
 
-
+# reset files permissions: allow the diskless Linux to write to these files
+# and ensure backward compatibility
+for $i ( "log.restore", "postinst.log" ) {
+    system("touch $home/images/$macfile/$i ; chown 65534 $home/images/$macfile/$i");
+}

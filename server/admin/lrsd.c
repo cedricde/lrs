@@ -376,7 +376,18 @@ int process_packet(unsigned char *buf, char *mac, char *smac,
 	    break;
 	case '5':
 	    if (buf[2] == '-') {
-		mysyslog(smac, LOG_INFO, "%s backup completed (%s)", mac, &buf[3]);
+        	int bn;
+                
+                mysyslog(smac, LOG_INFO, "%s backup completed (%s)", mac, &buf[3]);
+                if (sscanf(&buf[3], "Local-%d", &bn) == 1) {
+                        // Local backup
+                        snprintf(command, 255, "chown -R 0:0 %s/images/%s/Local-%d", basedir, smac, bn);
+                        system(command);
+                } else if (sscanf(&buf[3], "Base-%d", &bn) == 1) {
+                        // Shared backup
+                        snprintf(command, 255, "chown -R 0:0 %s/imgbase/Base-%d", basedir, bn);
+                        system(command);
+                }
 	    } else {
 		mysyslog(smac, LOG_INFO, "%s backup completed", mac);
 	    }
