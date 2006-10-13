@@ -21,11 +21,9 @@ kernel:
 	(cd $(SRC)/linux/;make all)
 # bcm5700 compile
 	(cd ./bcm/bcm5700-8.2.18/src; make; cp bcm5700.ko $(SRC)/linux/drivers/net/)
+# copy the kernel
 	cp -f $(SRC)/linux/arch/i386/boot/bzImage .
 	rdev bzImage /dev/ram0
-	# lufs
-	(cd lufs;make -C /usr/src/linux SUBDIRS=`pwd` modules)
-	cp -f lufs/lufs.ko .
 
 clean: cleanlufs
 	(cd $$SRC;make clean)
