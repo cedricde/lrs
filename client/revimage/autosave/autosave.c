@@ -894,9 +894,10 @@ int main(int argc, char *argv[])
   system("echo \"\">/revosave/progress.txt");
   saveimage();
   system("du -k /revosave > /revosave/size.txt");
+  mysystem1("cat /var/log/messages");    
+
   system("/bin/revosendlog 5");
   system("/bin/revosetdefault 0");
 
-  mysystem1("cat /var/log/messages");    
   return 0;
 }
