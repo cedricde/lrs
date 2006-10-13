@@ -58,7 +58,7 @@ initrd: Makefile MAKEDEV pump/pump $(IMAGE_DIR)/autorestore/revoboot
 	-find $(SRCLIN)/drivers/pcmcia -name "*.ko" -exec cp -av {} $(LOOP)/lib/modules \;
 	# latest imagers
 	for i in $(IMAGES); do cp -f $(IMAGE_DIR)/$$i $(LOOP)/revobin/ || exit 1 ;done
-	# cp -f $(IMAGE_DIR)/liblrs.so.1 $(LOOP)/lib
+	cp -f $(IMAGE_DIR)/liblrs.so.1 $(LOOP)/lib
 	# clean
 	rm -f $(LOOP)/symlinks
 	rm -rvf $(LOOP)/*/CVS/
