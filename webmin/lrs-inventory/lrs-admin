@@ -26,12 +26,24 @@ $before=$m[0];
 ereg("[^:/]+$", $after, $m);
 $after=$m[0];
 
+# that name already exists ?
+$sql = "SELECT Name FROM Machine WHERE Name='$after'";
+$conn->query($sql);
+$already = $conn->num_rows();
+
 $sql = "SELECT Name FROM Machine WHERE Name='$before'";
 $conn->query($sql);
 if ($conn->num_rows() == 1) {                          
-    echo $conn->Record['Name'];
+    if ($already) {
+	# delete the old name
+	$sql = "DELETE FROM Machine WHERE Name='$after';    
+	$conn->query($sql);
+    }
+    # rename 
     $sql = "UPDATE Machine SET Name='$after' WHERE Name='$before'";    
     $conn->query($sql);
 }
+
+
 
 ?>
