@@ -109,6 +109,8 @@ sub do_mkisofs
 	my $linuxrestore = 0;
 	
 	if ( -f "$basedir/bin/initrdcd.gz" ) { $linuxrestore = 1; }
+
+	if ($in{'oldcd'} eq "on") { $linuxrestore = 0; }
 	 
 	if ($num == 1) {
 	    if (-f "$basedir/bin/grub.cdrom") {
