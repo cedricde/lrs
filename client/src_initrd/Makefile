@@ -27,7 +27,7 @@ initrd: Makefile MAKEDEV pump/pump $(IMAGE_DIR)/autorestore/revoboot
 	#mke2fs -i $$((4096+512)) -m 0 -F $(INITRD)
 	#mount $(INITRD) $(LOOP) -o loop
 	tar cvf - --exclude .svn -C $(TREE) . | tar xf - -C $(LOOP)
-	(cd $(LOOP)/dev; $(MKDEV) console ptyp std hda hdb hdc hdd hde hdf hdg hdh sda sdb sdc sdd fd0 cciss.0 cciss.1 ida.0 scd0 scd1; mknod -m 600 initctl p; mknod -m 600 log p)
+	(cd $(LOOP)/dev; $(MKDEV) console ptyp std hda hdb hdc hdd hde hdf hdg hdh sda sdb sdc sdd sde sdf sdg sdh fd0 cciss.0 cciss.1 ida.0 scd0 scd1; mknod -m 600 initctl p; mknod -m 600 log p)
 	# get the latest pump
 	strip pump/pump
 	cp -f pump/pump $(LOOP)/bin
@@ -72,7 +72,7 @@ initrdcd:
 	    cp -v $(SRCLIN)/drivers/$$i $(LOOP)/lib/modules/cd ;\
 	done
 	(cd $(LOOP); find . | cpio -o -H newc ) >$(INITRD)cd
-	gzip $(INITRD)cd
+	gzip -f $(INITRD)cd
 	rm -rf $(LOOP)
 
 pump/pump: pump/Makefile
@@ -88,4 +88,4 @@ lvm2:
 	cd lvm2/tools; gcc -o lvm archiver.o toollib.o reporter.o segtypes.o vgscan.o lvm.o dumpconfig.o formats.o vgmknodes.o lvmcmdline.o vgchange.o pvmove.o polldaemon.o -L/home/svn/lbl/src_initrd/devmapper/lib/ioctl -Wl,--export-dynamic -L../lib -L/lib -llvm -ldevmapper -rdynamic
 	strip lvm2/tools/lvm
 
-.PHONY: lvm2
+.PHONY: lvm2 initrdcd
