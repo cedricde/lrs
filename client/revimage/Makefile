@@ -5,9 +5,12 @@
 OBJ=compress.o ui_newt.o
 LIBOBJ=compress.o ui_newt.o
 
-CFLAGS=-Wall -O2 -DLBLIMAGEVER=\"1.2\" -I./zlib-1.2.1 -I./e2fsprogs-1.22/lib/ -fPIC
+ZLIB=./zlib
+ZLIBOBJ=$(wildcard $(ZLIB)/*.o)
+
+CFLAGS=-Wall -O2 -DLBLIMAGEVER=\"1.2\" -I$(ZLIB) -I./e2fsprogs-1.22/lib/ 
 LDFLAGS=-s
-LIBS= -L./zlib-1.2.1/ -lz -lnewt -L. -llrs
+LIBS= -lnewt -L. -llrs
 RFSLIBS=-L./reiserfsprogs/lib/ -lcore -lmisc
 
 all: $(OBJ) $(LIBOBJ) liblrs.so.1 image_swap image_lvmreiserfs \
@@ -46,13 +49,13 @@ image_lvmreiserfs: lvm.o image_lvmreiserfs.o
 	cc $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS) $(RFSLIBS)
 
 decompress: decompress.o $(OBJ)
-	cc $(CFLAGS) $(LDFLAGS) -o $@ $^ -lz -lnewt
+	cc $(CFLAGS) $(LDFLAGS) -L. -llrs -lnewt -o $@ $^ 
 
 decompress-test: decompress-test.o $(OBJ)
-	cc $(CFLAGS) $(LDFLAGS) -o $@ $< --static -L./zlib-1.2.1 -lz
+	cc $(CFLAGS) $(LDFLAGS) -o $@ $< --static -L. -llrs
 
 decompress-bitmap: decompress-bitmap.o $(OBJ)
-	cc $(CFLAGS) $(LDFLAGS) -o $@ $< -L./zlib-1.2.1 -lz
+	cc $(CFLAGS) $(LDFLAGS) -o $@ $< -L. -llrs
 
 #image_reiserfs: image_reiserfs.o lvm.o 
 #	cc $(CFLAGS) -o $@ $(OBJ) $< $(LIBS) $(RFSLIBS)
@@ -64,7 +67,7 @@ image_e2fs.o: image_e2fs.c compress.h compress-loop.h config.h
 	cc $(CFLAGS) -o image_e2fs.o -c image_e2fs.c -I./e2fsprogs-1.22/lib
 
 liblrs.so.1: $(OBJ)
-	gcc -shared -Wl,-soname,liblrs.so.1 -o liblrs.so.1 $^ -lnewt
+	gcc -shared -Wl,-soname,liblrs.so.1 -o liblrs.so.1 $^ $(ZLIBOBJ)
 	strip $@
 	ln -sf $@ liblrs.so
 
