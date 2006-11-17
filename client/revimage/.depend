@@ -1,5 +1,6 @@
-compress.o: compress.c /usr/include/stdio.h /usr/include/features.h \
- /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h \
+compress.o: compress.c config.h /usr/include/stdio.h \
+ /usr/include/features.h /usr/include/sys/cdefs.h \
+ /usr/include/gnu/stubs.h \
  /usr/lib/gcc-lib/i386-linux/2.95.4/include/stddef.h \
  /usr/include/bits/types.h /usr/include/bits/pthreadtypes.h \
  /usr/include/bits/sched.h /usr/include/libio.h \
@@ -7,12 +8,15 @@ compress.o: compress.c /usr/include/stdio.h /usr/include/features.h \
  /usr/include/bits/wchar.h /usr/include/gconv.h \
  /usr/lib/gcc-lib/i386-linux/2.95.4/include/stdarg.h \
  /usr/include/bits/stdio_lim.h /usr/include/bits/stdio.h \
- /usr/include/stdlib.h /usr/include/sys/types.h /usr/include/time.h \
- /usr/include/endian.h /usr/include/bits/endian.h \
+ /usr/include/stdlib.h /usr/include/bits/waitflags.h \
+ /usr/include/bits/waitstatus.h /usr/include/endian.h \
+ /usr/include/bits/endian.h /usr/include/xlocale.h \
+ /usr/include/sys/types.h /usr/include/time.h \
  /usr/include/sys/select.h /usr/include/bits/select.h \
  /usr/include/bits/sigset.h /usr/include/bits/time.h \
  /usr/include/sys/sysmacros.h /usr/include/alloca.h \
  /usr/include/unistd.h /usr/include/bits/posix_opt.h \
+ /usr/include/bits/environments.h /usr/include/bits/wordsize.h \
  /usr/include/bits/confname.h /usr/include/getopt.h \
  /usr/include/sys/ioctl.h /usr/include/bits/ioctls.h \
  /usr/include/asm/ioctls.h /usr/include/asm/ioctl.h \
@@ -29,9 +33,12 @@ compress.o: compress.c /usr/include/stdio.h /usr/include/features.h \
  /usr/include/linux/dcache.h /usr/include/linux/stat.h \
  /usr/include/linux/cache.h /usr/include/asm/cache.h \
  /usr/include/linux/string.h /usr/include/asm/atomic.h \
- /usr/include/asm/bitops.h compress.h /usr/include/fcntl.h \
- /usr/include/bits/fcntl.h /usr/include/sys/stat.h \
- /usr/include/bits/stat.h zlib-1.2.1/zlib.h zlib-1.2.1/zconf.h
+ /usr/include/asm/bitops.h /usr/include/string.h \
+ /usr/include/bits/string.h /usr/include/bits/string2.h compress.h \
+ /usr/include/fcntl.h /usr/include/bits/fcntl.h \
+ /usr/include/sys/stat.h /usr/include/bits/stat.h zlib/zlib.h \
+ zlib/zconf.h ui_newt.h /usr/include/errno.h /usr/include/bits/errno.h \
+ /usr/include/linux/errno.h /usr/include/asm/errno.h compress-loop.h
 decompress-bitmap.o: decompress-bitmap.c /usr/include/stdlib.h \
  /usr/include/features.h /usr/include/sys/cdefs.h \
  /usr/include/gnu/stubs.h \
@@ -54,7 +61,7 @@ decompress-bitmap.o: decompress-bitmap.c /usr/include/stdlib.h \
  /usr/include/bits/posix_opt.h /usr/include/bits/environments.h \
  /usr/include/bits/wordsize.h /usr/include/bits/confname.h \
  /usr/include/getopt.h /usr/include/fcntl.h /usr/include/bits/fcntl.h \
- zlib-1.2.1/zlib.h zlib-1.2.1/zconf.h
+ zlib/zlib.h zlib/zconf.h
 decompress-test.o: decompress-test.c /usr/include/stdlib.h \
  /usr/include/features.h /usr/include/sys/cdefs.h \
  /usr/include/gnu/stubs.h \
@@ -79,7 +86,7 @@ decompress-test.o: decompress-test.c /usr/include/stdlib.h \
  /usr/include/getopt.h /usr/include/fcntl.h /usr/include/bits/fcntl.h \
  /usr/include/dirent.h /usr/include/bits/dirent.h \
  /usr/include/bits/posix1_lim.h /usr/include/bits/local_lim.h \
- /usr/include/linux/limits.h zlib-1.2.1/zlib.h zlib-1.2.1/zconf.h
+ /usr/include/linux/limits.h zlib/zlib.h zlib/zconf.h
 decompress.o: decompress.c /usr/include/stdlib.h \
  /usr/include/features.h /usr/include/sys/cdefs.h \
  /usr/include/gnu/stubs.h \
@@ -102,7 +109,7 @@ decompress.o: decompress.c /usr/include/stdlib.h \
  /usr/include/bits/posix_opt.h /usr/include/bits/environments.h \
  /usr/include/bits/wordsize.h /usr/include/bits/confname.h \
  /usr/include/getopt.h /usr/include/fcntl.h /usr/include/bits/fcntl.h \
- zlib-1.2.1/zlib.h zlib-1.2.1/zconf.h
+ zlib/zlib.h zlib/zconf.h
 image_e2fs.o: image_e2fs.c config.h /usr/include/fcntl.h \
  /usr/include/features.h /usr/include/sys/cdefs.h \
  /usr/include/gnu/stubs.h /usr/include/bits/fcntl.h \
@@ -133,10 +140,9 @@ image_e2fs.o: image_e2fs.c config.h /usr/include/fcntl.h \
  e2fsprogs-1.22/lib/ext2fs/bitops.h e2fsprogs-1.22/lib/e2p/e2p.h \
  /usr/include/dirent.h /usr/include/bits/dirent.h \
  /usr/include/bits/posix1_lim.h /usr/include/bits/local_lim.h \
- /usr/include/linux/limits.h compress.h zlib-1.2.1/zlib.h \
- zlib-1.2.1/zconf.h ui_newt.h /usr/include/errno.h \
- /usr/include/bits/errno.h /usr/include/linux/errno.h \
- /usr/include/asm/errno.h compress-loop.h
+ /usr/include/linux/limits.h compress.h zlib/zlib.h zlib/zconf.h \
+ ui_newt.h /usr/include/errno.h /usr/include/bits/errno.h \
+ /usr/include/linux/errno.h /usr/include/asm/errno.h
 image_error.o: image_error.c /usr/include/stdlib.h \
  /usr/include/features.h /usr/include/sys/cdefs.h \
  /usr/include/gnu/stubs.h \
@@ -185,9 +191,84 @@ image_jfs.o: image_jfs.c config.h /usr/include/stdio.h \
  /usr/include/sys/ttydefaults.h /usr/include/unistd.h \
  /usr/include/bits/posix_opt.h /usr/include/bits/environments.h \
  /usr/include/bits/wordsize.h /usr/include/bits/confname.h \
- /usr/include/getopt.h compress.h zlib-1.2.1/zlib.h zlib-1.2.1/zconf.h \
- ui_newt.h /usr/include/errno.h /usr/include/bits/errno.h \
- /usr/include/linux/errno.h /usr/include/asm/errno.h compress-loop.h
+ /usr/include/getopt.h compress.h zlib/zlib.h zlib/zconf.h ui_newt.h \
+ /usr/include/errno.h /usr/include/bits/errno.h \
+ /usr/include/linux/errno.h /usr/include/asm/errno.h
+image_lvm.o: image_lvm.c config.h /usr/include/stdio.h \
+ /usr/include/features.h /usr/include/sys/cdefs.h \
+ /usr/include/gnu/stubs.h \
+ /usr/lib/gcc-lib/i386-linux/2.95.4/include/stddef.h \
+ /usr/include/bits/types.h /usr/include/bits/pthreadtypes.h \
+ /usr/include/bits/sched.h /usr/include/libio.h \
+ /usr/include/_G_config.h /usr/include/wchar.h \
+ /usr/include/bits/wchar.h /usr/include/gconv.h \
+ /usr/lib/gcc-lib/i386-linux/2.95.4/include/stdarg.h \
+ /usr/include/bits/stdio_lim.h /usr/include/bits/stdio.h \
+ /usr/include/stdlib.h /usr/include/bits/waitflags.h \
+ /usr/include/bits/waitstatus.h /usr/include/endian.h \
+ /usr/include/bits/endian.h /usr/include/xlocale.h \
+ /usr/include/sys/types.h /usr/include/time.h \
+ /usr/include/sys/select.h /usr/include/bits/select.h \
+ /usr/include/bits/sigset.h /usr/include/bits/time.h \
+ /usr/include/sys/sysmacros.h /usr/include/alloca.h \
+ /usr/include/string.h /usr/include/bits/string.h \
+ /usr/include/bits/string2.h /usr/include/assert.h \
+ /usr/include/sys/mount.h /usr/include/sys/ioctl.h \
+ /usr/include/bits/ioctls.h /usr/include/asm/ioctls.h \
+ /usr/include/asm/ioctl.h /usr/include/bits/ioctl-types.h \
+ /usr/include/sys/ttydefaults.h /usr/include/sys/stat.h \
+ /usr/include/bits/stat.h /usr/include/asm/types.h \
+ /usr/include/errno.h /usr/include/bits/errno.h \
+ /usr/include/linux/errno.h /usr/include/asm/errno.h \
+ /usr/include/mntent.h /usr/include/paths.h /usr/include/unistd.h \
+ /usr/include/bits/posix_opt.h /usr/include/bits/environments.h \
+ /usr/include/bits/wordsize.h /usr/include/bits/confname.h \
+ /usr/include/getopt.h /usr/include/fcntl.h /usr/include/bits/fcntl.h \
+ /usr/include/stdint.h /usr/include/sys/vfs.h \
+ /usr/include/sys/statfs.h /usr/include/bits/statfs.h compress.h \
+ zlib/zlib.h zlib/zconf.h ui_newt.h lvm.h
+image_lvmreiserfs.o: image_lvmreiserfs.c config.h /usr/include/stdio.h \
+ /usr/include/features.h /usr/include/sys/cdefs.h \
+ /usr/include/gnu/stubs.h \
+ /usr/lib/gcc-lib/i386-linux/2.95.4/include/stddef.h \
+ /usr/include/bits/types.h /usr/include/bits/pthreadtypes.h \
+ /usr/include/bits/sched.h /usr/include/libio.h \
+ /usr/include/_G_config.h /usr/include/wchar.h \
+ /usr/include/bits/wchar.h /usr/include/gconv.h \
+ /usr/lib/gcc-lib/i386-linux/2.95.4/include/stdarg.h \
+ /usr/include/bits/stdio_lim.h /usr/include/bits/stdio.h \
+ /usr/include/stdlib.h /usr/include/bits/waitflags.h \
+ /usr/include/bits/waitstatus.h /usr/include/endian.h \
+ /usr/include/bits/endian.h /usr/include/xlocale.h \
+ /usr/include/sys/types.h /usr/include/time.h \
+ /usr/include/sys/select.h /usr/include/bits/select.h \
+ /usr/include/bits/sigset.h /usr/include/bits/time.h \
+ /usr/include/sys/sysmacros.h /usr/include/alloca.h \
+ /usr/include/string.h /usr/include/bits/string.h \
+ /usr/include/bits/string2.h /usr/include/assert.h \
+ /usr/include/sys/mount.h /usr/include/sys/ioctl.h \
+ /usr/include/bits/ioctls.h /usr/include/asm/ioctls.h \
+ /usr/include/asm/ioctl.h /usr/include/bits/ioctl-types.h \
+ /usr/include/sys/ttydefaults.h /usr/include/sys/stat.h \
+ /usr/include/bits/stat.h /usr/include/asm/types.h \
+ /usr/include/errno.h /usr/include/bits/errno.h \
+ /usr/include/linux/errno.h /usr/include/asm/errno.h \
+ /usr/include/mntent.h /usr/include/paths.h /usr/include/unistd.h \
+ /usr/include/bits/posix_opt.h /usr/include/bits/environments.h \
+ /usr/include/bits/wordsize.h /usr/include/bits/confname.h \
+ /usr/include/getopt.h /usr/include/fcntl.h /usr/include/bits/fcntl.h \
+ /usr/include/stdint.h /usr/include/sys/vfs.h \
+ /usr/include/sys/statfs.h /usr/include/bits/statfs.h \
+ reiserfsprogs/include/io.h reiserfsprogs/include/misc.h \
+ reiserfsprogs/include/reiserfs_lib.h \
+ reiserfsprogs/include/reiserfs_fs.h \
+ /usr/lib/gcc-lib/i386-linux/2.95.4/include/limits.h \
+ /usr/lib/gcc-lib/i386-linux/2.95.4/include/syslimits.h \
+ /usr/include/limits.h /usr/include/bits/posix1_lim.h \
+ /usr/include/bits/local_lim.h /usr/include/linux/limits.h \
+ /usr/include/bits/posix2_lim.h /usr/include/bits/xopen_lim.h \
+ reiserfsprogs/version.h compress.h zlib/zlib.h zlib/zconf.h ui_newt.h \
+ lvm.h
 image_raw.o: image_raw.c config.h /usr/include/stdio.h \
  /usr/include/features.h /usr/include/sys/cdefs.h \
  /usr/include/gnu/stubs.h \
@@ -227,9 +308,48 @@ image_raw.o: image_raw.c config.h /usr/include/stdio.h \
  /usr/include/unistd.h /usr/include/bits/posix_opt.h \
  /usr/include/bits/environments.h /usr/include/bits/wordsize.h \
  /usr/include/bits/confname.h /usr/include/getopt.h compress.h \
- zlib-1.2.1/zlib.h zlib-1.2.1/zconf.h ui_newt.h /usr/include/errno.h \
+ zlib/zlib.h zlib/zconf.h ui_newt.h /usr/include/errno.h \
  /usr/include/bits/errno.h /usr/include/linux/errno.h \
- /usr/include/asm/errno.h compress-loop.h
+ /usr/include/asm/errno.h
+image_reiserfs.o: image_reiserfs.c config.h /usr/include/stdio.h \
+ /usr/include/features.h /usr/include/sys/cdefs.h \
+ /usr/include/gnu/stubs.h \
+ /usr/lib/gcc-lib/i386-linux/2.95.4/include/stddef.h \
+ /usr/include/bits/types.h /usr/include/bits/pthreadtypes.h \
+ /usr/include/bits/sched.h /usr/include/libio.h \
+ /usr/include/_G_config.h /usr/include/wchar.h \
+ /usr/include/bits/wchar.h /usr/include/gconv.h \
+ /usr/lib/gcc-lib/i386-linux/2.95.4/include/stdarg.h \
+ /usr/include/bits/stdio_lim.h /usr/include/bits/stdio.h \
+ /usr/include/stdlib.h /usr/include/bits/waitflags.h \
+ /usr/include/bits/waitstatus.h /usr/include/endian.h \
+ /usr/include/bits/endian.h /usr/include/xlocale.h \
+ /usr/include/sys/types.h /usr/include/time.h \
+ /usr/include/sys/select.h /usr/include/bits/select.h \
+ /usr/include/bits/sigset.h /usr/include/bits/time.h \
+ /usr/include/sys/sysmacros.h /usr/include/alloca.h \
+ /usr/include/string.h /usr/include/bits/string.h \
+ /usr/include/bits/string2.h /usr/include/assert.h \
+ /usr/include/sys/mount.h /usr/include/sys/ioctl.h \
+ /usr/include/bits/ioctls.h /usr/include/asm/ioctls.h \
+ /usr/include/asm/ioctl.h /usr/include/bits/ioctl-types.h \
+ /usr/include/sys/ttydefaults.h /usr/include/sys/stat.h \
+ /usr/include/bits/stat.h /usr/include/asm/types.h \
+ /usr/include/errno.h /usr/include/bits/errno.h \
+ /usr/include/linux/errno.h /usr/include/asm/errno.h \
+ /usr/include/mntent.h /usr/include/paths.h /usr/include/unistd.h \
+ /usr/include/bits/posix_opt.h /usr/include/bits/environments.h \
+ /usr/include/bits/wordsize.h /usr/include/bits/confname.h \
+ /usr/include/getopt.h /usr/include/fcntl.h /usr/include/bits/fcntl.h \
+ reiserfsprogs/include/io.h reiserfsprogs/include/misc.h \
+ reiserfsprogs/include/reiserfs_lib.h \
+ reiserfsprogs/include/reiserfs_fs.h \
+ /usr/lib/gcc-lib/i386-linux/2.95.4/include/limits.h \
+ /usr/lib/gcc-lib/i386-linux/2.95.4/include/syslimits.h \
+ /usr/include/limits.h /usr/include/bits/posix1_lim.h \
+ /usr/include/bits/local_lim.h /usr/include/linux/limits.h \
+ /usr/include/bits/posix2_lim.h /usr/include/bits/xopen_lim.h \
+ reiserfsprogs/version.h compress.h zlib/zlib.h zlib/zconf.h ui_newt.h
 image_swap.o: image_swap.c config.h /usr/include/stdio.h \
  /usr/include/features.h /usr/include/sys/cdefs.h \
  /usr/include/gnu/stubs.h \
@@ -253,10 +373,9 @@ image_swap.o: image_swap.c config.h /usr/include/stdio.h \
  /usr/include/bits/environments.h /usr/include/bits/wordsize.h \
  /usr/include/bits/confname.h /usr/include/getopt.h \
  /usr/include/fcntl.h /usr/include/bits/fcntl.h \
- /usr/include/sys/stat.h /usr/include/bits/stat.h zlib-1.2.1/zlib.h \
- zlib-1.2.1/zconf.h ui_newt.h /usr/include/errno.h \
- /usr/include/bits/errno.h /usr/include/linux/errno.h \
- /usr/include/asm/errno.h compress-loop.h
+ /usr/include/sys/stat.h /usr/include/bits/stat.h zlib/zlib.h \
+ zlib/zconf.h ui_newt.h /usr/include/errno.h /usr/include/bits/errno.h \
+ /usr/include/linux/errno.h /usr/include/asm/errno.h
 image_xfs.o: image_xfs.c config.h /usr/include/stdio.h \
  /usr/include/features.h /usr/include/sys/cdefs.h \
  /usr/include/gnu/stubs.h \
@@ -295,10 +414,40 @@ image_xfs.o: image_xfs.c config.h /usr/include/stdio.h \
  /usr/include/bits/posix2_lim.h /usr/include/bits/xopen_lim.h \
  /usr/include/bits/sockaddr.h /usr/include/asm/socket.h \
  /usr/include/asm/sockios.h /usr/include/bits/in.h \
- /usr/include/bits/byteswap.h compress.h zlib-1.2.1/zlib.h \
- zlib-1.2.1/zconf.h ui_newt.h /usr/include/errno.h \
- /usr/include/bits/errno.h /usr/include/linux/errno.h \
- /usr/include/asm/errno.h image_xfs.h compress-loop.h
+ /usr/include/bits/byteswap.h compress.h zlib/zlib.h zlib/zconf.h \
+ ui_newt.h /usr/include/errno.h /usr/include/bits/errno.h \
+ /usr/include/linux/errno.h /usr/include/asm/errno.h image_xfs.h
+lvm.o: lvm.c /usr/include/stdio.h /usr/include/features.h \
+ /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h \
+ /usr/lib/gcc-lib/i386-linux/2.95.4/include/stddef.h \
+ /usr/include/bits/types.h /usr/include/bits/pthreadtypes.h \
+ /usr/include/bits/sched.h /usr/include/libio.h \
+ /usr/include/_G_config.h /usr/include/wchar.h \
+ /usr/include/bits/wchar.h /usr/include/gconv.h \
+ /usr/lib/gcc-lib/i386-linux/2.95.4/include/stdarg.h \
+ /usr/include/bits/stdio_lim.h /usr/include/bits/stdio.h \
+ /usr/include/stdlib.h /usr/include/bits/waitflags.h \
+ /usr/include/bits/waitstatus.h /usr/include/endian.h \
+ /usr/include/bits/endian.h /usr/include/xlocale.h \
+ /usr/include/sys/types.h /usr/include/time.h \
+ /usr/include/sys/select.h /usr/include/bits/select.h \
+ /usr/include/bits/sigset.h /usr/include/bits/time.h \
+ /usr/include/sys/sysmacros.h /usr/include/alloca.h \
+ /usr/include/string.h /usr/include/bits/string.h \
+ /usr/include/bits/string2.h /usr/include/assert.h \
+ /usr/include/sys/mount.h /usr/include/sys/ioctl.h \
+ /usr/include/bits/ioctls.h /usr/include/asm/ioctls.h \
+ /usr/include/asm/ioctl.h /usr/include/bits/ioctl-types.h \
+ /usr/include/sys/ttydefaults.h /usr/include/sys/stat.h \
+ /usr/include/bits/stat.h /usr/include/asm/types.h \
+ /usr/include/errno.h /usr/include/bits/errno.h \
+ /usr/include/linux/errno.h /usr/include/asm/errno.h \
+ /usr/include/mntent.h /usr/include/paths.h /usr/include/unistd.h \
+ /usr/include/bits/posix_opt.h /usr/include/bits/environments.h \
+ /usr/include/bits/wordsize.h /usr/include/bits/confname.h \
+ /usr/include/getopt.h /usr/include/fcntl.h /usr/include/bits/fcntl.h \
+ /usr/include/stdint.h /usr/include/sys/vfs.h \
+ /usr/include/sys/statfs.h /usr/include/bits/statfs.h ui_newt.h
 ui_newt.o: ui_newt.c config.h /usr/include/stdlib.h \
  /usr/include/features.h /usr/include/sys/cdefs.h \
  /usr/include/gnu/stubs.h \

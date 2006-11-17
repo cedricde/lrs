@@ -7,7 +7,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include "./zlib-1.2.1/zlib.h"
+#include "./zlib/zlib.h"
 
 #define OUTBUFF 8192
 

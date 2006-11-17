@@ -13,7 +13,7 @@ LDFLAGS=-s
 LIBS= -lnewt -L. -llrs
 RFSLIBS=-L./reiserfsprogs/lib/ -lcore -lmisc
 
-all: $(OBJ) $(LIBOBJ) liblrs.so.1 image_swap image_lvmreiserfs \
+all: $(OBJ) $(LIBOBJ) liblrs.so.1 liblrs.a image_swap image_lvmreiserfs \
  image_e2fs image_xfs image_jfs image_lvm \
  decompress decompress-test\
  image_error image_raw decompress-bitmap
@@ -55,7 +55,7 @@ decompress-test: decompress-test.o $(OBJ)
 	cc $(CFLAGS) $(LDFLAGS) -o $@ $< --static -L. -llrs
 
 decompress-bitmap: decompress-bitmap.o $(OBJ)
-	cc $(CFLAGS) $(LDFLAGS) -o $@ $< -L. -llrs
+	cc $(CFLAGS) $(LDFLAGS) -o $@ $< -L. -llrs -lnewt
 
 #image_reiserfs: image_reiserfs.o lvm.o 
 #	cc $(CFLAGS) -o $@ $(OBJ) $< $(LIBS) $(RFSLIBS)
@@ -70,5 +70,10 @@ liblrs.so.1: $(OBJ)
 	gcc -shared -Wl,-soname,liblrs.so.1 -o liblrs.so.1 $^ $(ZLIBOBJ)
 	strip $@
 	ln -sf $@ liblrs.so
+
+liblrs.a: $(OBJ)
+	ar rc $@ $^ $(ZLIBOBJ)
+	ranlib $@
+
 
 include .depend
