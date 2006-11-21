@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Mount helper script
+# Mount helper script for NFS
 #
 # $Id$
 #
@@ -8,8 +8,7 @@
 SIP=$1
 PREFIX=$2
 DIR=$3
-# (rsize is obsolete)
-RSIZE=$4
+
 SUBDIR=`dirname $3`
 
 # get the mac address

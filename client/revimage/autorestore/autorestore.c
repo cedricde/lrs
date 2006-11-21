@@ -23,8 +23,8 @@
  */
 
 /* How it works:
- * - mounts the filesystem with autorestore.sh
- * - opens and interprets conf.txt
+ * - opens and interprets /revosave/conf.txt 
+ * - logs and info are taken from /revoinfo/*
  */
 
 char *cvsid = "$Id$";
@@ -34,6 +34,7 @@ char *cvsid = "$Id$";
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
+#include <getopt.h>
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -56,7 +57,6 @@ char *cvsid = "$Id$";
 #define DEBUG(a)
 //#define TEST 1
 //#define TEST_PARTONLY 1
-#define LOGTXT "/revoinfo/log.restore"
 
 #include "zlib.h"
 
@@ -70,47 +70,56 @@ unsigned char zero[512];
 unsigned long s_min = 0xFFFFFFFF, s_max = 0;
 
 int dnum;
-/* default NFS read/write size */
-int rsize = 8192;
 /* hd space checks enabled ? */
 int revonospc = 0;
 /* hd fix the NT boot loader ? */
 int revontblfix = 0;
 /* cdrom restoration ? */
 int cdrom = 0;
+/* mtftp restoration ? */
+int mtftp = 0;
+/* do not run LRS specific code */
+int nolrs = 0;
 
 unsigned char buf[512];
 
 unsigned char command[120];
 
+/* paths mainly used  by mtftp restoration */
 unsigned char servip[40] = "";
 unsigned char servprefix[80] = "";
 unsigned char storagedir[80] = "";
 char hostname[32] = "";
 
+/* paths */
+char *revosave = "/revosave";
+char *revoinfo = "/revoinfo";
+char *revobin = "/revobin";
+char *outdir = NULL;
+char tmppath[1024];
+char logtxt[1024];
+
 /* do we have the bios HD map ? */
-int has_hdmap=0;
-char * hdmap[65536];
+int has_hdmap = 0;
+char *hdmap[65536];
 unsigned int exclude[65536];
 int nonewt = 0;
 
 
 /* LDM's privhead */
 typedef struct privhead_s {
-  __u64     logical_disk_start;                                             
-  __u64     logical_disk_size;                                              
-  __u64     config_start;                                                   
-  __u64     config_size;                                                    
+    __u64 logical_disk_start;
+    __u64 logical_disk_size;
+    __u64 config_start;
+    __u64 config_size;
 } privhead;
 
 /* */
-typedef struct params_
-{
-  int bitindex;
-  int fo;
-  __u64 offset;
-}
-PARAMS;
+typedef struct params_ {
+    int bitindex;
+    int fo;
+    __u64 offset;
+} PARAMS;
 
 
 /* proto */
@@ -118,11 +127,10 @@ int gethdbios(unsigned int sect);
 int isexcluded(int d, int p);
 
 /* Q&D IO abstraction layer */
-struct fops_
-{
-  int (*get)(char *fname, int filenum);
-  FILE * (*open)(char *fname, int filenum);
-  int  (*close)(FILE *stream);
+struct fops_ {
+    int (*get) (char *fname, int filenum);
+    FILE *(*open) (char *fname, int filenum);
+    int (*close) (FILE * stream);
 } fops;
 
 /* KB decompressed */
@@ -131,16 +139,16 @@ int todo = 0, done = 0;
 /*
  * printf() func with logging
  */
-void myprintf( const char *format_str, ... )
+void myprintf(const char *format_str, ...)
 {
     va_list ap;
     FILE *foerr;
 
     /* write some info */
-    foerr = fopen(LOGTXT, "a");
+    foerr = fopen(logtxt, "a");
     fprintf(foerr, "\n==== misc ====\n");
-    va_start( ap, format_str );
-    vfprintf( foerr, format_str, ap );
+    va_start(ap, format_str);
+    vfprintf(foerr, format_str, ap);
     va_end(ap);
     fclose(foerr);
 }
@@ -151,14 +159,16 @@ void myprintf( const char *format_str, ... )
 int mysystem(const char *s)
 {
     char cmd[1024];
-    char *redir = " >> " LOGTXT " 2>&1";
     FILE *foerr;
 
-    strncpy(cmd, s, 1024 - strlen(redir) - 1);
-    strcat(cmd, redir);
+    strncpy(cmd, s, 1024 - sizeof(logtxt) - 9 - 1);
+    strcat(cmd, " >> ");
+    strcat(cmd, logtxt);
+    strcat(cmd, " 2>&1");
+
 
     /* write some info */
-    foerr = fopen(LOGTXT, "a");
+    foerr = fopen(logtxt, "a");
     // ctime()
     fprintf(foerr, "\n==== %s ====\n", s);
     fclose(foerr);
@@ -166,7 +176,7 @@ int mysystem(const char *s)
     return 0;
 #endif
     return (system(cmd));
-    
+
 }
 
 /*
@@ -175,20 +185,35 @@ int mysystem(const char *s)
 int mysystem1(const char *s)
 {
     char cmd[1024];
-    char *redir = " 1>> " LOGTXT;
+    char *redir = " 1>> ";
     FILE *foerr;
 
-    strncpy(cmd, s, 1024 - strlen(redir) - 1);
+    strncpy(cmd, s, 1024 - strlen(logtxt) - 5 - 1);
     strcat(cmd, redir);
+    strcat(cmd, logtxt);
 
     /* write some info */
-    foerr = fopen(LOGTXT, "a");
+    foerr = fopen(logtxt, "a");
     // ctime()
     fprintf(foerr, "\n==== %s ====\n", s);
     fclose(foerr);
 
     return (system(cmd));
-    
+
+}
+
+/*
+ * snprintf to tmppath global var
+ */
+char *tmprintf(const char *format_str, ...)
+{
+    va_list ap;
+
+    va_start(ap, format_str);
+    vsnprintf(tmppath, 1023, format_str, ap);
+    va_end(ap);
+
+    return tmppath;
 }
 
 /* 
@@ -196,9 +221,11 @@ int mysystem1(const char *s)
  */
 void fatal(void)
 {
-  system("/bin/revosendlog 8");
-  while (1)
-    sleep(1);
+    if (!nolrs)
+	return;
+    system("revosendlog 8");
+    while (1)
+	sleep(1);
 }
 
 /*
@@ -206,33 +233,34 @@ void fatal(void)
  */
 void restore_raw(char *device, char *fname)
 {
-  char buffer[1024];
-  __u32 sect;
-  int fo, fp;
+    char buffer[1024];
+    __u32 sect;
+    int fo, fp;
 
-  fo = open(device, O_WRONLY | O_LARGEFILE);
-  sprintf(buffer, "/revosave/%s", fname);
-  fp = open(buffer, O_RDONLY | O_LARGEFILE);
+    fo = open(device, O_WRONLY | O_LARGEFILE);
+    tmprintf("%s/%s", revosave, fname);
+    fp = open(tmppath, O_RDONLY | O_LARGEFILE);
 
-  while (1) {
-    if (read(fp, buffer, 516) == 0) {
-      break;
+    while (1) {
+	if (read(fp, buffer, 516) == 0) {
+	    break;
+	}
+	sect = *(__u32 *) buffer;
+	if (lseek64(fo, (__u64) 512 * (__off64_t) sect, SEEK_SET) == -1) {
+	    DEBUG(printf("restore_raw: seek error\n"));
+	    ui_seek_error(device, __LINE__, errno, fo,
+			  (__u64) 512 * (__off64_t) sect);
+	}
+	if (write(fo, buffer + 4, 512) != 512) {
+	    DEBUG(printf("restore_raw: write error\n"));
+	    ui_write_error(device, __LINE__, errno, fo);
+	}
     }
-    sect = *(__u32 *) buffer;
-    if (lseek64(fo, (__u64)512 * (__off64_t) sect, SEEK_SET) == -1) {
-      DEBUG(printf("restore_raw: seek error\n"));
-      ui_seek_error(device, __LINE__, errno, fo, (__u64)512 * (__off64_t) sect);
+    close(fp);
+    if (ioctl(fo, BLKRRPART) < 0) {
+	myprintf("Reloading partition table failed\n");
     }
-    if (write(fo, buffer+4, 512) != 512) {
-      DEBUG(printf("restore_raw: write error\n"));
-      ui_write_error(device, __LINE__, errno, fo);
-    }
-  }
-  close(fp);
-  if (ioctl(fo, BLKRRPART) < 0) {
-    printf("Reloading partition table failed\n");
-  }
-  close(fo);
+    close(fo);
 }
 
 
@@ -241,41 +269,43 @@ void restore_raw(char *device, char *fname)
  */
 int file_get(char *fname, int filenum)
 {
-  char f[64];
-  struct stat st;
-  int ret;
+    char f[64];
+    struct stat st;
+    int ret;
 
-  sprintf(f, "%s%03d", fname, filenum);
-  DEBUG (printf ("** File: %s **", f));
-retry:
-  chdir("/revosave");
-  ret = stat(f, &st);
-  if (ret == -1 && cdrom) {
-	/* ask to swap the media*/
+    sprintf(f, "%s%03d", fname, filenum);
+    DEBUG(printf("** File: %s **", f));
+  retry:
+    chdir(revosave);
+    ret = stat(f, &st);
+    if (ret == -1 && cdrom) {
+	/* ask to swap the media */
 	chdir("/");
+	/* hardcoded paths because this feature is only used in the LRS-CD */
 	system("umount /revosave");
 	/* wait */
-	system("/revobin/image_error \"Please insert the next CD, and press a key\"");
+	system
+	    ("/revobin/image_error \"Please insert the next CD, and press a key\"");
 	getchar();
 	system("mount -t iso9660 /dev/cdrom /revosave");
 	goto retry;
-  }
-  return (ret);
+    }
+    return (ret);
 }
 
 FILE *file_open(char *fname, int filenum)
 {
-  char f[64];
-  FILE *fid;
-  
-  sprintf(f, "%s%03d", fname, filenum);
-  fid = fopen(f, "r");
-  return (fid);
+    char f[64];
+    FILE *fid;
+
+    sprintf(f, "%s%03d", fname, filenum);
+    fid = fopen(f, "r");
+    return (fid);
 }
 
-int file_close(FILE *stream)
+int file_close(FILE * stream)
 {
-  return fclose(stream);
+    return fclose(stream);
 }
 
 /* 
@@ -283,80 +313,76 @@ int file_close(FILE *stream)
  */
 int tftp_get(char *fname, int filenum)
 {
-  char f[64], cmd[512];
-  struct stat st;
+    char f[64], cmd[512];
+    struct stat st;
 
-  sprintf(f, "%s%03d", fname, filenum);
-  DEBUG (printf ("** File: %s **", f));
-  chdir("/tmpfs");
-  if (!nonewt) update_file(fname, filenum, -2, "Waiting", done);
-  sprintf(cmd, "/bin/revowait %s", f);
-  system(cmd);
-  if (!nonewt) update_file(fname, filenum, -2, "Downloading", done);
-  /* get files */
-  do 
-    {
-      system("rm * >/dev/null 2>&1");
-      sprintf(cmd, "/bin/atftp --tftp-timeout 10 --option \"blksize 4096\" --option multicast -g -r %s/%s/%s %s 69 2>/tmp/atftp.log", servprefix, storagedir, f, servip);
+    sprintf(f, "%s%03d", fname, filenum);
+    DEBUG(printf("** File: %s **", f));
+    chdir("/tmpfs");
+    if (!nonewt)
+	update_file(fname, filenum, -2, "Waiting", done);
+    sprintf(cmd, "revowait %s", f);
+    system(cmd);
+    if (!nonewt)
+	update_file(fname, filenum, -2, "Downloading", done);
+    /* get files */
+    do {
+	system("rm * >/dev/null 2>&1");
+	sprintf(cmd,
+		"atftp --tftp-timeout 10 --option \"blksize 4096\" --option multicast -g -r %s/%s/%s %s 69 2>/tmp/atftp.log",
+		servprefix, storagedir, f, servip);
     } while (system(cmd));
-  
-  return (stat(f, &st));
+
+    return (stat(f, &st));
 }
 
 FILE *tftp_open(char *fname, int filenum)
 {
-  char f[64];
-  
-  sprintf(f, "%s%03d", fname, filenum);
-  return (fopen(f, "r"));
+    char f[64];
+
+    sprintf(f, "%s%03d", fname, filenum);
+    return (fopen(f, "r"));
 }
 
-int tftp_close(FILE *stream)
+int tftp_close(FILE * stream)
 {
-  int ret = fclose(stream);
-  /* delete files */
-  //system("rm * >/dev/null 2>&1");
-  return ret;
+    int ret = fclose(stream);
+
+    return ret;
 }
 
 /*
  */
-int
-eof (int fd)
+int eof(int fd)
 {
-  __off64_t pos, end;
-  pos = lseek64 (fd, 0, SEEK_CUR);
-  if (pos < 0)
-    {
-      fprintf (stderr, "Error LSEEK : eof,pos\n");
+    __off64_t pos, end;
+    pos = lseek64(fd, 0, SEEK_CUR);
+    if (pos < 0) {
+	fprintf(stderr, "Error LSEEK : eof,pos\n");
     }
-  end = lseek64 (fd, 0, SEEK_END);
-  if (end < 0)
-    {
-      fprintf (stderr, "Error LSEEK : eof,end\n");
+    end = lseek64(fd, 0, SEEK_END);
+    if (end < 0) {
+	fprintf(stderr, "Error LSEEK : eof,end\n");
     }
-  if (lseek64 (fd, pos, SEEK_SET) < 0)
-    {
-      fprintf (stderr, "Error LSEEK, reseek\n");
+    if (lseek64(fd, pos, SEEK_SET) < 0) {
+	fprintf(stderr, "Error LSEEK, reseek\n");
     }
-  if (end == pos)
-    return 1;
-  return 0;
+    if (end == pos)
+	return 1;
+    return 0;
 }
 
 /*
  *
  */
-void
-fill (int fd, int bytes, int dir)
+void fill(int fd, int bytes, int dir)
 {
-  /* fills are not larger than 90MB so an 'int'should be enough */
-  int err = 0;
+    /* fills are not larger than 90MB so an 'int'should be enough */
+    int err = 0;
 
-  if (lseek64 (fd, bytes, dir) < 0)
-    {
-      ui_write_error(__FILE__, __LINE__, errno, fd);
-      err = 1;
+    if (lseek64(fd, bytes, dir) < 0) {
+	ui_write_error(__FILE__, __LINE__, errno, fd);
+	err = 1;
     }
 }
 
@@ -365,43 +391,39 @@ fill (int fd, int bytes, int dir)
  *
  */
 void
-flushToDisk (unsigned char *buff, unsigned char *bit, PARAMS * cp, int lg)
+flushToDisk(unsigned char *buff, unsigned char *bit, PARAMS * cp, int lg)
 {
-  unsigned char *ptr = buff;
-  unsigned char mask[] = { 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80 };
-  int indx = cp->bitindex;
-  
+    unsigned char *ptr = buff;
+    unsigned char mask[] =
+	{ 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80 };
+    int indx = cp->bitindex;
+
 
 // printf("Enter : bitindex -> %d\n",indx);
-  while (lg > 0)
-    {
-      __u64 s = 0;
-      while (!(bit[indx >> 3] & mask[indx & 7]))
-	{
-	  indx++;
-	  cp->offset += 512;
-	  s += 512;
+    while (lg > 0) {
+	__u64 s = 0;
+	while (!(bit[indx >> 3] & mask[indx & 7])) {
+	    indx++;
+	    cp->offset += 512;
+	    s += 512;
 	}
-      if (( s != 0) && (lseek64 (cp->fo, s, SEEK_CUR) < 0))
-	{
-	  ui_write_error(__FILE__, __LINE__, errno, cp->fo);
+	if ((s != 0) && (lseek64(cp->fo, s, SEEK_CUR) < 0)) {
+	    ui_write_error(__FILE__, __LINE__, errno, cp->fo);
 	}
 //      printf("Write @offset : %lld\t",cp->offset);
 //      {int i; for(i=0;i<15;i++) printf("%02x ",ptr[i]); printf("\n");}
-      if (cp->fo)
-	{
-	  if (write (cp->fo, ptr, 512) != 512)
-	    {
-	      ui_write_error(__FILE__, __LINE__, errno, cp->fo);
+	if (cp->fo) {
+	    if (write(cp->fo, ptr, 512) != 512) {
+		ui_write_error(__FILE__, __LINE__, errno, cp->fo);
 	    }
 	}
-      cp->offset += 512;
-      ptr += 512;
-      indx++;
-      lg -= 512;
+	cp->offset += 512;
+	ptr += 512;
+	indx++;
+	lg -= 512;
     }
 // printf("Exit  : bitindex -> %d\n",indx);
-  cp->bitindex = indx;
+    cp->bitindex = indx;
 }
 
 
@@ -410,204 +432,195 @@ flushToDisk (unsigned char *buff, unsigned char *bit, PARAMS * cp, int lg)
  */
 void restore(char *device, unsigned int sect, char *fname)
 {
-  int fo;			/* output device */
-  z_stream zptr;
-  int state, filenum, fmax = -1;
-  int ret, firstpass, bitmaplg;
-  FILE *fi;
-  PARAMS currentparams;
-  __u64 i, starto;
+    int fo;			/* output device */
+    z_stream zptr;
+    int state, filenum, fmax = -1;
+    int ret, firstpass, bitmaplg;
+    FILE *fi;
+    PARAMS currentparams;
+    __u64 i, starto;
 
-  currentparams.offset = 512*(__u64)sect;
-  currentparams.bitindex = 0;
-  memset (zero, 0, 512);
+    currentparams.offset = 512 * (__u64) sect;
+    currentparams.bitindex = 0;
+    memset(zero, 0, 512);
 
-  // log
-  myprintf("restore: %s, offset %d sectors, %s\n", device, sect, fname);
+    // log
+    myprintf("restore: %s, offset %d sectors, %s\n", device, sect, fname);
 
-  // open the output device
-  fo = open(device, O_WRONLY | O_LARGEFILE );
-  currentparams.fo = fo;
-  DEBUG(printf ("Seeking to : %lld\n", currentparams.offset));
-  i = lseek64 (currentparams.fo, currentparams.offset, SEEK_SET);
-  if (i != currentparams.offset) {
-    ui_seek_error(__FILE__, __LINE__, errno, currentparams.fo, currentparams.offset);
-  }
+    // open the output device
+    fo = open(device, O_WRONLY | O_LARGEFILE);
+    currentparams.fo = fo;
+    DEBUG(printf("Seeking to : %lld\n", currentparams.offset));
+    i = lseek64(currentparams.fo, currentparams.offset, SEEK_SET);
+    if (i != currentparams.offset) {
+	ui_seek_error(__FILE__, __LINE__, errno, currentparams.fo,
+		      currentparams.offset);
+    }
+    // open the data directory
+    filenum = 0;
+    while (!fops.get(fname, filenum)) {
+	/*      name = ep->d_name;
+	   l = strlen(name);
+	   if (strncmp(name, fname, strlen(fname))) continue;
+	   if (l < 4) continue;
+	   if (!isdigit(name[l-1]) || !isdigit(name[l-2]) || !isdigit(name[l-3]) ) continue;        
+	   DEBUG (printf ("** File: %s **", fname));
+	 */
+      start:
+	if (!nonewt)
+	    update_file(fname, filenum, fmax, device, done);
 
-  // open the data directory
-  filenum = 0;
-  while (!fops.get(fname ,filenum))
-    {
-      /*      name = ep->d_name;
-      l = strlen(name);
-      if (strncmp(name, fname, strlen(fname))) continue;
-      if (l < 4) continue;
-      if (!isdigit(name[l-1]) || !isdigit(name[l-2]) || !isdigit(name[l-3]) ) continue;	  
-      DEBUG (printf ("** File: %s **", fname));
-      */
-    start:
-      if (!nonewt) update_file(fname, filenum, fmax, device, done);
+	state = Z_SYNC_FLUSH;
+	firstpass = 1;
+	bitmaplg = 0;
 
-      state = Z_SYNC_FLUSH;
-      firstpass = 1;
-      bitmaplg = 0;
-      
-      zptr.zalloc = NULL;
-      zptr.zfree = NULL;
+	zptr.zalloc = NULL;
+	zptr.zfree = NULL;
 
-      starto = lseek64(currentparams.fo, 0 , SEEK_CUR);	/* save the current offset */
+	starto = lseek64(currentparams.fo, 0, SEEK_CUR);	/* save the current offset */
 
-      fi = fops.open (fname, filenum);
-      if (fi == NULL)
-	{
-	  /*printf ("Cannot open input file\n");*/
-	  system("/revobin/image_error \"Cannot open input file\"");
-	  fatal();
+	fi = fops.open(fname, filenum);
+	if (fi == NULL) {
+	    /*printf ("Cannot open input file\n"); */
+	    system("/revobin/image_error \"Cannot open input file\"");
+	    fatal();
 	}
 
-      zptr.avail_in = fread (IN, 1, INSIZE, fi);
-            
-      currentparams.offset = 0;
-      currentparams.bitindex = 0;
-      
-      zptr.next_in = (unsigned char *) IN;
-      zptr.next_out = (unsigned char *) BUFFER;	// was dbuf.data;
-      zptr.avail_out = 24064;
-      
-      inflateInit (&zptr);
+	zptr.avail_in = fread(IN, 1, INSIZE, fi);
 
-      do
-	{
+	currentparams.offset = 0;
+	currentparams.bitindex = 0;
+
+	zptr.next_in = (unsigned char *) IN;
+	zptr.next_out = (unsigned char *) BUFFER;	// was dbuf.data;
+	zptr.avail_out = 24064;
+
+	inflateInit(&zptr);
+
+	do {
 //  if (inflateSyncPoint(&zptr)) printf("#");
 
-	      ret = inflate (&zptr, state);
-	      if (!nonewt) update_progress( done + (zptr.total_in/1024) );
+	    ret = inflate(&zptr, state);
+	    if (!nonewt)
+		update_progress(done + (zptr.total_in / 1024));
 
 //  printf("-> %d : %d / %d\n",ret ,zptr.avail_in ,zptr.avail_out );
 
-	      if ((ret == Z_OK) && (zptr.avail_out == 0))
-		{
-		  if (firstpass)
-		    {
-		      DEBUG (printf ("Params : *%s\n", BUFFER));
-		      if (strstr (BUFFER, "BLOCKS="))
-			{
-			  int i = 0;
-			  if (sscanf (strstr (BUFFER, "BLOCKS=") + 7, "%d", &i) == 1) {
-			    fmax = i;
-			  }
-			}
-		      if (strstr (BUFFER, "ALLOCTABLELG="))
-			sscanf (strstr (BUFFER, "ALLOCTABLELG=") + 13, "%d",
-				&bitmaplg);
-		      memcpy (Bitmap, BUFFER + 2048, 24064 - 2048);
-		      currentparams.bitindex = 0;
-		      firstpass = 0;
-		    }
-		  else
-		    {
-		      flushToDisk (BUFFER, Bitmap, &currentparams, 24064);
-		    }
-
-		  zptr.next_out = (unsigned char *) BUFFER;
-		  zptr.avail_out = 24064;
-		}
-
-	      if ((ret == Z_OK) && (zptr.avail_in == 0))
-		{
-		  zptr.avail_in = fread (IN, 1, INSIZE, fi);
-		  zptr.next_in = (unsigned char *) IN;
-		}
-	    }
-	  while (ret == Z_OK);
-
-	  if (ret == Z_STREAM_END)
-	    {
-	      {
-		if (firstpass)
-		  {
-		    DEBUG (printf ("Params : *%s*\n", BUFFER));
-		    if (strstr (BUFFER, "BLOCKS="))
-		      {
+	    if ((ret == Z_OK) && (zptr.avail_out == 0)) {
+		if (firstpass) {
+		    DEBUG(printf("Params : *%s\n", BUFFER));
+		    if (strstr(BUFFER, "BLOCKS=")) {
 			int i = 0;
-			if (sscanf (strstr (BUFFER, "BLOCKS=") + 7, "%d", &i) == 1) {
-			  fmax = i;
+			if (sscanf(strstr(BUFFER, "BLOCKS=") + 7, "%d", &i)
+			    == 1) {
+			    fmax = i;
 			}
-		      }
-		    if (strstr (BUFFER, "ALLOCTABLELG="))
-		      sscanf (strstr (BUFFER, "ALLOCTABLELG=") + 13, "%d",
-			      &bitmaplg);
-		    memcpy (Bitmap, BUFFER + 2048, 24064 - 2048);
+		    }
+		    if (strstr(BUFFER, "ALLOCTABLELG="))
+			sscanf(strstr(BUFFER, "ALLOCTABLELG=") + 13, "%d",
+			       &bitmaplg);
+		    memcpy(Bitmap, BUFFER + 2048, 24064 - 2048);
+		    currentparams.bitindex = 0;
+		    firstpass = 0;
+		} else {
+		    flushToDisk(BUFFER, Bitmap, &currentparams, 24064);
+		}
+
+		zptr.next_out = (unsigned char *) BUFFER;
+		zptr.avail_out = 24064;
+	    }
+
+	    if ((ret == Z_OK) && (zptr.avail_in == 0)) {
+		zptr.avail_in = fread(IN, 1, INSIZE, fi);
+		zptr.next_in = (unsigned char *) IN;
+	    }
+	}
+	while (ret == Z_OK);
+
+	if (ret == Z_STREAM_END) {
+	    {
+		if (firstpass) {
+		    DEBUG(printf("Params : *%s*\n", BUFFER));
+		    if (strstr(BUFFER, "BLOCKS=")) {
+			int i = 0;
+			if (sscanf(strstr(BUFFER, "BLOCKS=") + 7, "%d", &i)
+			    == 1) {
+			    fmax = i;
+			}
+		    }
+		    if (strstr(BUFFER, "ALLOCTABLELG="))
+			sscanf(strstr(BUFFER, "ALLOCTABLELG=") + 13, "%d",
+			       &bitmaplg);
+		    memcpy(Bitmap, BUFFER + 2048, 24064 - 2048);
 		    zptr.next_out = (unsigned char *) BUFFER;
 		    zptr.avail_out = 24064;
-		  }
-	      }
-
-	      //printf ("Flushing to EOF ... (%d bytes)\n",
-		//      24064 - zptr.avail_out);
-	      flushToDisk (BUFFER, Bitmap, &currentparams, 24064 - zptr.avail_out);
-	      zptr.next_out = (unsigned char *) BUFFER;
-	      zptr.avail_out = 24064;
-	    }
-
-	  ret = inflate (&zptr, Z_FINISH);
-	  inflateEnd (&zptr);
-
-
-	  if (ret < 0)
-	    {
-	      /*printf ("Returned : %d\t", ret);
-	        printf ("(AvailIn : %d / ", zptr.avail_in);
-		printf ("AvailOut: %d)\n", zptr.avail_out);
-		printf ("(TotalIn : %ld / ", zptr.total_in);
-		printf ("TotalOut: %ld)\n", zptr.total_out);*/
-	      ui_zlib_error(ret);
-	      fops.close (fi);
-	      fops.get(fname ,filenum); /* reget file */
-	      /* return to the correct offset */
-	      lseek64(currentparams.fo, starto , SEEK_SET);	
-
-	      goto start;
-	    }
-
-	  /*printf ("Offset : %lld\n", currentparams.offset);
-	  printf ("Bitmap index : %d\n", currentparams.bitindex);*/
-
-	  if (bitmaplg)
-	    {
-	      if (bitmaplg * 8 > currentparams.bitindex)
-		{
-		  currentparams.offset +=
-		    (__u64)512 * (bitmaplg * 8 - currentparams.bitindex);
-		  if (currentparams.fo)
-		    {
-		      /* no error check for the last fill */
-		      /* bounds will be checked by the following write */
-		      lseek64 (currentparams.fo, 
-		    	    (__u64)512 * (bitmaplg * 8 - currentparams.bitindex),
-		    	    SEEK_CUR);
-		    }
 		}
 	    }
 
-	  filenum ++;
-	  fops.close (fi);
-	  done += zptr.total_in/1024;
-	  if ((fmax != -1) && (filenum >= fmax)) break;
+	    //printf ("Flushing to EOF ... (%d bytes)\n",
+	    //      24064 - zptr.avail_out);
+	    flushToDisk(BUFFER, Bitmap, &currentparams,
+			24064 - zptr.avail_out);
+	    zptr.next_out = (unsigned char *) BUFFER;
+	    zptr.avail_out = 24064;
+	}
+
+	ret = inflate(&zptr, Z_FINISH);
+	inflateEnd(&zptr);
+
+
+	if (ret < 0) {
+	    /*printf ("Returned : %d\t", ret);
+	       printf ("(AvailIn : %d / ", zptr.avail_in);
+	       printf ("AvailOut: %d)\n", zptr.avail_out);
+	       printf ("(TotalIn : %ld / ", zptr.total_in);
+	       printf ("TotalOut: %ld)\n", zptr.total_out); */
+	    ui_zlib_error(ret);
+	    fops.close(fi);
+	    fops.get(fname, filenum);	/* reget file */
+	    /* return to the correct offset */
+	    lseek64(currentparams.fo, starto, SEEK_SET);
+
+	    goto start;
+	}
+
+	/*printf ("Offset : %lld\n", currentparams.offset);
+	   printf ("Bitmap index : %d\n", currentparams.bitindex); */
+
+	if (bitmaplg) {
+	    if (bitmaplg * 8 > currentparams.bitindex) {
+		currentparams.offset +=
+		    (__u64) 512 *(bitmaplg * 8 - currentparams.bitindex);
+		if (currentparams.fo) {
+		    /* no error check for the last fill */
+		    /* bounds will be checked by the following write */
+		    lseek64(currentparams.fo,
+			    (__u64) 512 * (bitmaplg * 8 -
+					   currentparams.bitindex),
+			    SEEK_CUR);
+		}
+	    }
+	}
+
+	filenum++;
+	fops.close(fi);
+	done += zptr.total_in / 1024;
+	if ((fmax != -1) && (filenum >= fmax))
+	    break;
     }
-  close(fo);
+    close(fo);
 }
 
 /*
  */
-unsigned char *find(const char *str, const char *fname)
+char *find(const char *str, const char *fname)
 {
     FILE *f;
 
     f = fopen(fname, "r");
     if (f == NULL)
 	return NULL;
-    while (fgets((char *)buf, 256, f)) {
+    while (fgets((char *) buf, 256, f)) {
 	if (strstr(buf, str)) {
 	    fclose(f);
 	    return strstr(buf, str) + strlen(str);
@@ -622,7 +635,7 @@ unsigned char *find(const char *str, const char *fname)
  */
 void netinfo(void)
 {
-    unsigned char *ptr, *ptr2;
+    char *ptr, *ptr2;
 
     if ((ptr = find("Next server: ", "/etc/netinfo.log"))) {
 	ptr2 = ptr;
@@ -657,69 +670,24 @@ void gethost(void)
 
     f = fopen("/etc/lbxname", "r");
     if (f != NULL) {
-        fscanf(f, "%31s", hostname);
-	fclose(f);    
+	fscanf(f, "%31s", hostname);
+	fclose(f);
     }
 
     f = fopen("/revoinfo/hostname", "r");
     if (f == NULL)
-	return ;
+	return;
     fscanf(f, "%31s", hostname);
-    fclose(f);    
+    fclose(f);
 }
 
-void commandline(void)
-{
-    unsigned char *ptr, *ptr2;
-
-    if ((ptr = find("revosavedir=", "/etc/cmdline"))) {
-	ptr2 = ptr;
-	while (*ptr2 != ' ')
-	    ptr2++;
-	*ptr2 = 0;
-	//printf ("*%s*\n", ptr);
-	strcpy(storagedir, ptr);
-    }
-
-    if ((ptr = find("slownfs", "/etc/cmdline"))) {
-	/* decrease the NFS packet size */
-	rsize = 1024;
-    }
-
-    if ((ptr = find("revonospc", "/etc/cmdline"))) {
-	/* do not check the HD size */
-	revonospc = 1;
-    }
-
-    if ((ptr = find("revontblfix", "/etc/cmdline"))) {
-	/* do not check the HD size */
-	revontblfix = 1;
-    }
-
-    /* default: mtftp restore */
-    fops.open = tftp_open;
-    fops.close = tftp_close;
-    fops.get = tftp_get;
-    
-    if ((ptr = find("revorestorenfs", "/etc/cmdline"))) {
-      /* nfs restore */
-      fops.open = file_open;
-      fops.close = file_close;
-      fops.get = file_get;
-    }
-#ifdef TEST
-      fops.open = file_open;
-      fops.close = file_close;
-      fops.get = file_get;
-#endif
-}
 
 void setdefault(char *v)
 {
-  char buf[256];
+    char buf[256];
 
-  sprintf(buf, "/bin/revosetdefault %s", v!=NULL ? v : "0");
-  system(buf);
+    sprintf(buf, "revosetdefault %s", v != NULL ? v : "0");
+    system(buf);
 }
 
 /*
@@ -730,131 +698,120 @@ void restoreimage(void)
     FILE *f;
     char buf[255], buf2[255], lvm[255];
     int vgscan = 0;
-    char *conftxt = "/revosave/conf.txt";
+    char *conftxt;
 
-    if (cdrom) conftxt = "/tmp/conf.txt";
-    if ((f = fopen(conftxt, "r")) == NULL) return;    
+    if (cdrom) {
+	conftxt = "/tmp/conf.txt";
+    } else {
+	tmprintf("%s/conf.txt", revosave);
+	conftxt = tmppath;
+    }
+    if ((f = fopen(conftxt, "r")) == NULL)
+	return;
     while (!feof(f)) {
-      fgets(buf, 250, f);
-      if (sscanf(buf, "%s", buf2) == 1) {
-	/* buf=full line, buf2=1st keyword */
-	DEBUG(printf("%s\n", buf2));
-	if (!strcmp("ptabs", buf2)) {
-	  // ptabs command
-	  unsigned int d1;
+	fgets(buf, 250, f);
+	if (sscanf(buf, "%s", buf2) == 1) {
+	    /* buf=full line, buf2=1st keyword */
+	    DEBUG(printf("%s\n", buf2));
+	    if (!strcmp("ptabs", buf2)) {
+		// ptabs command
+		unsigned int d1;
 
-	  if (sscanf(buf, " ptabs (hd%u) (nd)PATH/%s", &d1, buf2) == 2) {
-	    DEBUG(printf("%d,%s\n", d1, buf2));
-	    // restore the files to the device
+		if (sscanf(buf, " ptabs (hd%u) (nd)PATH/%s", &d1, buf2) ==
+		    2) {
+		    DEBUG(printf("%d,%s\n", d1, buf2));
+		    // restore the files to the device
 #ifdef TEST
-	    //restore_raw("/revoinfo/PTABS", buf2);
+		    //restore_raw("/revoinfo/PTABS", buf2);
 #else
-	    restore_raw(hdmap[d1], buf2);
+		    restore_raw(hdmap[d1], buf2);
 #endif
-	  }
-	  
-	} else if (!strcmp("partcopy", buf2)) {
-	  // partcopy command
-	  unsigned int d1, d2, sect;
-#ifdef TEST_PARTONLY 
-	  continue;
-#endif     
-	  if (sscanf(buf, " partcopy (hd%u,%u) %u PATH/%s", 
-		     &d1, &d2, &sect, buf2) == 4) {
-	    DEBUG(printf("%d,%d,%d,%s\n", d1, d2, sect, buf2));
-	    // convert the BIOS hd number to a Linux device	    
-	    // and restore the files to the device
-	    if (d1 >= 3968 && d2 == -1) {
-	      // lvm: no hdmap necessary
-	      strncpy(lvm, "/dev/", 5);
-	      if (sscanf(buf, " partcopy (hd%*u,%*u) %*u PATH/%*s %s", &lvm[5]) != 1) {
-		myprintf("syntax error in conf.txt: %s\n", buf);
-		exit(1);
-	      }
-	      if (vgscan == 0) {
-		system("lvm vgscan >/dev/null 2>&1; lvm vgchange -ay >/dev/null 2>&1");
-		vgscan = 1;
-	      }
-	      DEBUG(printf("lvm : %s\n", lvm));
-	      restore(lvm, sect, buf2);
-	      
-	    } else {
+		}
+
+	    } else if (!strcmp("partcopy", buf2)) {
+		// partcopy command
+		unsigned int d1, d2, sect;
+#ifdef TEST_PARTONLY
+		continue;
+#endif
+		if (sscanf(buf, " partcopy (hd%u,%u) %u PATH/%s",
+			   &d1, &d2, &sect, buf2) == 4) {
+		    DEBUG(printf("%d,%d,%d,%s\n", d1, d2, sect, buf2));
+		    // convert the BIOS hd number to a Linux device         
+		    // and restore the files to the device
+		    if (d1 >= 3968 && d2 == -1) {
+			// lvm: no hdmap necessary
+			strncpy(lvm, "/dev/", 5);
+			if (sscanf
+			    (buf, " partcopy (hd%*u,%*u) %*u PATH/%*s %s",
+			     &lvm[5]) != 1) {
+			    myprintf("syntax error in conf.txt: %s\n",
+				     buf);
+			    exit(1);
+			}
+			if (vgscan == 0) {
+			    system
+				("lvm vgscan >/dev/null 2>&1; lvm vgchange -ay >/dev/null 2>&1");
+			    vgscan = 1;
+			}
+			DEBUG(printf("lvm : %s\n", lvm));
+			restore(lvm, sect, buf2);
+
+		    } else {
 #ifdef TEST
-	      // restore("/revoinfo/P1", sect, buf2);
+			// restore("/revoinfo/P1", sect, buf2);
 #else
-	      restore(hdmap[d1], sect, buf2);
-#endif	    
-	      // fix the NT Bootloader if needed
-	      if (sect == 63 && revontblfix == 1) {
-		char command[255];
-	        sprintf(command, "ntblfix %s %d", hdmap[d1], d1+1);
-    		mysystem(command);
-	      }
+			restore(hdmap[d1], sect, buf2);
+#endif
+			// fix the NT Bootloader if needed
+			if (sect == 63 && revontblfix == 1) {
+			    char command[255];
+			    sprintf(command, "ntblfix %s %d", hdmap[d1],
+				    d1 + 1);
+			    mysystem(command);
+			}
+		    }
+		}
+	    } else if (!strcmp("setdefault", buf2) && !nolrs) {
+		strtok(buf, " ");
+		setdefault(strtok(NULL, " "));
+	    } else if (!strcmp("chainloader", buf2) && !nolrs) {
+		setdefault("0");
 	    }
-	  }
-	} else if (!strcmp("setdefault", buf2)) {
-	  strtok(buf, " ");
-	  setdefault(strtok(NULL, " "));
-	} else if (!strcmp("chainloader", buf2)) {
-	  setdefault("0");
 	}
-      }
     }
     fclose(f);
 }
-
-
-/*
- * load the 'hdmap' file if present
- */
-/*
-void loadhdmap(void)
-{
-  FILE *f;
-  int i = 0;
-  unsigned int d, n;
-
-  for (i = 0; i < 256; i++)
-    hdmap[i] = 0xFFFFFFFF;
-
-  f = fopen("/revoinfo/hdmap", "r");
-  if (f == NULL) return;
-
-  has_hdmap = 1;
-  while (!feof(f)) {
-    if (fscanf(f, "%d=%d\n", &d, &n ) == 2) {
-      DEBUG (printf("%d %d\n", d, n ));
-      hdmap[d] = n;
-    }
-  }
-  fclose(f);
-}
-*/
 
 /*
  * Check if the image can fit
  */
 void checkhdspace(__u32 major, __u32 minor, __u32 sect)
 {
-  FILE *f;
-  char fn[64], command[256];
-  __u32 orig = 0;
+    FILE *f;
+    char command[256];
+    __u32 orig = 0;
 
-  if (revonospc) return;
+    if (revonospc)
+	return;
 
-  sprintf(fn, "/revosave/size%02x%02x.txt", major, minor);
-  f = fopen(fn, "r");
-  if (f == NULL) return;
-  fscanf(f, "%u", &orig);
-  if (orig > sect) {
-    /* problem : the disk seems to be too small */
-    system("/bin/revosendlog 8");
-    sprintf(command,                                                        
-	    "/revobin/image_error \"Your hard disk seems to be to small to restore this image (%u vs %u KB).\n\nIf you want to restore anyway, you can disable the disk space checks in the client's options panel.\"", sect, orig);                                      
-    system(command);
-    while (1) sleep(1);
-  }
-  fclose(f);
+    tmprintf("%s/size%02x%02x.txt", revosave, major, minor);
+    f = fopen(tmppath, "r");
+    if (f == NULL)
+	return;
+    fscanf(f, "%u", &orig);
+    if (orig > sect) {
+	/* problem : the disk seems to be too small */
+	if (!nolrs)
+	    system("revosendlog 8");
+	sprintf(command,
+		"/revobin/image_error \"Your hard disk seems to be to small to restore this image (%u vs %u KB).\n\nIf you want to restore anyway, you can disable the disk space checks in the client's options panel.\"",
+		sect, orig);
+	system(command);
+	while (1)
+	    sleep(1);
+    }
+    fclose(f);
 }
 
 /*
@@ -863,121 +820,214 @@ void checkhdspace(__u32 major, __u32 minor, __u32 sect)
  */
 void makehdmap(void)
 {
-  FILE *fp;
-  int i = 0;
-  unsigned int d, major, minor, sec;
-  char line[256], buf[256];
+    FILE *fp;
+    int i = 0;
+    unsigned int d, major, minor, sec;
+    char line[256], buf[256];
 
-  for (i = 0; i < 256; i++)
-    hdmap[i] = NULL;
+    for (i = 0; i < 256; i++)
+	hdmap[i] = NULL;
 
-  d = 0;
-  fp = fopen("/proc/partitions", "r");
-  if (fp == NULL) return;
-  while (!feof(fp)) {
-    fgets(line, 255, fp);
-    if (sscanf(line, " %u %u %u %s\n", &major, &minor, &sec, buf) == 4) {
-      if ((((major == 3) || (major == 22) || (major == 33)
-	    || (major == 34)) && !(minor & 0x3F)) || 
-	  (((major == 8) || (major == 65) || (major >= 72 && major <= 79) 
-	    || (major >= 104 && major <= 111))
-	   && !(minor & 0xF))) {
-	char *str;
+    d = 0;
+    fp = fopen("/proc/partitions", "r");
+    if (fp == NULL)
+	return;
+    while (!feof(fp)) {
+	fgets(line, 255, fp);
+	if (sscanf(line, " %u %u %u %s\n", &major, &minor, &sec, buf) == 4) {
+	    if ((((major == 3) || (major == 22) || (major == 33)
+		  || (major == 34)) && !(minor & 0x3F)) ||
+		(((major == 8) || (major == 65)
+		  || (major >= 72 && major <= 79)
+		  || (major >= 104 && major <= 111))
+		 && !(minor & 0xF))) {
+		char *str;
 
-	/* check that the HD is big enough for the restore */
-	checkhdspace(major, minor, sec);
-	/* fill the hdmap */
-	str = malloc(strlen(buf) + 16);
-	strcpy(str, "/dev/");
-	strcat(str, buf);
-	hdmap[d] = str;
-	DEBUG (printf("%d %d %d %s\n", minor, major, d, str ));
-	d++;
-      }
+		/* check that the HD is big enough for the restore */
+		checkhdspace(major, minor, sec);
+		/* fill the hdmap */
+		str = malloc(strlen(buf)*2);
+		if (outdir) {
+			strcpy(str, outdir);
+			strcat(str, "/");
+		} else {
+			strcpy(str, "/dev/");			
+		}
+		strcat(str, buf);
+		hdmap[d] = str;
+		DEBUG(printf("%d %d %d %s\n", minor, major, d, str));
+		d++;
+	    }
+	}
     }
-  }
-  fclose(fp);
+    fclose(fp);
 
-  return;
+    return;
 
 }
 
 
 /* 
+ * Get the total image size (from /revosave/size.txt)
  */
-int getbytes()
+int getbytes(void)
 {
-  int kb = 0;
+    int kb = 0;
+    FILE *f;
 
-  FILE *f = fopen ("/revosave/size.txt", "r");
-  if (f == NULL) {
-    system("cd /revosave; du -k > /revosave/size.txt");
-    f = fopen ("/revosave/size.txt", "r");
-  } 
-  if (f == NULL) {
+    tmprintf("%s/size.txt", revosave);
+    f = fopen(tmppath, "r");
+    if (f == NULL) {
+	tmprintf("du -k %s", revosave);
+	f = popen(tmppath, "r");
+    }
+    if (f == NULL) {
+	return kb;
+    }
+    fscanf(f, "%d", &kb);
+    fclose(f);
     return kb;
-  }
-  fscanf(f, "%d", &kb);
-  fclose(f);
-  return kb;
+}
+
+/*
+ * command line parsing
+ */
+void commandline(int argc, char *argv[])
+{
+    char *ptr, *ptr2;
+    int c;
+
+    while (1) {
+	static struct option long_options[] = {
+	    /* These options set a flag. */
+	    {"nospc", no_argument, &revonospc, 1},
+	    {"ntblfix", no_argument, &revontblfix, 1},
+	    {"mtftp", no_argument, &mtftp, 1},
+	    {"nolrs", no_argument, &nolrs, 1},
+	    /* These options don't set a flag.
+	       We distinguish them by their indices. */
+	    {"save", required_argument, 0, 's'},
+	    {"info", required_argument, 0, 'i'},
+	    {"bin", required_argument, 0, 'b'},
+	    {"outdir", required_argument, 0, 'o'},
+	    {0, 0, 0, 0}
+	};
+	/* getopt_long stores the option index here. */
+	int option_index = 0;
+
+	c = getopt_long(argc, argv, "", long_options, &option_index);
+
+	/* Detect the end of the options. */
+	if (c == -1)
+	    break;
+
+	switch (c) {
+	case 's':
+	    revosave = optarg;
+	    break;
+	case 'i':
+	    revoinfo = optarg;
+	    break;
+	case 'b':
+	    revobin = optarg;
+	    break;
+	case 'o':
+	    outdir = optarg;
+	    revonospc = 1;
+	    break;
+	case '?':
+	    printf
+		("usage: autorestore [--nospc] [--nolrs] [--ntblfix] [--mtftp]\n"
+		 "	[--save /revosave] [--info /revoinfo] [--bin /revobin]\n"
+		 "	[--outdir restore_dir]\n");
+	    exit(1);
+	}
+    }
+
+    tmprintf("%s/log.restore", revoinfo);
+    strcpy(logtxt, tmppath);
+
+    if ((ptr = find("revosavedir=", "/etc/cmdline"))) {
+	ptr2 = ptr;
+	while (*ptr2 != ' ')
+	    ptr2++;
+	*ptr2 = 0;
+	//printf ("*%s*\n", ptr);
+	strcpy(storagedir, ptr);
+    }
+
+    /* default: mtftp restore */
+    fops.open = tftp_open;
+    fops.close = tftp_close;
+    fops.get = tftp_get;
+
+    if (!mtftp) {
+	/* nfs restore */
+	fops.open = file_open;
+	fops.close = file_close;
+	fops.get = file_get;
+    }
+#ifdef TEST
+    fops.open = file_open;
+    fops.close = file_close;
+    fops.get = file_get;
+#endif
 }
 
 /* 
+ * MAIN
  */
 int main(int argc, char *argv[])
 {
-  /* init */
-  BUFFER = malloc(24064);
-  Bitmap = malloc(24064 - 2048);
-  IN = malloc(INSIZE);
+    /* init */
+    FILE *f;
+    BUFFER = malloc(24064);
+    Bitmap = malloc(24064 - 2048);
+    IN = malloc(INSIZE);
 
-  netinfo();
-  commandline();
+    netinfo();
+    commandline(argc, argv);
 
-  if (argc > 1) nonewt = 1;
-
-  
-  // mount nfs dirs
-#ifndef TEST
-  if (strcmp(storagedir, "/cdrom")) {
-    do {
-	sprintf(command,
-	    "/bin/autosave.sh \"%s\" \"%s\" \"%s\" %d",
-	    servip, servprefix, storagedir, rsize);
-	printf("Mounting Storage directory...%s\n", command);
+    // mount nfs dirs
+    if (strcmp(storagedir, "/cdrom")) {
+	// now mounted by mount.sh
+    } else {
+	cdrom = 1;
     }
-    while (mysystem(command) != 0);
-  } else {
-    cdrom = 1;
-  }
-#endif
 
-  // some logging
-  system ("echo \"\"> " LOGTXT );
-  mysystem1 ("cat /etc/cmdline");
-  mysystem1 ("cat /proc/cmdline");
-  mysystem1 ("cat /proc/version");
-  mysystem1 ("cat /proc/partitions");
-  mysystem1 ("cat /proc/bus/pci/devices");
-  mysystem1 ("cat /proc/modules");    
-  mysystem1 ("cat /var/log/messages");
+    // some logging
+    f = fopen(logtxt, "w");	/* truncate the log file */
+    if (f != NULL)
+	fclose(f);
+    mysystem1("cat /etc/cmdline");
+    mysystem1("cat /proc/cmdline");
+    mysystem1("cat /proc/version");
+    mysystem1("cat /proc/partitions");
+    mysystem1("cat /proc/bus/pci/devices");
+    mysystem1("cat /proc/modules");
+    mysystem1("cat /var/log/messages");
 
-  // now we can use config files from the nfs server
-  makehdmap();
+    // now we can use config files from the nfs server
+    makehdmap();
 
-  // debug info
-  gethost();
-  todo = getbytes();
+    // debug info
+    gethost();
+    todo = getbytes();
 
-  if (!nonewt) init_newt(servip, servprefix, storagedir, hostname, todo);
-  system("/bin/revosendlog 2");
-  system("echo \"\">/revoinfo/progress.txt");
-  restoreimage();
-  system("/bin/revosendlog 3");
-  system("echo \"\">/revoinfo/progress.txt");
+    if (!nonewt)
+	init_newt(servip, servprefix, storagedir, hostname, todo);
+    if (!nolrs)
+	system("revosendlog 2");
+    
+    system(tmprintf("echo \"\">%s/progress.txt", revoinfo));
+    restoreimage();
+    if (!nolrs)
+	system("revosendlog 3");
+    
+    system(tmprintf("echo \"\">%s/progress.txt", revoinfo));
+    mysystem1("cat /var/log/messages");
 
-  mysystem1 ("cat /var/log/messages");
-
-  if (!nonewt) close_newt();
-  return 0;
+    if (!nonewt)
+	close_newt();
+    return 0;
 }
