@@ -7,12 +7,13 @@ crc32
 
 e100
 8139too full_duplex=1
-8139cp
-#3c59x debug=2 options=0x8007
+#8139cp
 3c59x full_duplex=1
 sk98lin
-e1000
+skge
+sky2
 via-rhine full_duplex=1
+e1000
 dmfe
 8390
 ne2k-pci full_duplex=1

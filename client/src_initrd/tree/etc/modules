@@ -7,10 +7,11 @@ crc32
 
 e100
 8139too
-8139cp
-#3c59x debug=2 options=0x8007
+#8139cp
 3c59x
 sk98lin
+skge
+sky2
 via-rhine
 e1000
 dmfe
