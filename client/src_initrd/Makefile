@@ -41,13 +41,13 @@ initrd: Makefile MAKEDEV pump/pump $(IMAGE_DIR)/autorestore/revoboot
 	for n in autorestore revosendlog revowait revogetname revosetdefault revoinc revoinv ;do \
 	    cp -f $(IMAGE_DIR)/autorestore/$$n $(LOOP)/bin || exit 1;\
 	done 
+	for n in autosave/autosave mount/mount.sh mount/mount-nfs.sh autosave/floppysave ;do \
+	    cp -f $(IMAGE_DIR)/$$n $(LOOP)/bin || exit 1;\
+	done 
 	cp -f $(IMAGE_DIR)/autorestore/revoboot $(LOOP)/etc/init.d ;\
 	for n in bench bench.ping ;do \
 	    cp -f $(IMAGE_DIR)/bench/$$n $(LOOP)/bin || exit 1;\
 	done 
-	cp -f $(AUTOSAVE_DIR)/autosave $(LOOP)/bin
-	cp -f $(AUTOSAVE_DIR)/autosave.sh $(LOOP)/bin
-	cp -f $(AUTOSAVE_DIR)/floppysave $(LOOP)/bin
 	if [ -d $(POSTINST_DIR) ] ; then \
 	    for n in postmount dopostinst mountwin doinitinst ;do \
 		cp -f $(POSTINST_DIR)/client/$$n $(LOOP)/bin ;\
