@@ -29,12 +29,8 @@
 	$datasource = & DataSource::getDefaultDataSource();
 
 	// Read compressed data
-	$data = "";
-	$stdin = fopen('php://input','r');
-	while (!feof($stdin)) {
-	    $data .= fread($stdin, 8192);
-	}
-	fclose($stdin);
+	$data = "$HTTP_RAW_POST_DATA";
+
 	// Uncompress it
 	// Write it in a temporary file (proc_open is only for php >=4.3)
 	$tname = tempnam("/tmp", "OCS");
