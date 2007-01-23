@@ -33,7 +33,7 @@ require '../lbs_common/lbs_common_priv.pl';
 ReadParse();
 lbs_common::InClean();
 
-use vars qw (%in %text $root_directory %gconfig $VERSION $LRS_HERE @LRS_MODULES %config %lbsconf $lbs_home $current_lang);
+use vars qw (%in %text $root_directory %gconfig $VERSION $LRS_HERE @LRS_MODULES %config %lbsconf $lbs_home $current_lang $last_st);
 
 cookie_send_group(%in);
 
@@ -111,6 +111,7 @@ sub last_status
       {
 	my $all = read_file_lines($file);
 	my $num = @$all;
+	$last_st = "";
 	my $last1 = &logfile2txt(@$all[$num-1]) if ($num >= 1);
 	my $last2 = &logfile2txt(@$all[$num-2]) if ($num >= 2);
 	my $last3 = &logfile2txt(@$all[$num-3]) if ($num >= 3);
@@ -152,6 +153,10 @@ sub logfile2txt
       my $l = read_file_lines($dir."/progress.txt");
       $log .= " ".$text{'lab_partition'}." ".$$l[0];
     }
+    if (-r $dir."/log.txt") {
+      $dir =~ s/$lbs_home//;
+      $log .= " <a href='details.cgi?mac=$mac&full=1&conf=$dir/'><img src='images/detail-small.gif'></a>";
+    }
   }
 
   if ($log =~ /([0-9A-F:]+) restoration started \((.*)\)/) {
@@ -182,9 +187,20 @@ sub logfile2txt
 
   foreach my $key (keys %trans) {
     if ($log =~ /($key) ?(.*)/) {
-      return "<img align='middle' src='images/$trans{$1}[1]'>&nbsp;".$trans{$1}[0]."&nbsp;".$2;
+      my $msg = $1;
+      my $rem = $2;
+      my $img = $trans{$msg}[1];
+      
+      if ($last_st =~ /completed/ and $msg =~ /started/) {
+        # if a completed follows a started state then, then change the started 
+	# state color to green
+	$img = "led-green.gif";
+      }
+      if ($msg ne "default set to") { $last_st = $msg; }
+      return "<img align='middle' src='images/$img'>&nbsp;".$trans{$msg}[0]."&nbsp;".$rem;
     }
   }
+  
   return $log;
 }
 
@@ -270,6 +286,7 @@ sub morelog($)
     {
       my $all = read_file_lines($file);
       #my $num = @$all;
+      $last_st = "";
 
       print "<h2>$text{lab_status}:</h2>";
       print "<pre>";

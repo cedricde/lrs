@@ -86,7 +86,7 @@ my @toprow = (
 		push @images, $k ;
 
 		$mvmac = "";
-		if ($size == 0 && $k ne "Base-0") {			# if there are no images attached
+		if ($size == 0 && $k ne "Base-0" && $k ne "Postinst") {			# if there are no images attached
 			$delicon = "trash.gif";
 			$mvicon = "up1.gif";
 			$delref = "<a href=\"imgbase.cgi?imgbase=".urlize($k)."\">";
@@ -106,7 +106,7 @@ my @toprow = (
 			  }
 		}
 
-		if ($size == 1 && $k ne "Base-0") {
+		if ($size == 1 && $k ne "Base-0" && $k ne "Postinst") {
 			my $sname = $first;
 			$sname =~ s/.*\///;
 			$mvicon = "up1.gif";
@@ -439,7 +439,20 @@ my %tabattr = (
 	'tr_body'   => $cb,
 	'border'    => "border=1 width='100%'",
 );
-	print "<script type=\"text/javascript\" src=\"/lbs_common/js/tooltip.js\"></script>\n";
+	print<<EOF;
+<script type="text/javascript" src="/lbs_common/js/tooltip.js"></script>
+<script language="JavaScript">
+<!--
+function confirmSub()
+{
+if (confirm("$text{'msg_menu_warn'}"))
+return true;
+else
+return false;
+}
+// -->
+</script>	
+EOF
 	print "<div id=\"tooltip\" style=\" position: absolute; visibility: hidden;\"></div>\n";
 	# Le tableau des menus	
 	print "<center>\n";
@@ -493,14 +506,16 @@ my %tabattr = (
 	lbs_common::lolRotate( \@lol );
 	print lbs_common::make_html_table( "", \@toprow, \@lol, \%tabattr );
 	
+	my $confirm = "";
         if ($mac) {
 	        print "<input type=hidden name=mac value=\"$mac\">\n";
         } else {
 	        print "<input type=hidden name=group value=\"$group\">\n";
 	        print "<input type=hidden name=profile value=\"$profile\">\n";
+		$confirm = "onclick=\"return confirmSub()\">";
         }
 	print "<input type=hidden name=form value=\"bootmenu\">\n";
-	print "<input type=submit name=apply value=\"$text{'but_apply'}\">\n";
+	print "<input type=submit name=apply value=\"$text{'but_apply'}\" $confirm\n";
 	print "<input type=submit name=sync value=\"$text{'but_sync'}\">\n";
 	print "<input type=submit name=cancel value=\"$text{'but_return'}\">\n";
 	

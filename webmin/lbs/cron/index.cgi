@@ -55,6 +55,7 @@ foreach $u (@ulist) {
 			print "<td><b>$text{'index_command'}</b></td> </tr>\n";
 			$donehead = 1;
 			}
+		if (!($job->{'command'} =~ /\/wake/)) { next; }
 		print "<tr $cb>\n";
 		if ($i == 0 && @ulist != 1) {
 			printf "<td valign=top rowspan=%d>", scalar(@plist);

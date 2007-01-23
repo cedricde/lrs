@@ -51,15 +51,14 @@ redirect("postinst.cgi") if (exists $in{'editconfpost'});
 lbs_common::print_header( $text{'tit_details'}, "index", $VERSION);
 
 $conf =~ s/[^a-z0-9_\/-]//gi;
-if ($conf =~ /imgbase/) {
-	lbs_common::print_html_tabs(['system_backup', 'details']);
+if ($in{'full'} && $in{'full'} == 1) {
+	lbs_common::print_html_tabs(['system_backup', 'logs']);
 } else {
-	lbs_common::print_html_tabs(['system_backup', 'details']);
-	# tabs(1);    	# FIXME
-}
+	lbs_common::print_html_tabs(['system_backup', 'shared_images']);
 
-bootmenu_save_edit_conf($conf, $lbs_home);
-bootmenu_save_postinst($conf, $lbs_home);
+	bootmenu_save_edit_conf($conf, $lbs_home);
+	bootmenu_save_postinst($conf, $lbs_home);
+}
 
 $conf =~ m|([^/]+)/?$|;
 print "<h1><center>$text{lab_image} $1</center></h1>\n";
@@ -133,7 +132,7 @@ if ($lrsgznbd) { push @toprow, "View"; }
 		$ll .= "line$i ";
 		
 		if ($lrsgznbd) {
-		    if ($type == 131 || $type == 7) {
+		    if ($type == 131 || $type == 7 || $type eq "LVM") {
 			push @view, "<a href=\"mountpart.cgi?part=$in{conf}/$file\">View !</a>";
 		    } else {
 			push @view, "&nbsp;";
