@@ -1,0 +1,10 @@
+/*
+ * stylesheet for the make_html_table function
+ */
+
+table.mht {                                                            
+        border          : 1px solid #EA4F26;
+}
+
+/* IE fix */
+table.mht input { border:none; }

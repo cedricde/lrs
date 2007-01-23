@@ -27,7 +27,7 @@ our $phplink="$logrep/php";
 
 ############ WEBMIN INCLUDING ############ 
         # doing some other init due to "strict" mode
-        use vars qw '%gconfig $module_root_directory %access';
+        use vars qw '%gconfig $module_root_directory %access %tconfig';
         $gconfig{'referers'}                    = "" unless $gconfig{'referers'};
         
 	do '../web-lib.pl';
@@ -87,10 +87,10 @@ $ENV{'LC_TIME'}=$ENV{'OLD_LANG'};
 use vars qw ($current_lang %config %gconfig %in %text $cb $tb %module_info $module_root_directory $module_name $root_directory);
 our $VERSION    ='$Rev$';                                                # REVISION
 $VERSION        =~ s/\$Rev: (\d+) \$/$module_info{version} (r.$1)/;
-our $LRS_HERE   =  -d "/tftpboot/revoboot";					# are we in LRS ?
+our $LRS_HERE   =  0;					# are we in LRS ?
 our $LINBOX_URL = 'http://www.linbox.com';
 our $BIGLOGO_URL= '/lbs_common/images/logo-big.gif';
-our @LRS_MODULES= qw 'lbs_common lbs backuppc lbs-inventory lrs-inventory lbs-cd  rsync lsc lbs-vnc lrs-proxy lbs/at ';      # every modules
+our @LRS_MODULES= qw 'lbs_common lbs backuppc lbs-inventory lrs-inventory lrs-ipmi lbs-cd  rsync lsc lbs-vnc lrs-proxy lbs/at ';      # every modules
 #our @LRS_MODULES= qw 'lbs_common lbs';      # every modules
 our $REALPATH   = 'readlink';
 ##############################################
@@ -392,7 +392,7 @@ my ($title, $help, $version, $image, $url)=@_;
 	$image  	= $BIGLOGO_URL  unless $image;
 	$version        = $VERSION   	unless $version;
 
-	header($title , "", $help, 1, 1, undef, "<a href='$url' style='text-decoration: none;'><img src='$image' style='border: none;'/></a>", "", "", "<font size='-2'>v. $version</font>");
+	header($title , "", $help, 1, 1, undef, "<a href='http://www.linbox.com'>Linbox home</a>", "", "", "<font size='-2'>v. $version</font>");
 	
 	return 0;
 }
@@ -468,6 +468,12 @@ $att_cell_center= $attr{'cell_center'}  if (exists($attr{'cell_center'})) ;
 
 my $out = "" ;
 
+my $col_tr_header = $att_tr_header;	# remove that stupid bgcolor= attribute
+my $col_tr_body = $att_tr_body;
+$col_tr_header =~ s/bgcolor=//i;
+$col_tr_body =~ s/bgcolor=//i;
+
+
 my $oddorevenline=0;    # to distinguish odd and even lines
 
         my $firstcell=0;
@@ -478,7 +484,7 @@ my $oddorevenline=0;    # to distinguish odd and even lines
                         $firstcell = 1;
                         $_ = "<td $att_tr_header><b>$_</b></td>"
                 }                        
-        } @{$top} ;	      	
+        } @{$top};
 
 	foreach (@{$lol}) {                                                     # each content of $lol become a cell
                 my $firstcell=0;
@@ -486,7 +492,7 @@ my $oddorevenline=0;    # to distinguish odd and even lines
                         if ($firstcell == 1) {
                                 $_ = "<td style=\"
                                         padding-left: .5em;
-                                        padding-right: .5em; border: 0px solid white; border-left: solid 1px #FCD3C2\">$_</td>"
+                                        padding-right: .5em; border: 0px solid white; border-left: solid 1px $col_tr_header\">$_</td>"
                         } else {
                                 $firstcell = 1;
                                 $_ = "<td style=\"padding-left: .5em; padding-right: .5em; border: 0px solid white;\">$_</td>"
@@ -499,7 +505,7 @@ my $oddorevenline=0;    # to distinguish odd and even lines
 	$out .= "<center>" if ($att_center);    				# center if needeed
 	
 	$out .= "<b><font size=+1>$title</font><br><br></b>"    		if ! ($title eq "");
-        $out .= "<table style='border: 1px solid #EA4F26'";
+        $out .= "<table class='mht'";
         $out .= " width='100%' " if ($att_center);    
         $out .= "$att_border>\n" ; 		      			# table's heading
 	foreach (@{$lol}) {  	# table's content
@@ -1288,8 +1294,8 @@ sub oddorevenline ($) {
         my $lineisoddref=shift;
         $$lineisoddref = !$$lineisoddref;
 
-        return "#F0F0F0" if ($$lineisoddref);
-        return "#F9F9F9";
+        return "#FFFFFF" if ($$lineisoddref);
+        return "#$tconfig{'cs_table'}";
 }
 
 # returns all profiles { profile => # of machines in profile }

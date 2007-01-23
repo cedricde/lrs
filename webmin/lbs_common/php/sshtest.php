@@ -50,7 +50,8 @@ Class sshtest
   {
 	$random = rand(1024, 65500);    
 
-	$cmd = escapeshellcmd("ssh -i $this->key -L $random:127.0.0.1:5900 $this->sshopts -n $this->user@$this->ip echo =SSHOK=");
+	$keychain = get_keychain();
+	$cmd = escapeshellcmd("$keychain ssh -i $this->key -L $random:127.0.0.1:5900 $this->sshopts -n $this->user@$this->ip echo =SSHOK=");
 	exec($cmd." 2>&1", $output, $ret);
 
 	$this->cmd = $cmd;

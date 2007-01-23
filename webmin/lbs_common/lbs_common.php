@@ -447,4 +447,19 @@ function normalize_machine_names(&$ether)
 
 }
 
+# 
+# Return the string to source ssh-agent variables if available
+#
+function get_keychain()
+{
+	$out = "";
+	exec("uname -n", $out);
+	if (file_exists("/root/.keychain/$out[0]-sh")) {
+		$lines = file("/root/.keychain/$out[0]-sh");
+		$line = explode(";", $lines[0]);
+		return("env $line[0]");
+	}
+	return("");
+}
+
 ?>

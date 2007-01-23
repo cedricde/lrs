@@ -1,6 +1,7 @@
 <!-- BEGIN section_menu -->
         <style type="text/css">
                 @import url("/lbs_common/css/tabs.css");
+                @import url("/lbs_common/css/maketable.css");
         </style>
 <!-- BEGIN ligne -->
         <ul id="lbsonglet">
