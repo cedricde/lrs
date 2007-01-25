@@ -118,11 +118,11 @@ void update_file(char *f, int n, int max, char *dev, int kb)
   char *path = "/revoinfo/progress.txt";
 
   if (max == -1) 
-    sprintf (buf, "- Restoring : %s%03d  -> %s\n       ", f, n, dev);
+    snprintf (buf, 255, "- Restoring : %s%03d  -> %s\n       ", f, n, dev);
   else if (max == -2)
-    sprintf (buf, "- Restoring : %s%03d (%s)  ", f, n, dev);
+    snprintf (buf, 255, "- Restoring : %s%03d (%s)  ", f, n, dev);
   else 
-    sprintf (buf, "- Restoring : %s%03d (/%d) -> %s\n     ", f, n, max-1, dev);
+    snprintf (buf, 255, "- Restoring : %s%03d (/%d) -> %s\n     ", f, n, max-1, dev);
   newtLabelSetText(i2, buf);
   newtRefresh();
 
@@ -229,7 +229,9 @@ void ui_zlib_error(int err)
     newtPopWindow();
 }
 
-/* fatal write error */
+/* 
+ * fatal write error 
+ */
 void ui_seek_error(char *s, int l, int err, int fd, off64_t seek)
 {
     char tmp[256];
@@ -269,6 +271,7 @@ void ui_seek_error(char *s, int l, int err, int fd, off64_t seek)
     getchar();
     //while (1) sleep(1);
 }
+
 
 void ui_write_error(char *s, int l, int err, int fd)
 {

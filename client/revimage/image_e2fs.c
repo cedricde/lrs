@@ -53,14 +53,13 @@
 #include "e2p/e2p.h"
 
 #include "compress.h"
-#include "ui_newt.h"
+#include "client.h"
 
 #define in_use(m, x)	(ext2fs_test_bit ((x), (m)))
 
 #define _(a) a
 
-unsigned long info1;
-unsigned long info2;
+char info1[32], info2[32];
 
 static void
 setbit (unsigned char *p, int num)
@@ -150,8 +149,10 @@ list_desc (ext2_filsys fs, PARAMS * p)
       group_blk = next_blk;
     }
 
-  info1 = ((long) fs->super->s_blocks_count * nbsect);
-  info2 = used;
+  sprintf(info1, "%lu", ((long) fs->super->s_blocks_count * nbsect));
+  sprintf(info2, "%lu", used);
+  print_sect_info(((long) fs->super->s_blocks_count * nbsect), used);
+  
 }
 
 
@@ -163,7 +164,6 @@ main (int argc, char **argv)
   ext2_filsys fs;
   char *device_name;
   PARAMS p;
-  FILE *fi;
   int big_endian;
   int fd;
 
@@ -189,7 +189,7 @@ main (int argc, char **argv)
 
   if (big_endian)
     debug (_("Note: This is a byte-swapped filesystem\n"));
-  list_super (fs->super);
+  //list_super (fs->super);
 
   retval = ext2fs_read_bitmaps (fs);
   if (retval)
@@ -205,13 +205,11 @@ main (int argc, char **argv)
   if (argv[2][0] == '?')
     exit (0);
 
-  init_newt (argv[1], argv[2], info1, info2, argv[0]);
+  ui_send("init_backup", 5, argv[1], argv[2], info1, info2, argv[0]);
   fd = open (argv[1], O_RDONLY);
   p.nb_sect = 0;
   compress_volume (fd, argv[2], &p, "E2FS=1|TYPE=131");
   close (fd);
-  stats();
-  close_newt ();
 
   exit (0);
 }

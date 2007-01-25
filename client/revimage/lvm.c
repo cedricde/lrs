@@ -23,7 +23,7 @@
 #include <stdint.h>
 #include <sys/vfs.h>
 
-#include "ui_newt.h"
+#include "compress.h"
 
 #define FMTT_MAGIC "\040\114\126\115\062\040\170\133\065\101\045\162\060\116\052\076"
 

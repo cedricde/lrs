@@ -20,7 +20,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "config.h"
+#include "../config.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,16 +34,15 @@
 #include <unistd.h>
 
 #include "compress.h"
-#include "ui_newt.h"
+#include "client.h"
 
-
-unsigned long info1, info2;
+char info1[32], info2[32];
 
 void
 allocated_sectors (PARAMS * p, char *dev)
 {
   int i, fd, bytes;
-  int size;
+  unsigned int size;
 
   if ((fd = open (dev, O_RDONLY)) == -1) exit(1);
   
@@ -73,9 +72,9 @@ allocated_sectors (PARAMS * p, char *dev)
     p->bitmap[i] = (0xFF >> (8-(size & 7))) & 0xFF;
   }
   
-  info1 = size;
-  info2 = size;
-
+  sprintf(info1, "%u", size);
+  sprintf(info2, "%u", size);
+  print_sect_info(size, size);
 }
 
 int
@@ -95,12 +94,10 @@ main (int argc, char *argv[])
 
   allocated_sectors(&params, argv[1]);
 
-  init_newt (argv[1], argv[2], info1, info2, argv[0]);
+  ui_send("init_backup", 5, argv[1], argv[2], info1, info2, argv[0]);
   fd = open (argv[1], O_RDONLY); // |O_DIRECT);
   compress_volume (fd, argv[2], &params, "");
   close (fd);
-  stats();
-  close_newt ();
-
+  
   return 0;
 }

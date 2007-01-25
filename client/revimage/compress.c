@@ -25,14 +25,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <errno.h>
 #include <sys/ioctl.h>
 #include <linux/fs.h>
 #include <string.h>
+#include <time.h>
 
 #include "compress.h"
-#include "ui_newt.h"
+#include "client.h"
 
 #define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))                 
+#define UI_READ_ERROR ui_read_error(__FILE__,__LINE__, errno, fi)
 
 /* Check that off_t can represent 2**63 - 1 correctly.
      We can't simply define LARGE_OFF_T to be 9223372036854775807,
@@ -46,7 +49,7 @@ int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
 #define BLOCKFLUSH 10
 
 unsigned long long done, todo;
-
+ 
 #if 0
 void setblocksize(FILE *f)
 {
@@ -80,6 +83,50 @@ void setblocksize(int fd)
 }
 #endif
 
+
+/* Fatal error, notify the server about it */
+void fatal(void)
+{
+    system("/bin/revosendlog 8");
+}
+
+/*
+ * backup read error: disk dead ? out of bounds read ?
+ */
+void ui_read_error(char *file, int line, int err, int fd)
+{
+    char sline[32], serrno[32], soffset[32], tmp[256];
+    off64_t offset;
+        
+    sprintf(sline, "%d", line);
+    sprintf(serrno, "%d", err);
+    offset = lseek64(fd, 0, SEEK_CUR);
+    sprintf(soffset, "%llu", (unsigned long long)offset);
+
+    snprintf(tmp, 255,
+	     "Hard Disk Read Error ! Bad hard disk or filesystem !\n"
+	     "errno %d (%s)\n" " file %s, line %d \n"
+	     "offset=%08lx%08lx ", err, strerror(err), file, line,
+	     (long) ((long long) offset >> 32), (long) offset);
+    fprintf(stderr, "ERROR: %s\n", tmp);
+        
+    fatal();
+    ui_send("misc_error", 2, "Hard Disc read error", tmp);
+}
+
+/*
+ * prints the number of total/used sectors
+ */
+void print_sect_info(long long unsigned tot_sec, long long unsigned used_sec)
+{
+    debug("- Total sectors : %llu = %llu MiB\n", tot_sec,  (tot_sec / 2048));
+    debug("- Used sectors  : %llu = %llu MiB (%3.2f%%)\n", used_sec,
+	    (used_sec / 2048), 100.0 * (float) used_sec / tot_sec);
+}
+
+/*
+ * Compression initialization
+ */
 void
 compress_init (COMPRESS ** c, int block, unsigned long long bytes,
 	       FILE * index)
@@ -123,7 +170,7 @@ compress_data (COMPRESS * c, unsigned char *data, int lg, FILE * out,
 {
   int ret, lout = c->outbuff - c->zptr->next_out;
   size_t w;
-  static int nocomp = 0, slg = 0, sout = 0;
+  //static int nocomp = 0, slg = 0, sout = 0;
 
   c->zptr->next_in = data;
   c->zptr->avail_in = lg;
@@ -241,13 +288,14 @@ compress_end (COMPRESS * c, FILE * out)
   return ret;
 }
 
+/* Write error */
 void
 compress_write_error (void)
 {
-  ui_write_error ();
-  // loop foreever
-  while (1)
-    sleep (1);
+  fatal();
+  fprintf(stderr, "ERROR: Write error ! Server's disk might be full.\n");
+  ui_send("backup_write_error", 0);
+  exit(EXIT_FAILURE);
 }
 
 /* 
@@ -264,12 +312,11 @@ compress_volume (int fi, unsigned char *nameprefix, PARAMS * p, char *info)
   unsigned long long bytes = 0;
   unsigned short lg, datalg;
   FILE *fo, *fs, *index;
-  unsigned char filename[128], firststring[200], *filestring,
+  char filename[128], firststring[200], *filestring, *sec,
     line[400], empty[] = "", numline[8];
-
+  time_t start, now;
+  
   setblocksize(fi);
-
-  // debug("Compressing Image :\n");
 
   //debug("- Bitmap lg    : %ld\n",p->bitmaplg);
   nb = ((p->bitmaplg + ALLOCLG - 1) / ALLOCLG);
@@ -280,13 +327,18 @@ compress_volume (int fi, unsigned char *nameprefix, PARAMS * p, char *info)
 
   skip = 0;
 
-  sprintf (firststring, "SECTORS=%ld|BLOCKS=%d|%s", p->nb_sect, nb, info);
+  sprintf (firststring, "SECTORS=%llu|BLOCKS=%d|%s", p->nb_sect, nb, info);
 
   sprintf (filename, "%sidx", nameprefix);
   index = fopen (filename, "w");
 
+  start = time(NULL);
+  
 #include "compress-loop.h"
 
+  now = time(NULL);
   fclose (index);
-
+    
+  sec = ui_send("close", 0);
+  debug("- saved in %d seconds\n", (int)difftime(now, start));
 }

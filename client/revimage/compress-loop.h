@@ -4,10 +4,6 @@
       used = 0;
 
       //debug("- Block %d : O",i+1);
-#ifndef BENCH
-      update_block (i, nb);
-#endif
-
 #ifdef BENCH
       sprintf (filename, "/dev/null");
 #else
@@ -59,10 +55,12 @@
       for (j = 0; j < lg; j++)
 	{
 	  //debug("%3d\b\b\b",(100*j)/lg);
-	  if (j % 100 == 0)
+	  if (j % 200 == 0)
 	    {
 #ifndef BENCH
-	       update_progress ((100 * j) / lg);
+	    	char tmp[32];
+	    	sprintf(tmp, "%llu", done);
+	        ui_send("refresh_backup_progress", 1, tmp);
 #endif
 	    }
 	  for (k = 1; k < 256; k += k)
@@ -73,14 +71,10 @@
 		{
 		  if (skip)
 		    {
-//		      if (fseek (fi, skip, SEEK_CUR)) UI_READ_ERROR;
 		      if (lseek (fi, skip, SEEK_CUR) == -1) UI_READ_ERROR;
 		      c->cbytes += skip;
 		    }
-//		  if (fread (dataptr, 512, 1, fi) != 1) UI_READ_ERROR;
-//		  if (fread (dataptr, 512, 1, fi) != 1) ui_read_error("read", c->cbytes, j);
 		  if (read (fi, dataptr, 512) != 512) UI_READ_ERROR;
-//		  if (read (fi, dataptr, 512) != 512) ui_read_error("read", k, j, fi);
 		  skip = 0;
 		  dataptr += 512;
 		  datalg += 512;

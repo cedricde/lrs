@@ -57,6 +57,7 @@ char *cvsid = "$Id$";
 #include <linux/sockios.h>
 
 #include "autosave.h"
+#include "../client.h"
 
 #define DEBUG(a)
 #define PARTONLY 1
@@ -383,12 +384,10 @@ int save(void)
 
     if (stat( tmprintf("%s/CONF", revosave) , &st) == 0) {
 	/* A backup is already here, stop everything ! */
-	sprintf(command,
-		"/revobin/image_error \"A Backup is already present in the server's directory\nYou may have a problem with getClientResponse on the server!\n\"");
-	mysystem(command);
+	ui_send("misc_error", 2, "Backup error", "A Backup is already present in the server's directory\nYou may have a problem with getClientResponse on the server!\n");
+
 #ifndef TEST
-	while (1)
-	    sleep(1);
+	exit(1);
 #endif
     }
 
@@ -634,14 +633,12 @@ int save(void)
 		"# ERROR: Unsupported or corrupted FS...(disk %d, part %d, type %x)\n",
 		dnum, poff[i], ttype[i]);
 	fclose(foerr);
-	/* Show a nice error message */
-	sprintf(command,
-		"/revobin/image_error \"Unsupported or corrupted file system...\n\n(disk %d, part %d, type %x)\"",
-		dnum, poff[i], ttype[i]);
-	system(command);
+
 	fatal();
-	while (getchar() != 'c')
-	    sleep(1);
+	/* Show a nice error message */
+	sprintf(command, "Unsupported or corrupted file system...\n\n(disk %d, part %d, type %x)",
+		dnum, poff[i], ttype[i]);
+	ui_send("misc_error", 2, "Backup error", command);
 
     }
 
@@ -651,12 +648,9 @@ int save(void)
 
     if (backuped == 0) {
 	/* nothing backuped !!! */
-	sprintf(command,
-		"/revobin/image_error \"Nothing was backuped !\nMaybe your disk controller was not recognized...\"");
-	mysystem(command);
 	fatal();
-	while (getchar() != 'c')
-	    sleep(1);
+	ui_send("misc_error", 2, "Backup error", "Nothing was backuped !\nMaybe your disk controller was not"
+		" recognized...");
     }
 
     if (fmajor)

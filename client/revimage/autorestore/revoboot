@@ -287,6 +287,7 @@ mount_cdrom()
 #
 # Env Set-up
 #
+ulimit -c 100000
 [ ! -f /etc/cmdline ] && cp -f /proc/cmdline /etc
 ETH=`cat /etc/eth`
 BASE="/tftpboot/revoboot"
@@ -328,6 +329,9 @@ grep -q revosavedir=/cdrom /etc/cmdline && mount_cdrom
 
 # Debug ?
 grep -q revodebug /etc/cmdline && exit 0
+
+# Launch the UI
+[ -x /bin/uinewt ] && /bin/uinewt &
 
 # CDROM boot ?
 grep -q revocdrom /etc/cmdline && do_cdrom

@@ -36,6 +36,7 @@ char *cvsid = "$Id$";
 #include <stdarg.h>
 #include <getopt.h>
 #include <ctype.h>
+#include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -52,7 +53,7 @@ char *cvsid = "$Id$";
 #include <linux/sockios.h>
 
 //#include "autosave.h"
-#include "ui_newt.h"
+#include "../client.h"
 
 #define DEBUG(a)
 //#define TEST 1
@@ -86,9 +87,9 @@ unsigned char buf[512];
 unsigned char command[120];
 
 /* paths mainly used  by mtftp restoration */
-unsigned char servip[40] = "";
-unsigned char servprefix[80] = "";
-unsigned char storagedir[80] = "";
+unsigned char servip[40] = "127.0.0.1";
+unsigned char servprefix[80] = "/";
+unsigned char storagedir[80] = "/";
 char hostname[32] = "";
 
 /* paths */
@@ -134,7 +135,8 @@ struct fops_ {
 } fops;
 
 /* KB decompressed */
-int todo = 0, done = 0;
+unsigned int todo = 0, done = 0;
+char todos[32];
 
 /*
  * printf() func with logging
@@ -158,10 +160,10 @@ void myprintf(const char *format_str, ...)
  */
 int mysystem(const char *s)
 {
-    char cmd[1024];
+    char cmd[1025];
     FILE *foerr;
 
-    strncpy(cmd, s, 1024 - sizeof(logtxt) - 9 - 1);
+    strncpy(cmd, s, 1024 - strlen(logtxt) - 9 - 1);
     strcat(cmd, " >> ");
     strcat(cmd, logtxt);
     strcat(cmd, " 2>&1");
@@ -224,8 +226,61 @@ void fatal(void)
     if (!nolrs)
 	return;
     system("revosendlog 8");
-    while (1)
-	sleep(1);
+    exit(EXIT_FAILURE);
+}
+
+/* Update the current file label */
+void update_file(char *f, int n, int max, char *dev)
+{
+    char ns[32], maxs[32];
+    
+    sprintf(ns, "%d", n);   
+    sprintf(maxs, "%d", max);   
+    ui_send("refresh_file", 4, f, ns, maxs, dev);   
+}
+
+/* fatal write error */
+void ui_seek_error(char *s, int l, int err, int fd, off64_t seek)
+{
+    char tmp[256];
+    int bs=0, mb=0;
+    off64_t offset;
+
+    /* get device block size */
+    ioctl(fd, BLKBSZGET, &bs);
+    /* get current offset */
+    offset = lseek64(fd, 0, SEEK_CUR);
+    
+    if (seek != 0) {
+	offset = seek;
+    }
+    mb = (int)(offset/1024/1024);
+    snprintf(tmp, 255, "Hard Disk Write Error ! Bad or too small hard disk !\n"
+	"errno %d (%s)\n"
+	"file %s, line %d \n"
+	"bs=%d  %s=%08lx%08lx (%d MiB)", 
+	err, strerror(err), s, l, bs, (seek!=0?"seek":"offset"),
+	(long)((long long)offset>>32), (long)offset, mb);
+    fprintf(stderr, "ERROR: %s\n", tmp);
+
+    /* fatal error */
+    system("/bin/revosendlog 8");
+    ui_send("misc_error", 2, "HD Write error", tmp);
+}
+
+void ui_write_error(char *s, int l, int err, int fd)
+{
+    ui_seek_error(s, l, err, fd, 0);
+}
+
+
+/* zlib error */
+void ui_zlib_error(int err)
+{
+    char tmp[32];
+
+    sprintf(tmp, "%d", err);
+    ui_send("zlib_error", 1, tmp);
 }
 
 /*
@@ -284,9 +339,7 @@ int file_get(char *fname, int filenum)
 	/* hardcoded paths because this feature is only used in the LRS-CD */
 	system("umount /revosave");
 	/* wait */
-	system
-	    ("/revobin/image_error \"Please insert the next CD, and press a key\"");
-	getchar();
+	ui_send("misc_error", 2, "Media change", "Please insert the next CD, and press the 'c' key");
 	system("mount -t iso9660 /dev/cdrom /revosave");
 	goto retry;
     }
@@ -320,11 +373,11 @@ int tftp_get(char *fname, int filenum)
     DEBUG(printf("** File: %s **", f));
     chdir("/tmpfs");
     if (!nonewt)
-	update_file(fname, filenum, -2, "Waiting", done);
+	update_file(fname, filenum, -2, "Waiting");
     sprintf(cmd, "revowait %s", f);
     system(cmd);
     if (!nonewt)
-	update_file(fname, filenum, -2, "Downloading", done);
+	update_file(fname, filenum, -2, "Downloading");
     /* get files */
     do {
 	system("rm * >/dev/null 2>&1");
@@ -413,7 +466,7 @@ flushToDisk(unsigned char *buff, unsigned char *bit, PARAMS * cp, int lg)
 //      printf("Write @offset : %lld\t",cp->offset);
 //      {int i; for(i=0;i<15;i++) printf("%02x ",ptr[i]); printf("\n");}
 	if (cp->fo) {
-	    if (write(cp->fo, ptr, 512) != 512) {
+    	    if (write(cp->fo, ptr, 512) != 512) {
 		ui_write_error(__FILE__, __LINE__, errno, cp->fo);
 	    }
 	}
@@ -434,7 +487,7 @@ void restore(char *device, unsigned int sect, char *fname)
 {
     int fo;			/* output device */
     z_stream zptr;
-    int state, filenum, fmax = -1;
+    int state, filenum, fmax = -1, upcnt;
     int ret, firstpass, bitmaplg;
     FILE *fi;
     PARAMS currentparams;
@@ -468,7 +521,7 @@ void restore(char *device, unsigned int sect, char *fname)
 	 */
       start:
 	if (!nonewt)
-	    update_file(fname, filenum, fmax, device, done);
+	    update_file(fname, filenum, fmax, device);
 
 	state = Z_SYNC_FLUSH;
 	firstpass = 1;
@@ -481,8 +534,7 @@ void restore(char *device, unsigned int sect, char *fname)
 
 	fi = fops.open(fname, filenum);
 	if (fi == NULL) {
-	    /*printf ("Cannot open input file\n"); */
-	    system("/revobin/image_error \"Cannot open input file\"");
+	    ui_send("misc_error", 2, "Error", "Cannot open input file");
 	    fatal();
 	}
 
@@ -497,15 +549,17 @@ void restore(char *device, unsigned int sect, char *fname)
 
 	inflateInit(&zptr);
 
+	upcnt = 0;
 	do {
-//  if (inflateSyncPoint(&zptr)) printf("#");
-
+    	    /* decompress */
 	    ret = inflate(&zptr, state);
-	    if (!nonewt)
-		update_progress(done + (zptr.total_in / 1024));
-
-//  printf("-> %d : %d / %d\n",ret ,zptr.avail_in ,zptr.avail_out );
-
+	    
+	    if ( upcnt++ % 100 == 0 ) {
+		/* update status */
+    	    	char tmp[32];
+	    	sprintf(tmp, "%llu", ((long long unsigned)done)*1024 + zptr.total_in);
+	    	ui_send("refresh_backup_progress", 1, tmp);
+	    }
 	    if ((ret == Z_OK) && (zptr.avail_out == 0)) {
 		if (firstpass) {
 		    DEBUG(printf("Params : *%s\n", BUFFER));
@@ -567,7 +621,6 @@ void restore(char *device, unsigned int sect, char *fname)
 
 	ret = inflate(&zptr, Z_FINISH);
 	inflateEnd(&zptr);
-
 
 	if (ret < 0) {
 	    /*printf ("Returned : %d\t", ret);
@@ -674,7 +727,8 @@ void gethost(void)
 	fclose(f);
     }
 
-    f = fopen("/revoinfo/hostname", "r");
+    tmprintf("%s/hostname", revoinfo);
+    f = fopen(tmppath, "r");
     if (f == NULL)
 	return;
     fscanf(f, "%31s", hostname);
@@ -804,10 +858,8 @@ void checkhdspace(__u32 major, __u32 minor, __u32 sect)
 	/* problem : the disk seems to be too small */
 	if (!nolrs)
 	    system("revosendlog 8");
-	sprintf(command,
-		"/revobin/image_error \"Your hard disk seems to be to small to restore this image (%u vs %u KB).\n\nIf you want to restore anyway, you can disable the disk space checks in the client's options panel.\"",
-		sect, orig);
-	system(command);
+	sprintf(command, "Your hard disk seems to be to small to restore this image (%u vs %u KB).\n\nIf you want to restore anyway, you can disable the disk space checks in the client's options panel.", sect, orig);
+	ui_send("misc_error", 2, "Error", command);
 	while (1)
 	    sleep(1);
     }
@@ -1013,9 +1065,9 @@ int main(int argc, char *argv[])
     // debug info
     gethost();
     todo = getbytes();
+    snprintf(todos, 32, "%u", todo);
 
-    if (!nonewt)
-	init_newt(servip, servprefix, storagedir, hostname, todo);
+    ui_send("init_restore", 4, servip, servprefix, hostname, todos);
     if (!nolrs)
 	system("revosendlog 2");
     
@@ -1026,8 +1078,9 @@ int main(int argc, char *argv[])
     
     system(tmprintf("echo \"\">%s/progress.txt", revoinfo));
     mysystem1("cat /var/log/messages");
-
-    if (!nonewt)
-	close_newt();
+    
+    ui_send("close", 0);
+    
     return 0;
 }
+

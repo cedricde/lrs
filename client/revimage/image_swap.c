@@ -28,9 +28,9 @@
 #include <assert.h>
 
 #include "compress.h"
-#include "ui_newt.h"
+#include "client.h"
 
-unsigned long info1, info2;
+char info1[32], info2[32];
 
 void
 check_signature (FILE * f, PARAMS * p)
@@ -61,8 +61,9 @@ allocated_sectors (PARAMS * p)
   for (i = 0; i < 8; i++)
     p->bitmap[i] = 0xFF;
 
-  info1 = p->nb_sect;
-  info2 = used;
+  sprintf(info1, "%u", p->nb_sect);
+  sprintf(info2, "%u", used);
+  print_sect_info(p->nb_sect, used);
 }
 
 /*  */
@@ -91,11 +92,10 @@ int main (int argc, char *argv[])
   // Compress now
   //
 
-  init_newt (argv[1], argv[2], info1, info2, argv[0]);
+  ui_send("init_backup", 5, argv[1], argv[2], info1, info2, argv[0]);
   fd = open (argv[1], O_RDONLY);
   compress_volume (fd, argv[2], &params, "SWAP=1");
   close (fd);
-  close_newt ();
-
+  
   return 0;
 }

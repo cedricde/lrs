@@ -35,17 +35,16 @@
 #include <netinet/in.h>
 
 #include "compress.h"
-#include "ui_newt.h"
+#include "client.h"
 #include "image_xfs.h"
 
-unsigned long info1, info2;
+char info1[32], info2[32];
 
 struct xfs_superblock sb;
 
 /* proto */
 void scanSbtree(int fd, PARAMS *p, struct xfs_agf *agf, __u32 root, __u32 levels);
 void scanfuncBno(int fd, PARAMS *p, char *ablock, __u32 level, struct xfs_agf *agf);
-
 
 /*  */
 inline __u64 ntohll(__u64 number)
@@ -262,9 +261,9 @@ void readsb(PARAMS *p, char *dev)
        exit(1);
    }
 
-   info1 = p->nb_sect;
-   info2 = used;
-
+   sprintf(info1, "%llu", p->nb_sect);
+   sprintf(info2, "%llu", used);
+   print_sect_info(p->nb_sect, used);
 }
 
 
@@ -285,12 +284,10 @@ int main (int argc, char *argv[])
   if (argv[2][0] == '?')
     exit (0);
 
-  init_newt (argv[1], argv[2], info1, info2, argv[0]);
+  ui_send("init_backup", 5, argv[1], argv[2], info1, info2, argv[0]);
   fd = open (argv[1], O_RDONLY);
   compress_volume (fd, argv[2], &params, "XFS");
   close (fd);
-  stats();
-  close_newt ();
 
   return 0;
 }

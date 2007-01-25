@@ -17,10 +17,12 @@
 
 #define BLKGETSIZE _IO(0x12,96) /* return device size /512 (long *arg) */
 
+#define debug(...) fprintf(stderr, __VA_ARGS__)
+
 typedef struct {
   unsigned char *bitmap;
   unsigned long bitmaplg;
-  unsigned long nb_sect;
+  unsigned long long nb_sect;
 } PARAMS;
 
 typedef struct i
@@ -48,3 +50,4 @@ unsigned long long compress_end(COMPRESS *c,FILE *out);
 void compress_write_error (void);
 //void setblocksize(FILE *f);
 void setblocksize(int f);
+void print_sect_info(long long unsigned tot_sec, long long unsigned used_sec);

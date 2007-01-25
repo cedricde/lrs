@@ -4,7 +4,6 @@
 
 #include "config.h"
 
-#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,10 +26,10 @@
 //#include <linux/lvm.h>
 
 #include "compress.h"
-#include "ui_newt.h"
+#include "client.h"
 #include "lvm.h"
 
-unsigned long info1, info2;
+char info1[32], info2[32];
 unsigned long lvm_sect;
 
 void allocated_sectors(PARAMS * p)
@@ -55,8 +54,10 @@ void allocated_sectors(PARAMS * p)
     for (i = 0; i < off; i++)
 	setbit(p->bitmap, i);
 
-    info1 = off;
-    info2 = off;
+    sprintf(info1, "%u", off);
+    sprintf(info2, "%u", off);
+    print_sect_info(off, off);
+
 }
 
 /* main */
@@ -83,13 +84,11 @@ int main(int argc, char *argv[])
 
     // Compress now
 
-    init_newt(argv[1], argv[2], info1, info2, argv[0]);
+    ui_send("init_backup", 5, argv[1], argv[2], info1, info2, argv[0]);
     fd = open(argv[1], O_RDONLY);
 
     compress_volume(fd, argv[2], &params, "LVM");
     close(fd);
-    stats();
-    close_newt();
 
     return 0;
 }

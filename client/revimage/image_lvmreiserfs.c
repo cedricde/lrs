@@ -22,7 +22,6 @@
 
 #include "config.h"
 
-#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -50,7 +49,7 @@
 //#include <linux/lvm.h>
 
 #include "compress.h"
-#include "ui_newt.h"
+#include "client.h"
 #include "lvm.h"
 
 typedef struct p {
@@ -59,7 +58,7 @@ typedef struct p {
     unsigned long offset;	/* offset to real FS in bytes (LVM overhead) */
 } CPARAMS;
 
-unsigned long info1, info2;
+char info1[32], info2[32];
 unsigned long lvm_sect = 0;
 
 /* BEGIN CODE TAKE FROM reiserfsprogs 3.x */
@@ -295,8 +294,9 @@ void allocated_sectors(PARAMS * p, CPARAMS * cp)
 	    used++;
 	}
 
-    info1 = p->nb_sect + off;
-    info2 = used + off;
+    sprintf(info1, "%lu", p->nb_sect + off);
+    sprintf(info2, "%lu", used + off);
+    print_sect_info(p->nb_sect + off, used + off);
 
     if (p->nb_sect != lvm_sect && lvm_sect != 0) {
       debug("Cannot backup this LVM/Reiserfs volume in optimized mode\n"
@@ -359,12 +359,10 @@ int main(int argc, char *argv[])
     // Compress now
     //
 
-    init_newt(argv[1], argv[2], info1, info2, argv[0]);
+    ui_send("init_backup", 5, argv[1], argv[2], info1, info2, argv[0]);
     fd = open(argv[1], O_RDONLY);
     compress_volume(fd, argv[2], &params, "RFS3");
     close(fd);
-    stats();
-    close_newt();
 
     return 0;
 }
