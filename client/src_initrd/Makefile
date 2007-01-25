@@ -8,7 +8,7 @@ TREE=./tree
 LOOP=/mnt/build
 INITRD=initrd
 MKDEV=$(shell pwd)/MAKEDEV
-IMAGES=image_error image_lvmreiserfs image_raw image_swap image_e2fs image_fat image_ntfs image_xfs image_jfs image_ufs image_lvm
+IMAGES=image_lvmreiserfs image_raw image_swap image_e2fs image_fat image_ntfs image_xfs image_jfs image_ufs image_lvm
 SRCLIN=/usr/src/linux/
 
 AUTOSAVE_DIR=../revimage/autosave
@@ -41,7 +41,7 @@ initrd: Makefile MAKEDEV pump/pump $(IMAGE_DIR)/autorestore/revoboot
 	for n in autorestore revosendlog revowait revogetname revosetdefault revoinc revoinv ;do \
 	    cp -f $(IMAGE_DIR)/autorestore/$$n $(LOOP)/bin || exit 1;\
 	done 
-	for n in autosave/autosave mount/mount.sh mount/mount-nfs.sh autosave/floppysave ;do \
+	for n in autosave/autosave mount/mount.sh mount/mount-nfs.sh autosave/floppysave ui_newt/uinewt ;do \
 	    cp -f $(IMAGE_DIR)/$$n $(LOOP)/bin || exit 1;\
 	done 
 	cp -f $(IMAGE_DIR)/autorestore/revoboot $(LOOP)/etc/init.d ;\
