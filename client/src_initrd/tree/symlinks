@@ -93,7 +93,7 @@ ln -sf libm-2.2.5.so ./lib/libm.so.6
 ln -sf libnss_files-2.2.5.so ./lib/libnss_files.so.2
 ln -sf libresolv-2.2.5.so ./lib/libresolv.so.2
 ln -sf libnsl-2.2.5.so ./lib/libnsl.so.1
-ln -sf libz.so.1.2.1 ./lib/libz.so
+#ln -sf libz.so.1.2.1 ./lib/libz.so
 ln -sf libutil-2.2.5.so ./lib/libutil.so.1
 ln -sf libslang.so.1.4.4 ./lib/libslang.so.1
 ln -sf libcrypt-2.2.5.so ./lib/libcrypt.so.1
