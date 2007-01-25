@@ -1,9 +1,11 @@
 # /etc/modules: kernel modules to load at boot time.
 
 pcmcia_core
+rsrc_nonstatic
 yenta_socket
 mii
-crc32
+libcrc32c
+zlib_inflate
 
 e100
 8139too full_duplex=1
