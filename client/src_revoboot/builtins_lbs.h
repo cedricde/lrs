@@ -21,6 +21,9 @@ int identify_func (char *arg, int flags);
 int identifyauto_func (char *arg, int flags);
 int kbdfr_func (char *arg, int flags);
 
+/* macros */
+#define MIN(X,Y) ((X) < (Y) ? (X) : (Y))
+
 /* variables */
 
 /* grub builtins */

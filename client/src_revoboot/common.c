@@ -410,8 +410,7 @@ init_bios_info (void)
 		for (i = 0; i < 32; i++) {
 		    lbsname[i] = udp_packet_r[i];
 		}
-        	lbsname[sz] = 0;
-		lbsname[31] = 0;	
+        	lbsname[MIN(sz,31)] = 0;
 	}
 	udp_close();
 	done_inventory = 1;

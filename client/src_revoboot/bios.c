@@ -186,8 +186,6 @@ get_diskinfo (int drive, struct geometry *geometry)
 
 	  if (! err)
 	    {
-	      unsigned int t_sect,max_sect,min_sect;
-
 	      /* Set the LBA flag.  */
 	      geometry->flags = BIOSDISK_FLAG_LBA_EXTENSION;
 
@@ -202,53 +200,14 @@ get_diskinfo (int drive, struct geometry *geometry)
 	      /* FIXME: when the 2TB limit becomes critical, we must
 		 change the type of TOTAL_SECTORS to unsigned long
 		 long.  */
-
-	      max_sect= drp.sectors * drp.heads * (drp.cylinders+1);
-	      min_sect= drp.total_sectors;
-
-#ifdef DEBUG
-	      printf("Start with : min = %d , max = %d\n",min_sect,max_sect);
-#endif
-
-	      if (max_sect>min_sect)
-	      {
-	      while (min_sect != max_sect)
-	      {
-      			struct disk_address_packet
-			      {
-				unsigned char length;
-				unsigned char reserved;
-				unsigned short blocks;
-				unsigned long buffer;
-				unsigned long long block;
-			      } dap;
-
-			t_sect=(max_sect+min_sect)/2;
-			if (t_sect == min_sect) t_sect=max_sect;	// max=min+1 => last test with max
-
-      			dap.length = sizeof (dap);
-			dap.block = t_sect;
-      			dap.blocks = 1;
-      			dap.reserved = 0;
-      			dap.buffer = SCRATCHSEG << 16;
-#ifdef DEBUG
-	       		grub_printf("Testing sector %d (%d-%d) : ",t_sect,min_sect,max_sect);
-#endif
-      			err = biosdisk_int13_extensions (0x42, drive, &dap);
-#ifdef DEBUG
-			if (err) grub_printf("Failed\n");
-			    else grub_printf("OK\n");
-#endif
-
-			if (err) max_sect=(t_sect-1);
-			   else  min_sect=t_sect;
-	      }
-	      total_sectors= min_sect+1;
-	      }
+		 
+	      if (drp.total_sectors)
+		total_sectors = drp.total_sectors & ~0L;
 	      else
-	       total_sectors= min_sect;
-
-
+		/* Some buggy BIOSes doesn't return the total sectors
+		   correctly but returns zero. So if it is zero, compute
+		   it by C/H/S returned by the LBA BIOS call.  */
+		total_sectors = drp.cylinders * drp.heads * drp.sectors;
 	    }
 	}
 

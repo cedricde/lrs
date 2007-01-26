@@ -9,4 +9,4 @@
 #define DATA32 data32
 
 #define PACKAGE "LinboxBootLoader"
-#define VERSION "1.30"
+#define VERSION "1.31"

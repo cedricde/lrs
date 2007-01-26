@@ -54,6 +54,8 @@ char imgname[32];
 /* proto */
 int new_get (char *file, int sect, int *endsect, int table);
 
+/* to force a new inventory */
+extern int done_inventory;
 
 void
 sendACK (int block, int from, int port)
@@ -272,7 +274,6 @@ drive_info (unsigned char *buffer)
       if (err)
 	continue;
       /* verify that the disk is readable */
-      
       if (biosdisk (BIOSDISK_READ, current_drive, &geom, 0, 1, SCRATCHADDR))
 	{                                                       
 	  /* 	 grub_printf ("Error reading the 1st sector on disk %d\n", 
@@ -1346,6 +1347,7 @@ identify_func (char *arg, int flags)
   udp_send_withmac (buffer, i + 1, 1001, 1001);
   udp_close ();
 
+  done_inventory = 0;
   init_bios_info();
 
   return 0;
