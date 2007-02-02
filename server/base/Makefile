@@ -8,6 +8,7 @@ LRSCD = /tmp/lrscd
 SHELL = /bin/bash
 BUILD = $(shell cat BUILD)
 BUILDRB = $(shell grep VERSION ../../client/src_revoboot/config.h|tr -dc [0-9])
+RELEASE = /home/weex/lrsorg/
 
 TMPBASE = base.tgz
 REVOBOOT_FILES = $(shell find $(SRCDIR) -type f)
@@ -16,6 +17,11 @@ TODAY = $(shell date '+%Y%m%d')
 BASE=../base/revoboot/bin
 
 all:	dist
+
+release: dist deb
+	cp -f $(DESTDIR)/base-update_$(TODAY).tgz $(RELEASE)/bin
+	cp -f $(DESTDIR)/base_$(TODAY).tgz $(RELEASE)/bin
+	cp -f $(DESTDIR)/lbs_$(TODAY)*i386.deb $(RELEASE)/bin
 
 mini: update_build
 	(cd revoboot/bin;tar -czvf ../../bin-miniupdate_$(TODAY).tgz initrd* bzI*)

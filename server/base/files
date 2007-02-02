@@ -16,3 +16,4 @@
 ../admin/perl/update_menu	revoboot/bin/update_menu
 ../admin/wake			revoboot/bin/wake
 ../admin/wol			revoboot/bin/wol
+../admin/perl/rotatelog		revoboot/bin/rotatelog
