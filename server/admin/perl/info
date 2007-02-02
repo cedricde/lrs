@@ -186,7 +186,10 @@ sub misc
   {
 	my @list=split(/[:,]/);
 
-	if ($list[13] == '47')
+	# the current fields are extracted from cpuid level 1
+	# see http://www.sandpile.org/ia32/cpuid.htm
+	# family, model, stepping, brandid, cpuid level (4 bytes), cpu flags (4 bytes), vendorid (12 bytes)
+	if ($list[13] eq "47" && $list[20] eq "49")
 	{
 		print "CpuVendor=Intel\n";
 		if ($list[1] == '4') {print "Model=486\n";next;}
@@ -206,8 +209,10 @@ sub misc
 		    if (($list[2] eq '9')) {print "Model=Pentium III Mobile\n";next;}
 		    if (($list[2] eq 'a')) {print "Model=Pentium III Xeon\n";next;}
 		    if (($list[2] eq 'b')) {print "Model=Pentium III 0.13u\n";next;}
-		    if (($list[2] eq 'd')) {print "Model=Pentium M 0.09u\n";next;}
-		    print "Model=Pentium Pro/II/III\n";
+		    if (($list[2] eq 'd')) {print "Model=Pentium M 90nm 2MB cache\n";next;}
+		    if (($list[2] eq 'e')) {print "Model=Pentium Core Duo 65nm 2MB cache\n";next;}
+		    if (($list[2] eq 'f')) {print "Model=Pentium Core 2 Duo 65nm 4MB cache\n";next;}
+		    print "Model=Pentium Pro/II/III/M\n";
 		    next;
 		  }
 		if (($list[1] eq '7')) {print "Model=Itanium\n";next;}
@@ -215,14 +220,15 @@ sub misc
 		    if ($list[2] == '0') {print "Model=Pentium 4 0.18u\n";next;}
 		    if ($list[2] == '1') {print "Model=Pentium 4 0.18u\n";next;}
 		    if ($list[2] == '2') {print "Model=Pentium 4 0.13u\n";next;}
-		    if ($list[2] == '3') {print "Model=Pentium 4 0.09u\n";next;}
-		    if ($list[2] == '4') {print "Model=Pentium 4 0.09u\n";next;}
+		    if ($list[2] == '3') {print "Model=Pentium 4 90nm\n";next;}
+		    if ($list[2] == '4') {print "Model=Pentium 4 90nm\n";next;}
+		    if ($list[2] == '6') {print "Model=Pentium 4 65nm\n";next;}
 		    print "Model=Pentium 4\n";next;
 		}
 		print "Model=???\n";
 		next;
 	}
-	if ($list[13] == '41')
+	if ($list[13] eq "41")
 	{	
 		print "CpuVendor=AMD\n";
 		if (($list[1] == '5')) {print "Model=K5/K6\n";next;}
@@ -243,7 +249,7 @@ sub misc
 		print "Model=???\n";
 		next;
 	}
-	if ($list[13] == '43')
+	if ($list[13] eq "43")
 	{	
 		print "CpuVendor=Cyrix/Via\n";
 		if (($list[1] == '5')) {print "Model=Cyrix M1/Media GX\n";next;}
@@ -252,6 +258,24 @@ sub misc
 		    print "Model=Via C3\n";next;
 		}
 		print "Model=???\n";
+		next;
+	}
+	if ($list[13] eq "53")
+	{	
+		print "CpuVendor=SiS\n";
+		print "Model=SiS 55x\n";
+		next;
+	}
+	if ($list[13] eq "47" && $list[15] eq "6f")
+	{
+		print "CpuVendor=Geode by NSC\n";
+		print "Model=GX/LX\n";
+		next;
+	}
+	if ($list[13] eq "47" && $list[20] eq "54")
+	{
+		print "CpuVendor=Transmeta\n";
+		print "Model=Crusoe/Efficeon\n";
 		next;
 	}
 	print "CpuVendor=???\n";

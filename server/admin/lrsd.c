@@ -102,9 +102,7 @@ void mysyslog( char *smac, int priority, const char *format_str, ... )
 	syslog(priority, buf);
 
 	/* keep only the last 20 lines of the log */
-	snprintf(buf, 1023, "mv -f %s %s.bak", path, path);
-	system(buf);
-	snprintf(buf, 1023, "tail -20 < %s.bak > %s", path, path);
+	snprintf(buf, 1023, "%s/bin/rotatelog %s", basedir, path);
 	system(buf);
 
       }
