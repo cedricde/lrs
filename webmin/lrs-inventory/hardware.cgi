@@ -20,8 +20,11 @@ unset($data);
 renderTable('BootMem', 'BootMem.tpl', array('Used'=>'YesNo', 'Capacity'=>'KiloByte'));
 renderTable('Hardware', 'Memory.tpl', array('RamTotal'=>'MegaByte' , 'SwapSpace'=>'MegaByte') );
 renderTable('BootGeneral', 'BootMemory.tpl');
-renderTable('BootGeneral','BootBIOS.tpl', array(), '', "FilterSplitPipe");
-
+if ($config['genfromocs'] == "1") {
+	renderTable('Bios','BIOS.tpl');
+} else {
+	renderTable('BootGeneral','BootBIOS.tpl', array(), '', "FilterSplitPipe");
+}
 renderTable('Sound', 'Sound.tpl');
 // for video card information get also PCI information
 //$datapci = & $datasource->read('BootPCI', $machines);

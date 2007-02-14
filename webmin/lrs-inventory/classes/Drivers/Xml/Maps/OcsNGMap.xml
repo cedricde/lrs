@@ -26,13 +26,12 @@
 
 	<MappedObject name="BIOS" class="Bios">
 
-		<MappedField from="LETTER" to="DriveLetter" />
-		<MappedField from="TYPE" to="DriveType" />
-		<MappedField from="FILESYSTEM" to="FileSystem" />
-		<MappedField from="TOTAL" to="TotalSpace" />
-		<MappedField from="FREE" to="FreeSpace" />
-		<MappedField from="NUMFILES" to="FileCount" />
-		<MappedField from="VOLUMN" to="VolumeName" />
+		<MappedField from="SMANUFACTURER" to="SmbManufacturer" />
+		<MappedField from="SMODEL" to="SmbProduct" />
+		<MappedField from="SSN" to="SmbSerial" />
+		<MappedField from="BMANUFACTURER" to="BiosVendor" />
+		<MappedField from="BVERSION" to="BiosVersion" />
+		<MappedField from="BDATE" to="ChipSerial" />
 
 	</MappedObject>
 
@@ -94,10 +93,12 @@
 	</MappedObject>
 
 	<MappedObject name="PORTS" class="Port">
-
+	
 		<MappedField from="TYPE" to="Type" />
-		<MappedField from="NAME" to="Name" />
-
+		<MappedField from="NAME" to="Stamp" />
+		<MappedField from="CAPTION" to="Caption" />
+		<MappedField from="DESCRIPTION" to="Description" />
+		
 	</MappedObject>
 
 	<MappedObject name="PRINTERS" class="Printer">

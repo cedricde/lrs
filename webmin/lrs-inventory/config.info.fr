@@ -3,3 +3,4 @@ chemin_CSV=Répertoire des fichiers CSV,0
 adresse_mail=Adresse mail,0
 showempty=Afficher les clients sans inventaire,1,1-Oui,0-Non
 genfromocs=Afficher les informations générales en utilisant:,1,1-L'inventaire OCS,0-L'inventaire au boot PXE
+keep=Nombre d'inventaires conservés dans la BDD (par machine),0

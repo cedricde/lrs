@@ -323,6 +323,7 @@ class XmlDriver extends Driver
 	 */
 	function characterDataXmlParser($parser, $data)
 	{
+exec("echo \"==D\" >>/tmp/log"); 			
 		if ( trim($data) != "" && $data!='N/A' && isset($GLOBALS['CURRENTOBJECT']))
 		{		
 			$object = & $GLOBALS['CURRENTOBJECT'];
@@ -331,7 +332,8 @@ class XmlDriver extends Driver
 			$object->setProperty($GLOBALS['CURRENTFIELD'], $data);
 	
 			$machine = & $GLOBALS['CURRENTMACHINE'];
-			
+
+exec("echo \"==C\" >>/tmp/log"); 			
 			// Sets the machine name
 			if ( ($GLOBALS['CURRENTFIELD']=='Host' || $GLOBALS['CURRENTFIELD']=='NAME') && $GLOBALS['CURRENTTAG']=='HARDWARE') {
 				$machine->setName($data);

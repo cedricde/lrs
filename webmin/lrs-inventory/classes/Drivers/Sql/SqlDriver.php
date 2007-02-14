@@ -115,8 +115,13 @@ class SqlDriver extends Driver
 	 */
 	function databaseCleanup($table, $inventoryid, $machineid)
 	{
-		// Only keep the latest 100 inventories
-		$keep = 100;
+		// Only keep the latest 20 inventories by default
+		$keep = 20;
+		
+		@$config = parse_ini_file("/etc/webmin/lrs-inventory/config");
+		if (intval($config['keep']) >= 1) {
+			$keep = intval($config['keep']);
+		}
 		
 		// This cleanup should be done sometimes... (randomly or cron job? I don't like cron jobs)
 		if (rand() % $keep != 0) return;
@@ -269,9 +274,9 @@ class SqlDriver extends Driver
 		$cachekey = $this->getCacheKey($object);
 
 		// Look up in the cached queries if this search hasn't been yet performed.
-		if ( array_key_exists($cachekey, $this->m_CachedQueries) )
+		if ( array_key_exists($cachekey, $this->m_CachedQueries) ) {
 			return $this->m_CachedQueries[$cachekey];
-			
+		}
 		$connection = $this->m_Connection;
 
 		// If not, then execute the query
@@ -288,10 +293,13 @@ class SqlDriver extends Driver
 
 			// Cache the query
 			$this->m_CachedQueries[$cachekey] = $id;
-
+			
 			// Bye bye
 			return $id;
 		}
+
+		// Cache the query even if it's empty
+		$this->m_CachedQueries[$cachekey] = "";
 		
 		// Else, if it should be created
 		if ( $create )
@@ -554,7 +562,7 @@ class SqlDriver extends Driver
 			$class = $class->getClassName();
 
 		// If table name cache hasn't been created
-		if ( !isset($this->m_Table) )
+		if ( !isset($this->m_Tables) )
 		{
 			// Create it
 			$this->m_Tables = array();

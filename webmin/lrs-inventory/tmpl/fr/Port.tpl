@@ -1,4 +1,6 @@
-	<div id="sound-informations">
+<p>
+
+	<div id="port-informations">
 
 		<div class="download-informations">
 			<a href="{DONWLOAD_URL}">
@@ -6,32 +8,31 @@
 			</a>
 		</div>
 
-		<h3>Contrôleurs son</h3>
+		<h3>Ports</h3>
 		
 		<table>
 		
 			<tr>
 				<th>Client {SORT_HOST}</th>
-				<th>Nom {SORT_NAME}</th>
+				<th>Type {SORT_TYPE}</th>
+				<th>Nom {SORT_STAMP}</th>
 				<th>Description {SORT_DESCRIPTION}</th>
-				<th>Fabricant {SORT_MANUFACTURER}</th>				
-				<th>Apparition {SORT_FIRSTAPPARITION}</th>
+				<th>Divers {SORT_CAPTION}</th>
+				<th>Appearance {SORT_FIRSTAPPARITION}</th>
 			</tr>
 			
 			<!-- BEGIN row -->
 			
 			<tr class="{ROWCLASS}">
 				<td class="{HOST_CLASS}">{HOSTL}</td>
-				<td class="{NAME_CLASS}">{NAME}</td>
+				<td class="{TYPE_CLASS}">{TYPE}</td>
+				<td class="{STAMP_CLASS}">{STAMP}</td>
 				<td class="{DESCRIPTION_CLASS}">{DESCRIPTION}</td>
-				<td class="{MANUFACTURER_CLASS}">{MANUFACTURER}</td>
+				<td class="{CAPTION_CLASS}">{CAPTION}</td>
 				<td class="{FIRSTAPPARITION_CLASS}">{FIRSTAPPARITION}</td>
 			</tr>
-			
-			<!-- END row -->
-			
-		</table>
-	
-	</div>
 
+			<!-- END row -->			
+		</table>	
+	</div>
 </p>

@@ -3,3 +3,4 @@ chemin_basedir=/tftpboot/revoboot
 adresse_mail=ocsinventory
 showempty=1
 genfromocs=0
+keep=20

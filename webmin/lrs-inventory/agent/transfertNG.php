@@ -48,7 +48,7 @@
 	ereg('<DEVICEID>([a-zA-Z0-9_-]+)</DEVICEID>', $DATA, $matches);
 	$DEVICEID = $matches[1];
 		
-	//exec("echo \"$DATA\" >>/tmp/log");
+	//exec("echo \"$DEVICEID $DATA\" >>/tmp/log");
 	//$DEBUG = true;
 
 	if ( $QUERY=='PROLOG' ) {
@@ -67,6 +67,9 @@
 		$enc = $matches2[1];
 		
 		$INVENTORY = '<?xml version="1.0" encoding="'.$enc.'" ?><Inventory>'. $matches[1] .'</Inventory>';
+		// OCS client 4.0.3.0 added new tags ?!
+		$INVENTORY = preg_replace('/<\/?HISTORY>/i', '', $INVENTORY);
+		$INVENTORY = preg_replace('/<\/?DOWNLOAD>/i', '', $INVENTORY);
 		$resp = '<?xml version="1.0" encoding="utf-8" ?><REPLY><RESPONSE>no_account_update</RESPONSE></REPLY>';
 
 		// Store data on the server

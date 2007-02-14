@@ -1,0 +1,15 @@
+--
+-- Inventory update
+--
+
+ALTER TABLE Controller MODIFY Vendor varchar(128) default NULL;
+ALTER TABLE Controller MODIFY ExpandedType varchar(32) default NULL;
+ALTER TABLE Memory MODIFY SlotCount varchar(16) default NULL;
+ALTER TABLE Port MODIFY Type varchar(32) default NULL;
+
+ALTER TABLE Port ADD Caption varchar(32) default NULL;
+ALTER TABLE Port ADD Description varchar(32) default NULL;
+ALTER TABLE Sound ADD Manufacturer varchar(128) default NULL;
+
+DELETE FROM Version;
+INSERT INTO Version VALUES( '6' );

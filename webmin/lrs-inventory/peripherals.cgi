@@ -9,6 +9,7 @@
 	renderTable('Input');
 	renderTable('Monitor');
 	renderTable('Modem');
+	renderTable('Port');
 
     print perl_exec("lbs_footer.cgi");
 
