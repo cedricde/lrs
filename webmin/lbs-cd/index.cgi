@@ -223,13 +223,17 @@ if (!defined $in{'dir'}) {
 	
 	my $buff;
 	
-	open F,$in{'dir'}."CONF";
+	open F,$in{'dir'}."conf.txt";
 	while (<F>) {$buff .= $_;}
 	close(F);
 
-	$t->assign('OLDCD', $text{'oldcd'});
-	$t->parse('form.oldcd');
-
+	my $countlvm = 0;
+	while ($buff =~ /PATH\/Lvm/g) { $countlvm++ }
+	
+	if ($countlvm <= 1) {
+	    $t->assign('OLDCD', $text{'oldcd'});
+	    $t->parse('form.oldcd');
+	}
 	$t->assign('CONTAIN', $buff);
 	$t->assign('URL', $in{'dir'});
 	$t->assign('LAUNCH', $text{'LaunchMkisofs'});
