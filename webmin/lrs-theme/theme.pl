@@ -351,10 +351,10 @@ sub theme_footer {
 		print "  <div id=\"footer\" class=\"small\">";
 		print "         <div class=\"left\"><!--Linbox FAS: Metz Technop&ocirc;le | 152, r. de Grigy | 57070 Metz, FRANCE-->";
         	print "         	<span style=\"font-weight:bold;\">Web</span>: <a href=\"http://www.linbox.com\">www.linbox.com</a> - ";
-        	print "         	<span style=\"font-weight:bold;\">Support</span>: +33 (0)3 87 50 87 90 - ";
+        	print "         	<span style=\"font-weight:bold;\">Support</span>: +33 (0)810 LINBOX +33 (0)810 54 62 69 -";
 		print "         	<span style=\"font-weight:bold;\">Contact</span>: <a href=\"mailto:info&#64;linbox.com?subject=LRS Support\">info&#64;linbox.com</a>";
 		print " 	</div>";
-		print "         <div class=\"right\">&copy;&nbsp; 1996-2005 Linbox FAS&nbsp;</div>";
+		print "         <div class=\"right\">&copy;&nbsp; 1996-2007 Linbox FAS&nbsp;</div>";
         	print "  </div>";
 		print "</body></html>\n";
 	}
