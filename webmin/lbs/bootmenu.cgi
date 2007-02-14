@@ -204,6 +204,7 @@ if ( exists( $in{'cancel'} ) ) {			# back to the main menu
                                 closedir CFGPATH;
                                 $cmd .= " $cfgpath";
                                 system($cmd);
+				updateEntry( $lbs_home, $macaddr ) or error( lbsGetError() );
                         }
                 }
                 

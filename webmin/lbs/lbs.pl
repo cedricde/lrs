@@ -132,7 +132,7 @@ my @toprow = (
 		
 		push @lsdesc, lbs_common::colorStatus($$bstat{$k},$$bdesc{$k});
 		
-		my ($siz, $dummy) = split ' ', `du -h $imgdir/$k`;
+		my ($siz, $dummy) = split ' ', `du -h $imgdir/$k|tail -1`;
 
 		if ( ($siz =~ m/\d+k/i) || ($siz =~ m/\d+o/i)) {	# images below 1 MB aren't shown
 			push @burn, "<center>&nbsp;</center>";
@@ -305,7 +305,7 @@ sub list_postinst_templates {
 
   use vars qw ($current_lang);
 
-  push @tmpl, [ ("NULL", "Pas de postinstall", "") ];
+  push @tmpl, [ ("NULL", $text{lab_nopostinst}, "") ];
 
   opendir(DIR, $lbs_home."/images/templates/") || return @tmpl;
   @files = grep { /^[^\.][^~]+$/ && -r $lbs_home."/images/templates/".$_ } readdir(DIR);

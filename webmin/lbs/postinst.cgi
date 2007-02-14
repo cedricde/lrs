@@ -23,7 +23,7 @@
 use strict;
 
 # ... and vars
-use vars qw (%access %config %gconfig %in %lbsconf %text $VERSION $POSTINST_PATH);
+use vars qw (%access %config %gconfig %in %lbsconf %text $VERSION $POSTINST_PATH $current_lang);
 # get some common functions ...
 require "./lbs.pl";
 
@@ -61,7 +61,7 @@ sub postinst_deletefile_form($) {
 
 sub postinst_main_page($) {
 	
-	my $lang=$in{'lang'};
+	my $lang=$current_lang;
 	my $lbs_home=shift;
 	opendir(DIR, $POSTINST_PATH) || error(text("err_notarelativefile"));
 	my @scripts = map "$POSTINST_PATH/$_", sort grep { /^[^\.][^~]+$/ && -f "$POSTINST_PATH/$_" } readdir(DIR);
@@ -81,8 +81,8 @@ sub postinst_main_page($) {
 		$t->assign('FULLFILENAME', $script);
 		$script =~ s|.*/(.*)$|$1|;
 		$t->assign('FILENAME', "$script: " . $postinstcontent[0]->{'desc'}->{'en'})       	if $postinstcontent[0]->{'desc'}->{'en'};       # keep the english translation in last case
-		$t->assign('FILENAME', "$script: " . $postinstcontent[0]->{'desc'}->{$lang})       	if $postinstcontent[0]->{'desc'}->{$lang};      # keep the local translation if we found it
 		$t->assign('FILENAME', "$script: " . $postinstcontent[0]->{'desc'}->{'unified'})  	if $postinstcontent[0]->{'desc'}->{'unified'};  # keep the user's desc if it exists
+		$t->assign('FILENAME', "$script: " . $postinstcontent[0]->{'desc'}->{$lang})       	if $postinstcontent[0]->{'desc'}->{$lang};      # keep the local translation if we found it
 		$t->parse('fileslist.file');
 	}
 	$t->parse('fileslist');
@@ -239,8 +239,8 @@ sub postinst_print(@) {
 	$t->assign('CB', $cb);
 	$t->assign('TB', $tb);
 	$t->assign('DESC', $postinstcontent[0]->{'desc'}->{'en'})       	if $postinstcontent[0]->{'desc'}->{'en'};       # keep the english translation in last case
-	$t->assign('DESC', $postinstcontent[0]->{'desc'}->{$lang})       	if $postinstcontent[0]->{'desc'}->{$lang};      # keep the local translation if we found it
 	$t->assign('DESC', $postinstcontent[0]->{'desc'}->{'unified'})  	if $postinstcontent[0]->{'desc'}->{'unified'};  # keep the user's desc if it exists
+	$t->assign('DESC', $postinstcontent[0]->{'desc'}->{$lang})       	if $postinstcontent[0]->{'desc'}->{$lang};      # keep the local translation if we found it
 
 	$t->assign('COMMENTS', $postinstcontent[0]->{'comments'});
 	

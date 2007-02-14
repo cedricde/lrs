@@ -108,6 +108,7 @@ lab_nbimages=Images
 lab_newmac=Nouvelle adresse MAC
 lab_nodesc=(sans description)
 lab_none=(néant)
+lab_nopostinst=Pas de post-installation
 lab_nosecurity=Accès ligne de command GRUB
 lab_notitle=(sans titre)
 lab_number=Images
@@ -224,5 +225,3 @@ tooltip_defchoice=Choix par défaut
 tooltip_display=Affiché
 tooltip_scheddefchoice=Choix par défaut pour un WOL
 tooltip_scheddisplay=Affiché lors d un WOL
-
-blabla="BlaBla"
