@@ -64,6 +64,10 @@ deb:
 	(cd $(SRCDIR); dpkg-buildpackage -tc)
 	mv lbs_$(TODAY)* $(DESTDIR)
 
+pci:
+	(cd revoboot/etc; rm pci.ids; wget http://pciids.sourceforge.net/pci.ids)
+
+
 clean:
 	rm -f $(TMPBASE)
 	
