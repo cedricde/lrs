@@ -15,6 +15,8 @@ SEC=0
 MAXSEC=45
 # if CDROM boot, then be less patient
 grep -q revocdrom /etc/cmdline && MAXSEC=5
+# CDROM + static ip mode
+grep -q revocdromstatic /etc/cmdline && staticip
 
 # check if eth0 is up
 while true
@@ -69,17 +71,18 @@ staticip()
     IP=192.168.0.100
     NM=255.255.255.0
     while true; do
-	whiptail --title "Static IP" --backtitle "Linbox Rescue Server" --inputbox "Please enter the IP address below" 10 70 "$IP" 2>/tmp/res
+	whiptail --title "Static IP" --backtitle "Linbox Rescue Server" --inputbox "Please enter the IP address:" 10 70 "$IP" 2>/tmp/res
 	IP=`cat /tmp/res`
-	whiptail --title "Static IP" --backtitle "Linbox Rescue Server" --inputbox "Please enter the netmask below" 10 70 "$NM" 2>/tmp/res
+	whiptail --title "Static IP" --backtitle "Linbox Rescue Server" --inputbox "Please enter the netmask:" 10 70 "$NM" 2>/tmp/res
 	NM=`cat /tmp/res`
 	DEFGW=`echo $IP|cut -d. -f1-3`".1"
-	whiptail --title "Static IP" --backtitle "Linbox Rescue Server" --inputbox "Please enter the default gateway below" 10 70 "$DEFGW" 2>/tmp/res
+	whiptail --title "Static IP" --backtitle "Linbox Rescue Server" --inputbox "Please enter the default gateway:" 10 70 "$DEFGW" 2>/tmp/res
 	GW=`cat /tmp/res`
-	whiptail --title "Static IP" --backtitle "Linbox Rescue Server" --inputbox "Please enter the LRS IP address below" 10 70 "$DEFGW" 2>/tmp/res
+	whiptail --title "Static IP" --backtitle "Linbox Rescue Server" --inputbox "Please enter the LRS IP address:" 10 70 "$DEFGW" 2>/tmp/res
 	LRS=`cat /tmp/res`
 	ifconfig $ETH $IP netmask $NM
 	route add default gw $DEFGW
+	sleep 5
 	ping -c 1 $LRS >/dev/null && break 
 	wecho "Cannot reach \"$LRS\". Please check the network configuration again."
 	sleep 10
@@ -237,7 +240,7 @@ do_cdrom()
 	eval CMDLINE=\$LKERN_`cat /tmp/ret`
 	# check if this action can be done
 	[ "$CMDLINE" ] && break
-	wechow "Sorry this entry can only be used with a PXE boot.\n\nBecause you are booting from a CDROM, not all LRS features are available. To set-up a PXE network boot, please refer the the LRS manual."
+	wechow "Sorry this entry can only be used with a PXE boot.\nBecause you are booting from a CDROM, some LRS features are not available. To set-up PXE network boot, please refer to the LRS manual."
     done
     # fake /proc/cmdline 
     echo $CMDLINE | cut -f 2- -d " "> /etc/cmdline
@@ -339,7 +342,7 @@ grep -q revocdrom /etc/cmdline && do_cdrom
 # Backup / Restore
 if grep -q revosavedir /etc/cmdline ;then
     # launch initial pre-inst scripts
-    do_pre_inst    
+    [ -x /bin/postmount ] && do_pre_inst    
     # Now backup/restore    
     if grep -q revorestore /etc/cmdline ;then
 	do_restore
@@ -350,7 +353,7 @@ fi
 
 # Postinstall 
 if grep -q revopost /etc/cmdline ; then
-    do_postinst
+    [ -x /bin/postmount ] && do_postinst
 fi
 
 grep -q revodebug /etc/cmdline || reboot
