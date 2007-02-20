@@ -549,6 +549,8 @@ next_partition (unsigned long drive, unsigned long dest,
 
   /* If previous partition is a BSD partition or a PC slice which
      contains BSD partitions...  */
+/* LINBOX: BSD slice detection is buggy and we don't need it */
+#if 0
   if ((*partition != 0xFFFFFF && IS_PC_SLICE_TYPE_BSD (*type))
       || ! (drive & 0x80))
     {
@@ -569,7 +571,7 @@ next_partition (unsigned long drive, unsigned long dest,
       /* Ignore the error.  */
       errnum = ERR_NONE;
     }
-	  
+#endif	  
   return next_pc_slice ();
 }
 
