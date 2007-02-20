@@ -316,7 +316,7 @@ int process_packet(unsigned char *buf, char *mac, char *smac,
 		ntohs(si_other->sin_port), mac, buf);
 	fclose(fo);
 
-	ptr = strchr(buf + 3, ':');
+	ptr = strrchr(buf + 3, ':');
 	*ptr = 0;
 	strcpy(pass, ptr + 1);
 	strcpy(hostname, buf + 3);
