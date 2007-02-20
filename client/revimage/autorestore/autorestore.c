@@ -292,6 +292,9 @@ void restore_raw(char *device, char *fname)
     __u32 sect;
     int fo, fp;
 
+    // log
+    myprintf("restore raw: %s, %s\n", device, fname);
+
     fo = open(device, O_WRONLY | O_LARGEFILE);
     tmprintf("%s/%s", revosave, fname);
     fp = open(tmppath, O_RDONLY | O_LARGEFILE);
@@ -778,6 +781,7 @@ void restoreimage(void)
 #ifdef TEST
 		    //restore_raw("/revoinfo/PTABS", buf2);
 #else
+		    myprintf("grub cmdline: %s\n", buf);
 		    restore_raw(hdmap[d1], buf2);
 #endif
 		}
@@ -815,6 +819,7 @@ void restoreimage(void)
 #ifdef TEST
 			// restore("/revoinfo/P1", sect, buf2);
 #else
+			myprintf("grub cmdline: %s\n", buf);
 			restore(hdmap[d1], sect, buf2);
 #endif
 			// fix the NT Bootloader if needed
@@ -907,7 +912,7 @@ void makehdmap(void)
 		}
 		strcat(str, buf);
 		hdmap[d] = str;
-		DEBUG(printf("%d %d %d %s\n", minor, major, d, str));
+		myprintf("hdmap: %d %d %d %s\n", minor, major, d, str);
 		d++;
 	    }
 	}
