@@ -2,7 +2,7 @@
 #
 # Script to rotate LRS client logs
 #
-# $Id: rename_host 2307 2005-06-13 09:40:44Z root $
+# $Id$
 #
 #
 # Linbox Rescue Server
@@ -33,5 +33,5 @@ if ($ARGV[0] eq "") {
 
 rename($log, $log.".bak");
 # keep only the last lines of the log
-system("tail -$lines < $log.bak > %log");
+system("tail -$lines < $log.bak > $log");
 exit 0;
