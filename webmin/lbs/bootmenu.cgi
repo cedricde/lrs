@@ -417,7 +417,7 @@ my $mode = "";                                                  # describe how t
        	lbs_common::print_header( $text{'tit_bmenu'}, "bootmenu", $VERSION);
 	# tabs
 	lbs_common::print_html_tabs(['system_backup', 'boot_menu']);
-  
+	lbs_common::checkforspace();
 	# boot menu, FIXME i18n
         if (($mode eq "MONO")) {          # only one client selected
 	        print "<h2 align=center>Client $name ($macaddr)</h2>";

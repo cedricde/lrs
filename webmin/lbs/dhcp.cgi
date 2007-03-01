@@ -167,7 +167,8 @@ if (exists $in{'cancel'}) {     				# user has flies
 
 	# tabs
 	lbs_common::print_html_tabs(['list_of_machines', 'dhcp_form']);
-
+	lbs_common::checkforspace();
+	
 	# form	
 	print_dhcp_form("dhcp.cgi", $lbs_common::lbsconf{'license'}, %einfo) ;
 	

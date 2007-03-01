@@ -287,6 +287,7 @@ if (exists($in{'cancel'})) {
 
 	# tabs
 	lbs_common::print_html_tabs(['system_backup', 'shared_images']);
+	lbs_common::checkforspace();
 	
         if ($mode eq "MONO") {
 	        print "<h2 align=center>Client $name ($macaddr)</h2>";
