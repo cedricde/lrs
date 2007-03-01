@@ -128,6 +128,7 @@ lbs_common::print_header(text('title'), "index", $VERSION);
 
 # tabs
 lbs_common::print_html_tabs(['lbs-cd']);
+lbs_common::checkforspace();
 
 my $basedir=$lbs_common::lbsconf{"basedir"};
 

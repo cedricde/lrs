@@ -1,6 +1,6 @@
-webmin-lbs-cd (1.7.2) stable; urgency=low
+webmin-lbs-cd (1.7.3) stable; urgency=low
 
   * New release. see SVN logs
 
- -- Linbox Team <nobody@linbox.com>  Mon, 23 Aug 2004 14:11:37 +0200
+ -- Linbox Team <libre@linbox.org>  Mon, 23 Aug 2004 14:11:37 +0200
 
