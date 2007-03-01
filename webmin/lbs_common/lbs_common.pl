@@ -1139,14 +1139,22 @@ sub checkfordaemon () {
 }
 
 #
-# Check if there's at least 100MB in /var
+# Check if there's at least 100MB in /var and 1GB in /tftpboot
 #
 sub checkforspace () {
     my $run = `df -Pm /var|tail -1|awk '{print \$4}'`;
     if ($run < 100)
 	{
 	    print "<font size='+2' color='red'><br>";
-	    print $text{'err_space_low'};
+	    print text('err_space_low', "/var");
+	    print "<br><br></font>";
+	}
+    
+    $run = `df -Pm /tftpboot|tail -1|awk '{print \$4}'`;
+    if ($run < 1024)
+	{
+	    print "<font size='+2' color='red'><br>";
+	    print text('err_space_low', "/tftpboot");
 	    print "<br><br></font>";
 	}
 }

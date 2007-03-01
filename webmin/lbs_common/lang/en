@@ -155,6 +155,6 @@ err_paramnf=Parameter <tt>$1</tt> not found in file <b>$2</b> .
 err_basedirnf=LRS root directory <b>$1</b> not found. You should check <tt>basedir</tt> located into <tt>lbs.conf</tt> .
 err_cantlink=Unable to link <tt>$1</tt> with <tt>$2</tt> .
 err_gcr_not_running=The 'getClientResponse' or 'lrsd' daemon is not running. You probably have a license problem. Check that your licenses are correct <a href="/lbs/license.cgi">here</a> or restart the LRS service by clicking <a href="/lbs/restart.cgi">here</a>.
-err_space_low=Warning ! Available space in the /var disk is low. You should free some space or some LRS services may fail.
+err_space_low=Warning ! Available space in the $1 disk is low. You should free some space or some LRS services may fail.
 
 index_title=LRS : Control Center
