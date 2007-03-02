@@ -6,9 +6,12 @@
 #
 
 TYPE=nfs
-
 . /etc/netinfo.sh
 
+# CDROM restoration: already mounted
+grep -q revosavedir=/cdrom /etc/cmdline && exit 0
+
+# Other restoration types
 SRV=$Next_server
 PREFIX=`echo $Boot_file|sed 's/\/bin\/revoboot.pxe//'`
 DIR=`cat /etc/cmdline|cut -f 1 -d " "|cut -f 2 -d =`
