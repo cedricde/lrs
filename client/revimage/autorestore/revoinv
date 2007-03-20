@@ -13,7 +13,6 @@ if [ "$1" != "stdout" ]; then
 
     . /etc/netinfo.sh
     SRV=$Next_server
-    [ -n "$Option_177" ] && SRV=`echo $Option_177|cut -d : -f 1`
     [ -z "$SRV" ] && exit 1
 fi
 
