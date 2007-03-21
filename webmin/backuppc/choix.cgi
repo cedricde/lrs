@@ -56,9 +56,9 @@ function showMain($get_data)
   $t->set_var("GET_DATA_BREF", $get_data);  // needed for the cancel button
 
   if (isset($_REQUEST['username']) && isset($_REQUEST['passwd'])) { // needed for smbclient
-    //$username = $_REQUEST['username'];
+    $username = $_REQUEST['username'];
     //$get_data = $get_data . "&username=$username";
-    //$passwd = $_REQUEST['passwd'];
+    $passwd = $_REQUEST['passwd'];
     //$get_data = $get_data . "&passwd=$passwd"; 
   }
  
@@ -86,11 +86,11 @@ function showMain($get_data)
       array_splice($shares, $i, 1);
     }
   }
- // add shares to $_REQUEST array  
-  $get_data = $get_data . "&shares="; 
-  for ($i=0; $i<count($shares); $i++) 
-    if ($shares[$i] != "")
-      $get_data = $get_data . $shares[$i] . "|";
+// add shares to $_REQUEST array  
+//  $get_data = $get_data . "&shares="; 
+//  for ($i=0; $i<count($shares); $i++) 
+//    if ($shares[$i] != "")
+//      $get_data = $get_data . $shares[$i] . "|";
 
   if ( isset($_REQUEST['add']) && $_REQUEST['add'] != "") { // rsync - eventually add another folder
     array_push($shares, $_REQUEST['add']);
@@ -142,16 +142,18 @@ function showMain($get_data)
     $i=0;
     $t->set_block("choix", "added_share_row","added_share_rows");  
     foreach ($shares as $share) {
-      if (!in_array($share, $shares_all)) {
         $t->set_var("SHARE", $share);
         $t->parse("added_share_rows", "added_share_row", true);
 	$i++;
-      }
     }
     $t->set_var("SHARE_SIZE", $i);
 
-    # output everything
-        
+    # translations
+    foreach (array("AVAIL_SHARES", "SELECTED_SHARES", "ADD", "SUBMIT") as $txt) {
+        $t->set_var("TEXT_$txt", $text[strtolower("lab_$txt")]);
+    }
+
+    # output everything        
     echo perl_exec("lbs_header.cgi", array("backuppc host_configuration", $text{'tit_conf'}, "index"));
     $t->pparse("out", "choix");
     echo perl_exec("lbs_footer.cgi");
@@ -160,8 +162,6 @@ function showMain($get_data)
 # --------MAIN--------------------------------
 
 LIB_init_config();
-
-$lbs = isLBS();
 
 $t = tmplInit( array( "choix" => "choix.tpl" ) );
 

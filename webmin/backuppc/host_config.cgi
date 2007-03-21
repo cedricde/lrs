@@ -99,15 +99,14 @@ function showMain($ether)
       $xfermethod = $_GET['xfermethod'];
       $get_data = $get_data . "&xfermethod=$xfermethod";
     }
-    if (isset($_GET['username']) && isset($_GET['passwd'])) { // needed by smbclient in choix.php
-      $username = $_GET['username'];
-      $passwd = $_GET['passwd'];
+    if (isset($_REQUEST['username']) && isset($_REQUEST['passwd'])) { // needed by smbclient in choix.php
+      $username = $_REQUEST['username'];
+      $passwd = $_REQUEST['passwd'];
     }
-    if (isset($_GET['shares'])) { // got share from rsync or from multiple changes
-      $shares = explode("|", $_GET['shares']);
+    if (isset($_REQUEST['selshares'])) { // got share from rsync or from multiple changes
+      $shares = split("\|", $_REQUEST['selshares']);
       if ($shares[count($shares) - 1] == "")
         array_splice($shares, count($shares) - 1, 1);
-//      $get_data = $get_data . "&shares=" . $_GET['shares'];
     } 
   }
   // now read the file for the missing variables
