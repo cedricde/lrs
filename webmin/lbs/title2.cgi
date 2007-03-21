@@ -68,8 +68,13 @@ if ( $ENV{'HTTP_REFERER'} =~ "/move.cgi" or $redir_flag eq "move" ) {
 error($text{'err_invalcgi_nomenu'}) if (not exists $in{'conf'});
 
 $in{'conf'} =~ s/^\.[\.]+//g;
-$hdrname = $lbs_home . "/" . $in{'conf'} . "/conf.txt" ;
-	
+$hdrname = $lbs_home . "/" . $in{'conf'} ;
+if (-r "$hdrname/conf.tmp" ) {
+    $hdrname .= "/conf.tmp";
+} else {
+    $hdrname .= "/conf.txt";
+}
+
 my $data;
 fileLoad($hdrname, \$data) or error( lbsGetError() ) ;
 

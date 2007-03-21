@@ -68,7 +68,13 @@ if (not exists $in{'conf'}) {
 }
 
 $in{'conf'} =~ s/^\.[\.]+//g;
-$hdrname = $lbs_home . "/" . $in{'conf'} . "/conf.txt" ;
+$hdrname = $lbs_home . "/" . $in{'conf'} ;
+if (-r "$hdrname/conf.tmp" ) {
+    $hdrname .= "/conf.tmp";
+} else {
+    $hdrname .= "/conf.txt";
+}
+
 my $data;	
 fileLoad($hdrname, \$data) or error( lbsGetError() ) ;
 
