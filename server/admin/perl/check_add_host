@@ -19,6 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+use File::Copy;
 
 my $base;
 my $eth;
@@ -218,7 +219,8 @@ sub insert_ether
  my $old=shift;
  my $newline=shift;
 
- open FILE,">".$file or die;
+ copy($file, $file.".old") or die("Cannot copy etc/ether. $!\n");
+ open FILE,">".$file or die("Cannot write etc/ether. $!");
  print FILE "#Automatically generated, do not edit\n\n";
  foreach my $i (keys %$old)
  {
