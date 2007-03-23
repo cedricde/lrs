@@ -90,7 +90,7 @@ $VERSION        =~ s/\$Rev: (\d+) \$/$module_info{version} (r.$1)/;
 our $LRS_HERE   =  0;					# are we in LRS ?
 our $LINBOX_URL = 'http://www.linbox.com';
 our $BIGLOGO_URL= '/lbs_common/images/logo-big.gif';
-our @LRS_MODULES= qw 'lbs_common lbs backuppc lbs-inventory lrs-inventory lrs-ipmi lbs-cd  rsync lsc lbs-vnc lrs-proxy lbs/at ';      # every modules
+our @LRS_MODULES= qw 'lbs_common lbs backuppc backuppc3 lbs-inventory lrs-inventory lrs-ipmi lbs-cd  rsync lsc lbs-vnc lrs-proxy lbs/at ';      # every modules
 #our @LRS_MODULES= qw 'lbs_common lbs';      # every modules
 our $REALPATH   = 'readlink';
 ##############################################
@@ -1052,7 +1052,7 @@ my @list;
 my @header;
 my @lol=();
 my @webminmodules=qw '  lbs             lbs-cd          lbs_common
-                        lbs-inventory   lrs-inventory	lbs-vnc         lsc		backuppc';
+                        lbs-inventory   lrs-inventory	lbs-vnc         lsc		backuppc	backuppc3';
 
 my @lrsmodules=qw '     backuppc        php4-cgi        lbs
                         iproute';
