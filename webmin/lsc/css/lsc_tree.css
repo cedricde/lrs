@@ -1,0 +1,32 @@
+#lsc-tree-directory {
+	
+}
+
+#lsc-tree-directory A {
+	text-decoration: none;
+}
+
+#lsc-tree-directory UL {
+	list-style-image : url("../images/folder.png");
+	margin-left: 7px;
+	padding-left: 7px;
+}
+
+#lsc-tree-directory UL LI.open {
+	list-style-image : url("../images/folder_open.png");
+}
+
+#lsc-tree-directory UL LI.open A {
+	font-weight: bold;
+}
+
+#lsc-tree-directory UL LI.active {
+	list-style-image : url("../images/folder_open.png");
+}
+
+#lsc-tree-directory UL LI.active A {
+	font-style: italic;
+	font-weight: bold;
+}
+
+

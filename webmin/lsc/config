@@ -1,0 +1,12 @@
+path_destination=/c/lsc
+winadmin=root
+create_destination_directory=1
+start_script=1
+delete_file_after_execute_successful=1
+inventory=0
+wake_on_lan=1
+max_connection_attempt=3
+next_connection_delay=60
+delay_between_wake_on_lan_and_new_connection=10
+repository=/tftpboot/revoboot/lsc/
+explorer=1

@@ -1,0 +1,3 @@
+lbs_conf=/etc/lbs.conf
+extensionicons=extension.icons
+mount_point=/mnt/net/ssh

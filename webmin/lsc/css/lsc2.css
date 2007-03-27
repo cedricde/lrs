@@ -1,0 +1,99 @@
+.lsc H2 {
+	
+}
+
+.lsc H3 {
+	margin-top:2em;
+	font-size : 1.1em;
+	border-bottom:1px solid #EA4F26;
+}
+
+TABLE {
+	border:0px;
+}
+
+TABLE TD {
+	border:0px;
+}
+
+INPUT {
+	border:0px;
+}
+
+#lsc-where-I-connected {
+	float:right;
+	text-align:right;
+	font-size: x-small;
+}
+
+TABLE.table-horizontal {
+	font-size:10px;
+	border: 1px solid #FF3300;
+}
+
+.table-horizontal TH {
+	background-color: #fcd3c2;
+	color:black;
+}
+
+.table-horizontal TR.row-odd {
+	background-color: #F0F0F0;;
+}
+
+.table-horizontal TR.row-even {
+	background-color: #F9F9F9;
+}
+
+.table-horizontal TD {
+	border:0;
+}
+
+.table-horizontal TD.center-column {
+	text-align:center;
+}
+
+.table-horizontal TD.right-column {
+	text-align:right;
+}
+
+.table-horizontal TD.left-column {
+	text-align:left;
+}
+
+/* Table vertical */
+
+TABLE.table-vertical {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+
+.table-vertical TH {
+	color:black;
+}
+
+.table-vertical TD {
+	border:0;
+}
+
+.table-vertical TD.center-column {
+	text-align:center;
+}
+
+.table-vertical TR.row-odd {
+	background-color: #F0F0F0;;
+}
+
+.table-vertical TR.row-even {
+	background-color: #F9F9F9;
+}
+
+/* Table clean */
+
+TABLE.table-clean {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+
+.table-clean TD {
+	border:0;
+}

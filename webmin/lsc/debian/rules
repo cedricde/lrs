@@ -1,0 +1,52 @@
+#!/usr/bin/make -f
+
+clean:
+	rm -rf *~ debian/tmp debian/webmin-lsc
+	rm -f build-stamp
+	dh_clean
+
+build:
+	echo "Nothing to build"
+
+binary: binary-arch binary-indep
+
+binary-arch: 
+
+DESTDIR = debian/webmin-lsc
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs
+
+	debian/copyversion
+	-cp -af * $(DESTDIR)/usr/share/webmin/lsc/
+
+	-find $(DESTDIR) -name CVS -exec rm -rf {} \; 2>/dev/null
+	-find $(DESTDIR) -name .svn -exec rm -rf {} \; 2>/dev/null
+	-find $(DESTDIR) -name .keepme -exec rm -rf {} \; 2>/dev/null
+
+	rm -rf $(DESTDIR)/usr/share/webmin/lsc/debian
+	find $(DESTDIR) -name "*.cgi" -exec chmod 755 {} \;
+	find $(DESTDIR) -name "*.php" -exec chmod 755 {} \;
+
+	install --mode=600 config $(DESTDIR)/etc/webmin/lsc/config
+	touch $(DESTDIR)/etc/webmin/lsc/admin.acl
+
+binary-indep: install
+	dh_testdir
+	dh_testroot
+	dh_installdebconf
+	dh_installdocs
+	dh_installcron
+	dh_installchangelogs
+	dh_link
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_perl
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+

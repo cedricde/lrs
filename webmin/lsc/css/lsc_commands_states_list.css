@@ -1,0 +1,124 @@
+#lsc-commands-states-list {
+}
+
+#lsc-commands-states-list TABLE{
+	width:100%;
+}
+
+#lsc-commands-states-list TH {
+	background-color: #fcd3c2;
+	border:0;
+	color:black;
+}
+
+#lsc-commands-states-list TH.target-column {
+	text-align:center;
+}
+
+#lsc-commands-states-list TH.number-of-host-column {
+	text-align:center;
+}
+
+#lsc-commands-states-list TH.title-column {
+	text-align:center;
+}
+
+#lsc-commands-states-list TH.date-created-column {
+	width:10px;
+	text-align:center;
+	white-space:nowrap;
+}
+
+#lsc-commands-states-list TH.start-date-column {
+	width:10px;
+	text-align:center;
+	white-space:nowrap;
+}
+#lsc-commands-states-list TH.end-date-column {
+	width:10px;
+	text-align:center;
+	white-space:nowrap;
+	padding:2px;
+}
+
+#lsc-commands-states-list TH.current-states-column {
+	text-align:center;
+	width:10px;
+	white-space:nowrap;
+}
+
+#lsc-commands-states-list TH.number-attempt-column {
+	text-align:center;
+	width:10px;
+	white-space:nowrap;
+}
+
+#lsc-commands-states-list TH.actions-column {
+	text-align:center;
+	width:10px;
+	white-space:nowrap;
+}
+
+#lsc-commands-states-list TR.row-odd {
+	background-color: #F0F0F0;
+}
+
+#lsc-commands-states-list TR.row-even {
+	background-color: #F9F9F9;
+}
+
+#lsc-commands-states-list TD {
+	border:1px solid #FCD3C2;
+	border-top: 0;
+	border-bottom: 0;
+	border-collapse : collapse;
+}
+
+#lsc-commands-states-list TD.target-column {
+	text-align:center;
+}
+
+#lsc-commands-states-list TD.number-of-host-column {
+	text-align:center;
+}
+
+#lsc-commands-states-list TD.title-column {
+	text-align:center;
+	width:100%;
+}
+
+#lsc-commands-states-list TD.date-created-column {
+	width:10px;
+	text-align:center;
+	white-space:nowrap;
+}
+
+#lsc-commands-states-list TD.start-date-column {
+	width:10px;
+	text-align:center;
+	white-space:nowrap;
+}
+
+#lsc-commands-states-list TD.end-date-column {
+	width:10px;
+	text-align:center;
+	white-space:nowrap;
+}
+
+#lsc-commands-states-list TD.current-states-column {
+	text-align:center;
+	width:10px;
+	white-space:nowrap;
+}
+
+#lsc-commands-states-list TD.number-attempt-column {
+	text-align:center;
+	width:10px;
+	white-space:nowrap;
+}
+
+#lsc-commands-states-list TD.actions-column {
+	text-align:center;
+	width:10px;
+	white-space:nowrap;
+}

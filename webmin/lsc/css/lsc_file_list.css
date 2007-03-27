@@ -1,0 +1,30 @@
+.lsc-file-list {
+
+}
+
+.lsc-file-list TR.row-odd {
+	background-color: #fce6e0;
+}
+
+.lsc-file-list TR.row-even {
+	background-color: #ddd;
+}
+
+.lsc-file-list .icon-column {
+	text-align:center;
+}
+
+.lsc-file-list .filename-column {
+	
+}
+.lsc-file-list .size-column {
+	text-align:right;
+	
+}
+.lsc-file-list .date-column {
+	text-align:right;
+	
+}
+.lsc-file-list .action-column {
+	text-align:center;
+}

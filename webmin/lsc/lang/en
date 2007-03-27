@@ -1,0 +1,58 @@
+explorer_title=Secure control
+home_title=Secure control
+repository_title=Secure control
+execute_title=Secure control
+editor_title=Secure control
+tit_error=Error
+lab_lsc=LSC
+
+err_invalide_filename=Nom de fichier invalide.
+err_invalide_dirname=Nom de r&eacute;pertoire invalide.
+err_isnt_file=Cet objet n'est pas un fichier.
+err_isng_dir=Cet objet n'est pas un r&eacute;pertoire.
+err_create_file=Ne peut cr&eacute;er le fichier.
+err_create_dir=Ne peut cr&eacute;er le r&eacute;pertoire.
+err_not_exist_file=Le fichier n'existe pas.
+err_not_exist_dir=Le r&eacute;pertoire n'existe pas.
+err_cant_rm_file=Impossible de supprimer le fichier.
+err_cant_rm_dir=Impossible de supprimer le r&eacute;pertoire.
+err_perm=Permission refus&eacute;e.
+err_default=Erreur interne.
+
+create_file_ok=File created
+create_dir_ok=Directory created
+suppr_ok=Delete success
+send_ok=Upload success
+
+mac_address_not_found=Mac address not found
+command_on_host_class_is_not_inistialised=L'objet 'command_on_host' n'est pas initilis&eacute;
+internal_error=Erreur interne
+upload_in_progress=Upload in progress
+upload_done=Upload done
+upload_failed=Upload failed
+execution_in_progress=Execution in progress
+execution_done=Execution done
+execution_failed=Execution failed
+delete_in_progress=Delete in progress
+delete_done=Delete done
+delete_failed=Delete failed
+inventory_in_progress=Agent inventory execution in progress
+inventory_failed=Agent inventory execution failed
+inventory_done=Agent inventory execution done
+not_reachable=Connection error
+done=Command done
+pause=Command paused
+stop=Command stopped
+scheduled=Command scheduled
+
+TODO=todo
+IGNORED=ignored
+DONE=done
+FAILED=failed
+WORK_IN_PROGRESS=work in progress
+many_states=many states
+
+yes=yes
+no=no
+success=success
+failed=failed

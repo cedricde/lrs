@@ -1,0 +1,3 @@
+title=Start Windows inventory
+titlefr=Lancer l'inventaire Windows
+command=/scripts/run-inventory.bat

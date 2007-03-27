@@ -1,0 +1,12 @@
+path_destination=Répertoire Windows de destination par défaut (Dépôt de fichiers) :,0
+winadmin=Nom de l'admin Windows :, 0
+create_destination_directory=Activer la création du répertoire destination :,1,0-Non,1-Oui
+start_script=Activer l'exécution du script :,1,0-Non,1-Oui
+delete_file_after_execute_successful=Après l'exécution avec succès de la commande supprimer les fichiers transférés :,1,0-Non,1-Oui
+inventory=Activer l'exécution de l'inventaire :,1,0-Non,1-Oui
+wake_on_lan=Si la connecxion d'une commande a échoué alors lancer une requête "Wake on Lan" :,1,0-Non,1-Oui
+max_connection_attempt=Nombre maximum de tentatives de connexions :,0
+next_connection_delay=Délai entre deux tentatives de connexion (en minutes) :,0
+delay_between_wake_on_lan_and_new_connection=Délai entre l'émission de la requête "Wake on Lan" et la nouvelle tentative de connexion (en minutes) :,0
+repository=Chemin du dépôt de fichiers :,0
+explorer=Afficher l'explorateur,1,0-Non,1-Oui

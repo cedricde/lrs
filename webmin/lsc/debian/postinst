@@ -1,0 +1,14 @@
+#!/bin/sh
+set -e
+
+/usr/sbin/update-webmin add lsc
+
+# db update
+echo "Updating database..."
+(cd /usr/share/webmin/lsc/sql/; ./create-db.sh)
+
+# scripts update
+[ -d /tftpboot/revoboot/lsc/linbox/ ] || mkdir -p /tftpboot/revoboot/lsc/linbox/
+cp -ar /usr/share/webmin/lsc/scripts/*	/tftpboot/revoboot/lsc/linbox/
+
+#DEBHELPER#

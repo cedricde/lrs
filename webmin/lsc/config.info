@@ -1,0 +1,12 @@
+path_destination=Default Windows destination directory (Repository),0
+winadmin=Windows admin name,0
+create_destination_directory=Create destination directory enable by default,1,0-No,1-Yes
+start_script=Start script enable by default,1,0-No,1-Yes
+delete_file_after_execute_successful=Delete files uploaded after success execution enable by default,1,0-No,1-Yes
+inventory=Start inventory agent after command execution enable by default,1,0-No,1-Yes
+wake_on_lan=If connection failed send Wake on Lan query and connection retry enable by default,1,0-No,1-Yes
+max_connection_attempt=Maximum connection attempt by default,0
+next_connection_delay=Time delay to retry connection by default (minutes),0
+delay_between_wake_on_lan_and_new_connection=Delay between wake on lan and retry connection by default (minutes),0
+repository=Repository path :,0
+explorer=Show the explorer,1,0-No,1-Yes

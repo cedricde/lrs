@@ -1,0 +1,58 @@
+explorer_title=Contrôle S&eacute;curis&eacute;
+home_title=Contrôle S&eacute;curis&eacute;
+repository_title=Contrôle S&eacute;curis&eacute;
+execute_title=Contrôle S&eacute;curis&eacute;
+editor_title=Contrôle S&eacute;curis&eacute;
+tit_error=Erreur
+lab_lsc=LSC
+
+err_invalide_filename=Nom de fichier invalide.
+err_invalide_dirname=Nom de r&eacute;pertoire invalide.
+err_isnt_file=Cet objet n'est pas un fichier.
+err_isng_dir=Cet objet n'est pas un r&eacute;pertoire.
+err_create_file=Ne peut cr&eacute;er le fichier.
+err_create_dir=Ne peut cr&eacute;er le r&eacute;pertoire.
+err_not_exist_file=Le fichier n'existe pas.
+err_not_exist_dir=Le r&eacute;pertoire n'existe pas.
+err_cant_rm_file=Impossible de supprimer le fichier.
+err_cant_rm_dir=Impossible de supprimer le r&eacute;pertoire.
+err_perm=Permission refus&eacute;e.
+err_default=Erreur interne.
+
+create_file_ok=Fichier cr&eacute;&eacute;.
+create_dir_ok=R&eacute;pertoire cr&eacute;&eacute;.
+suppr_ok=Suppression r&eacute;ussie.
+send_ok=Transfer r&eacute;ussi.
+
+mac_address_not_found=Adresse mac non trouv&eacute;
+command_on_host_class_is_not_inistialised=L'objet 'command_on_host' n'est pas initilis&eacute;
+internal_error=Erreur interne
+upload_in_progress=Transfert en cours
+upload_done=Transfert terminé
+upload_failed=Transfert échoué
+execution_in_progress=Exécution en cours
+execution_done=Exécution terminée
+execution_failed=Exécution échouée
+delete_in_progress=Suppression en cours
+delete_done=Suppression terminée
+delete_failed=Suppression échouée
+inventory_in_progress=Exécution de l'inventaire en cours
+inventory_failed=Erreur d'exécution de l'inventaire
+inventory_done=Inventaire terminé
+not_reachable=Connexion impossible
+done=Commande terminée
+pause=Commande en pause
+stop=Commande arrêtée
+scheduled=Commande en attente
+
+TODO=à faire
+IGNORED=ignoré
+DONE=terminé
+FAILED=échoué
+WORK_IN_PROGRESS=en cours
+many_states=divers états
+
+yes=oui
+no=non
+success=succès
+failed=échoué

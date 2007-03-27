@@ -1,0 +1,57 @@
+.state-upload-in-progress {
+	background-color: green;
+}
+
+.state-upload-done {
+	background-color: blue;
+}
+
+.state-upload-failed {
+	background-color: red;
+}
+
+.state-execution-in-progress {
+	background-color: green;
+}
+
+.state-execution-done {
+	background-color: blue;
+}
+
+.state-execution-failed {
+	background-color: red;
+}
+
+.state-delete-in-progress {
+	background-color: green;
+}
+
+.state-delete-done {
+	background-color: blue;
+}
+
+.state-delete-failed {
+	background-color: red;
+}
+
+.state-not-reachable {
+	background-color: red;
+}
+
+.state-done {
+	background-color: green;
+}
+
+.state-pause {
+	background-color: black;
+	color: white;
+}
+
+.state-done {
+	background-color: blue;
+}
+
+.state-scheduler {
+	background-color: yellow;
+}
+

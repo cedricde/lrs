@@ -1,0 +1,122 @@
+@import url("lsc_tree.css");
+@import url("lsc_files_list.css");
+@import url("lsc_file_list_directory.css");
+@import url("lsc_commands_states_list.css");
+@import url("lsc_command_on_host_history.css");
+@import url("lsc_states.css");
+
+.lsc H2 {
+}
+
+.lsc H3 {
+	margin-top:2em;
+	font-size : 1.1em;
+	border-bottom:1px solid #EA4F26;
+}
+
+H3.box-title {
+	padding:0;
+	margin:0;
+	font-weight: normal;
+	border-bottom: 0;
+}
+
+.lsc .indent {
+	margin-left:2em;
+}
+
+table {
+	font-family     	: Verdana, Arial, Helvetica, sans-serif;
+	font-size               : 12px;
+}
+
+table.vertical {
+}
+
+table.vertical TD {
+	border:0;
+}
+
+table.vertical TH {
+	text-align:right;
+	border:0;
+}
+
+table.form TD {
+	border: 0;
+}
+
+table.form INPUT {
+	vertical-align: middle;
+}
+
+table.form SELECT {
+	vertical-align: middle;
+}
+
+#left-panel {
+	width:20em;
+	float:left;
+	margin:0;
+	padding:0;
+}
+
+#left-panel H3 {
+	margin-top: 0;
+}
+
+#main-panel {
+	padding-left: 21em;
+}
+
+.box, #lsc-tree-directory, #lsc-what-is-current-directory {
+	background-color: #f9f3f2;
+	border: 1px solid #ef4d21;
+	padding:1em;
+	margin:1em;
+}
+
+#lsc-standard-file-list-directory-actions .box {
+	margin:0;
+}
+
+#lsc-repository-actions .box {
+	margin:0;
+}
+
+#lsc-tree-directory {
+	margin:0;
+	padding-left:1.5em;
+}
+
+#lsc-standard-host-actions .box {
+	margin:0;
+	padding-left:1.5em;
+}
+
+#lsc-where-I-connected {
+	float:right;
+	text-align:right;
+	font-size: x-small;
+}
+
+#lsc-what-is-current-directory {
+	width:60%;
+	margin-left:auto;
+	margin-right:auto;
+	text-align:center;
+}
+
+.clear {
+	clear:both;
+}
+
+table {
+	border:0;
+}
+
+table TD {
+	border:0;
+}
+
+
