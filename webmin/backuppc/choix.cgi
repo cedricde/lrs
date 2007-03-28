@@ -163,8 +163,9 @@ function showMain($get_data)
 
 LIB_init_config();
 
-$t = tmplInit( array( "choix" => "choix.tpl" ) );
+$t = tmplInit();
+$t->set_root("./tmpl");				// lang indep templates
+$t->set_file( array( "choix" => "choix.tpl" ) );
 
 showMain($get_data);
-
 ?>
