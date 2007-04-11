@@ -184,12 +184,12 @@ setup_diskless_environment (void)
   imgname[0] = '\0';
   grub_printf("Base Dir : %s\n",basedir);
  
-  iphex((char *)&arptable[ARP_CLIENT].ipaddr);
+  machex((char *)nic_macaddr);
   grub_sprintf(config_file,"%s/cfg/%s",basedir,ip);
   grub_printf("Testing : %s\n",config_file);
   if (new_tftpdir(config_file) < 0)
   {
-	machex((char *)nic_macaddr);
+	iphex((char *)&arptable[ARP_CLIENT].ipaddr);
   	grub_sprintf(config_file,"%s/cfg/%s",basedir,ip);
   	grub_printf("Testing : %s\n",config_file);
   	if (new_tftpdir(config_file) < 0)
