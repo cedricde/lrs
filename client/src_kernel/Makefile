@@ -7,6 +7,7 @@
 
 SRC=/usr/src
 HERE=`pwd`
+CC=gcc-3.3
 
 all: kernel
 
@@ -18,9 +19,9 @@ kernel:
 # kernel compile
 	[ -f $(SRC)/linux/.config ]
 	cp -f logo_linux_vga16.ppm $(SRC)/linux/drivers/video/logo/
-	(cd $(SRC)/linux/;make all)
+	(cd $(SRC)/linux/;make all CC=$(CC))
 # bcm5700 compile
-	(cd ./bcm/bcm5700-8.2.18/src; make; cp bcm5700.ko $(SRC)/linux/drivers/net/)
+#	(cd ./bcm/bcm5700-8.2.18/src; make; cp bcm5700.ko $(SRC)/linux/drivers/net/)
 # copy the kernel
 	cp -f $(SRC)/linux/arch/i386/boot/bzImage .
 	rdev bzImage /dev/ram0
