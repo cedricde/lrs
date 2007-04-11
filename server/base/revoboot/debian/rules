@@ -54,7 +54,7 @@ install: build
 
 	# Add here commands to install the package into debian/lbs.
 	mkdir -p $(CURDIR)/debian/lbs/tftpboot/revoboot
-	tar c --exclude .svn bin cfg images imgskel log etc imgbase iso lib tmp | tar -xv -C $(CURDIR)/debian/lbs/tftpboot/revoboot
+	tar c --exclude .svn bin cfg images imgskel log etc imgbase iso lib lsc tmp | tar -xv -C $(CURDIR)/debian/lbs/tftpboot/revoboot
 	touch $(CURDIR)/debian/lbs/tftpboot/revoboot/images/data/.keepme
 	cp -f debian/lbs.conf $(CURDIR)/debian/lbs/etc
 	#cp -f debian/lbs_starter $(CURDIR)/debian/lbs/tftpboot/revoboot/bin
