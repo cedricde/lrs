@@ -762,12 +762,15 @@ function lsc_command_set_stop($id_command)
 		if ($DEBUG >= 1) $database->Debug = true;
 	}
 
+    	// should we kill the running job if available ?
+
 	$query = sprintf(
 "
 	UPDATE
 		%s
 	SET
-		current_state = \"stop\"
+		current_state = \"stop\",
+		current_pid = -1
 	WHERE
 		id_command = \"%s\" and
 		(
@@ -809,8 +812,7 @@ function lsc_command_set_play($id_command)
 		uploaded = \"TODO\"
 	WHERE
 		id_command = \"%s\" and
-		current_state = \"upload_failed\"
-",
+		current_state = \"upload_failed\"  ",
 		COMMANDS_ON_HOST_TABLE,
 		$id_command
 	);

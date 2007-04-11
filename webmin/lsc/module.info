@@ -2,4 +2,4 @@ name=lsc
 desc=LRS : Linbox Secure Control 
 desc_fr=LRS : Prise de Contrôle à Distance Sécurisé
 depends=1.030 lbs_common
-version=1.0.3
+version=1.0.4

@@ -553,7 +553,7 @@ class LSC_Command_Launcher {
 		                  
 		if ( $mac != "" ) {
 			$remains_connection_attempt = lsc_command_on_host_get_remains_connection_attempt($this->id_command_on_host);
-			while($remains_connection_attempt >= 0) {
+			while($remains_connection_attempt > 0) {
 				$this->command_on_host->refresh();
 				
 				if (
@@ -628,14 +628,16 @@ class LSC_Command_Launcher {
 		
 					lsc_command_on_host_set_remains_connection_attempt(
 						$this->id_command_on_host, 
-						$remains_connection_attempt--
+						--$remains_connection_attempt
 					);
 		
 					lsc_command_on_host_set_next_attempt_date_time(
 						$this->id_command_on_host,
 						time() + ($this->command->next_connection_delay * 60)
 					);
-		
+					
+					if ($remains_connection_attempt <= 0) return -1;
+					
 					sleep($this->command->next_connection_delay * 60);
 				}
 			}

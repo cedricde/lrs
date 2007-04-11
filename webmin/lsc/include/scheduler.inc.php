@@ -330,6 +330,7 @@ WHERE
 					NOT (A.current_state = \"execution_failed\") and
 					NOT (A.current_state = \"delete_failed\") and
 					NOT (A.current_state = \"inventory_failed\") and
+					(A.number_attempt_connection_remains > 0) and
 					(A.current_pid = \"-1\")
 				ORDER BY
 					B.date_created ASC

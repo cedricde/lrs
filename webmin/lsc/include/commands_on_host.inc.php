@@ -980,9 +980,15 @@ function lsc_command_on_host_set_play($id_command_on_host)
 		if ($DEBUG >= 1) $database->Debug = true;
 	}
 
-	/*
-	 *
-	 */
+    	/* Reset the connection attempts */
+
+	$database->query("UPDATE ".COMMANDS_ON_HOST_TABLE." 
+	    	SET current_pid=-1
+	    	WHERE id_command=\"$id_command_on_host\"");
+	$database->query("UPDATE ".COMMANDS_ON_HOST_TABLE." 
+	    	SET number_attempt_connection_remains=1
+	    	WHERE id_command=\"$id_command_on_host\" AND number_attempt_connection_remains=0");
+
 	$query = sprintf(
 "
 	UPDATE
@@ -1081,6 +1087,7 @@ function lsc_command_on_host_set_play($id_command_on_host)
 	
 	$database->query($query);
 }
+
 
 
 ?>
