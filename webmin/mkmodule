@@ -7,6 +7,7 @@ PKGNAME=$1
 
 TARBALL=$2.wbm
 
+find $PKGNAME -name \*.cgi -o -name \*.php -exec chmod 755 {} \;
 tar --exclude old --exclude debian --exclude CVS --exclude .svn -cvzf $TARBALL "$PKGNAME"
 
 echo
