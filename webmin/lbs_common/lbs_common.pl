@@ -541,7 +541,7 @@ sub print_machines_list($$$$) {
         my ($paramsref, $headcallbacksref, $bodycallbacksref, %in) = @_;
 
         my $home=$TFTPBOOT;
-
+    	my $text_wp = $text{'lab_wp'};
         my $baseuri=$paramsref->{'baseuri'};
         $baseuri = $ENV{'SCRIPT_NAME'} unless $baseuri;
 
@@ -881,6 +881,7 @@ sub print_machines_list($$$$) {
 		}
 	}
 
+
         foreach my $row (@tmpcols) {
                 $template->assign('ROWSTYLE', "style='background-color: ".oddorevenline(\$lineisodd).";'");
                 
@@ -897,20 +898,22 @@ sub print_machines_list($$$$) {
                 $template->parse('mainlist.normalrow');
         }
 
-        #if (lc($profile_key) ne "none" and lc($profile_key) ne "all") {
-                $template->assign('ACTIONONCURRENTPROF', text('lab_thisprofile', $profile_name));
-                foreach my $bodycallback (@$bodycallbacksref) {
-                        foreach my $label (&$bodycallback({'currentprofile' => $in{'profile'}, 'profile' => $in{'profile'}, 'ether' => $ethero })) {
-                                if (defined($label) and $label) {
-                                        my %localhash=%$label;                                                                        
-                                        $template->assign('CONTENT', $localhash{'content'});
-                                        $template->assign('ATTRIBS', $localhash{'attribs'});
-                                        $template->parse('mainlist.endtable.moreactions.uppercell');
-                                }
+    	# last line: the whole profile
+        $template->assign('ROWSTYLE', "style='background-color: ".oddorevenline(\$lineisodd).";'");
+        $template->assign('CONTENT', "<i>$text_wp</i>");
+        $template->assign('FIRSTCELLARGS', "$nowrap $firstcellwidth");
+        $template->parse('mainlist.normalrow.firstcell');
+        foreach my $bodycallback (@$bodycallbacksref) {
+                foreach my $label (&$bodycallback({'name' => "ALLPROFILES", 'group' => "", 'profile' => $in{'profile'}, 'currentprofile' => $in{'profile'}, 'ether' => $ethero })) {
+                        if (defined($label) and $label) {
+                                my %localhash=%$label;                                                                        
+                                $template->assign('CONTENT', $localhash{'content'});
+                                $template->assign('ATTRIBS', $localhash{'attribs'});
+                                $template->parse('mainlist.normalrow.normalcell');
                         }
                 }
-                $template->parse('mainlist.endtable.moreactions');
-        #}
+        }
+        $template->parse('mainlist.normalrow');
         
         $template->parse('mainlist.endtable');
         $template->parse('mainlist');
