@@ -1,7 +1,5 @@
 #!/usr/bin/perl -w
 #
-# Show the admin panel
-#
 # $Id$
 #
 # Linbox Rescue Server
@@ -21,103 +19,119 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-# stay strict
 use strict;
-use DB_File;;
-use Fcntl;
-# get some common functions ...
-require 'lbs.pl';
 
 # ... and vars
-ReadParse();
-use vars qw (%in %text $root_directory %gconfig $VERSION $LRS_HERE @LRS_MODULES %config %lbsconf $lbs_home $current_lang);
+use vars qw (%access %config %in %lbsconf %text $VERSION);
+# get some common functions ...
+require "lbs.pl";
 
 lbs_common::init_lbs_conf() or exit(0) ;
-$lbs_home = $lbs_common::lbsconf{'basedir'};
-# entete
-lbs_common::print_header( $text{'tit_index'}, "index", $VERSION);
 
-if (!defined $in{mac}) {
+my %einfo ;
+my $lbs_home = $lbs_common::lbsconf{'basedir'};
+my $etherfile = $lbs_home . "/etc/ether" ;
+my ($mac,$name) ;
+my $hdrname ;
+my $menu ;
+my %hdr ;
+my %minfo ;
+my $title ;
+my $redir = "";
+my $wake = $config{"wake"};
 
-  # tabs
-  lbs_common::print_html_tabs(['list_of_machines', 'logs']);
+error(text("err_dnf",$lbs_home)) if (not -d $lbs_home) ;
+error(text("err_fnf",$etherfile)) if (not -f $etherfile) ;
 
-  # machine list
-  my (@labelfunctions, @bodyfunctions);
-  
-  push @labelfunctions, sub {return ({'content' => "Renommer" }); };
-  push @bodyfunctions, \&rename;
-  push @labelfunctions, sub {return ({'content' => "Changer MAC" }); };
-  push @bodyfunctions, \&renamemac;
-  push @labelfunctions, sub {return ({'content' => "Supprimer" });};
-  push @bodyfunctions, \&delete;
+ReadParse() ;
 
-  lbs_common::print_machines_list(
-                                        {
-                                        },
-                                        \@labelfunctions,
-                                        \@bodyfunctions
-                                );
+etherLoad($etherfile, \%einfo) or error( lbsGetError() ) ;
+
+$redir = "";
+
+if (exists $in{'mac'}) {
+
+	$mac = $in{'mac'};
+
+	$name = etherGetNameByMac(\%einfo, $mac) ;
+	
+	if (not defined $name) {
+	    error(text("err_mac_inval",$mac)) ;
+	}
+
+	$redir .= "ext_cmd=".urlize("$in{mac}")."&mac=".urlize("$in{mac}");
+	
+	#redirect($redir) ;
+}
+elsif ($in{'group'}) {
+	my $macs = "";
+
+	foreach my $k (etherGetMacs(\%einfo)) {
+	    my $n = $einfo{$k}[1];
+	    if ( $n =~ m|([^:]*:)?/?([^:]+)/([^/]+)$| ) {
+		# group found
+		if (index ($2,$in{'group'}) != 0) { next; }
+		if (exists $in{'profile'} && index ($1,$in{'profile'}) != 0) { next; }
+		$macs .=  $k." ";
+	    }
+	}
+	$redir .= "ext_cmd=".urlize("$macs")."&group=".urlize($in{'group'})."&profile=".urlize($in{'profile'});
+	
+} elsif (exists $in{'profile'}) {
+	my $macs = "";
+
+	my $filt = $in{'profile'}.":";
+	if ($filt eq ":") { $filt = "" };
+
+	foreach my $k (etherGetMacsFilterName(\%einfo, $filt)) {
+	    my $n = $einfo{$k}[1];
+	    if ( $n =~ m|^([^:]+):| ) {
+		# prof found
+		if (index ($1,$in{'profile'}) != 0) { next; }
+		$macs .=  $k." ";
+	    } elsif ( $filt eq "" ) {
+		$macs .=  $k." ";	    
+	    }
+	}
+	$redir .= "ext_cmd=".urlize("$macs")."&group=".urlize($in{'group'})."&profile=".urlize($in{'profile'});	
+
 } else {
-  # log details
-  lbs_common::print_html_tabs(['system_backup', 'logs']);
-
-  &morelog($in{mac});
+	error($text{'err_invalcgi_nomac'}) ;
 }
 
+lbs_common::print_header( $text{'tit_wol'}, "imgbase", "");
+lbs_common::print_html_tabs(['list_of_machines', "clients_list"]);
 
-# end of tabs
-lbs_common::print_end_menu();
-lbs_common::print_end_menu();
-
-# pied de page
-footer("/", text('index'));
-
-#
-# Functions printing columns
-#
-sub rename
-{
-  my $inf = shift;
-
-  if (defined($inf->{'mac'}))
-    {
-      my $mac = $inf->{'mac'};
-      
-      return ({'content' => "<a href='/lbs/rename.cgi?mac=$mac'><img src='images/detail.gif'></a>"});
-      
-    }
-
-  return ({'content' => "&nbsp;"});
+if (exists $in{'mac'}) {
+    print <<EOF
+    <h2 align="center">Client $name ($mac)</h2>
+    <h2><img src="images/admin.gif" align="center"> $text{'lab_administrative_tasks'} :</h2>
+    <ul><li><a href='rename.cgi?$redir'>$text{'but_rename'}</a>
+    <li><a href='renamemac.cgi?$redir'>$text{'but_renamemac'}</a>
+    <li><a href='delete.cgi?$redir'>$text{'but_delete'}</a>
+    </ul>
+EOF
+} else {
+    print "<h2 align=\"center\">";
+    my @local_title;
+    push @local_title, "$text{'lab_group'} $in{'group'}" if $in{'group'};
+    push @local_title, "$text{'lab_profile'} $in{'profile'}" if $in{'profile'};
+    print join ', ', @local_title;
+    print "</h2>";
 }
 
-#
-sub renamemac
-{
-  my $inf = shift;
+print <<EOF;
+    <h2><img src="images/wake.gif" align="center"> $text{'lab_wol2'} :</h2>
+    <ul><li><a href='at/index.cgi?$redir'>$text{'lab_wol_one'}</a>
+    <li><a href='cron/edit_cron.cgi?new=1&$redir'>$text{'lab_wol_per'}</a>
+    </ul>
+EOF
 
-  if (defined($inf->{'mac'}))
-    {
-      my $mac = $inf->{'mac'};
-      return ({'content' => "<a href='/lbs/renamemac.cgi?mac=$mac'><img src='images/detail.gif'></a>"});
-    }
+lbs_common::print_end_menu();		
+lbs_common::print_end_menu();		
 
-  return ({'content' => "&nbsp;"});
-}
+footer("/lbs_common/", $text{'index'});
 
-
-
-# delete one machine
-sub delete
-{
-  my $inf = shift;
-
-  if (defined($inf->{'mac'}))
-    {
-      my $mac = $inf->{'mac'};
-      return ({'content' => "<a href='/lbs/delete.cgi?mac=$mac'><img src='images/trash.gif'></a>"});
-    }
-
-  return ({'content' => "&nbsp;"});
-}
+# DEBUG
+#&showConfig() ;
 

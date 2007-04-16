@@ -58,6 +58,7 @@ err_paramnf=Paramètre <tt>$1</tt> introuvable dans <b>$2</b> .
 file=fichier
 
 lab_adminid=Mot de passe
+lab_administrative_tasks=T&acirc;ches administratives
 lab_allmacs=Adresses MAC des interfaces réseau :
 lab_arguments=Arguments
 lab_backuppc=Backup
@@ -140,6 +141,7 @@ lab_used=Util.
 lab_value=Valeur
 lab_woltasks=Tâches WOL
 lab_wol=WOL
+lab_wol2=Wake on LAN
 lab_wol_one=Nouveau réveil unique
 lab_wol_per=Nouveau réveil périodique
 lab_na=<i>n/d</i>

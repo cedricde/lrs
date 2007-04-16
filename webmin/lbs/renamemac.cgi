@@ -54,7 +54,7 @@ error($text{'err_invalcgi_nomac'}) if (not exists $in{'mac'});
 
 # redirect to the good page
 $mac = $in{'mac'};
-$redir = "bootmenu.cgi?mac=$mac";
+$redir = "/lbs_common/";
 
 $name = etherGetNameByMac(\%einfo, $mac) ;
 error(text("err_mac_inval",$mac)) if (not defined $name);
@@ -94,7 +94,7 @@ if (exists $in{'cancel'}) {
 		delete $einfo{$oldmac};
 		etherSave($etherfile, \%einfo);
 		
-		$redir = "bootmenu.cgi?mac=$mac";
+		$redir = "/lbs_common/";
 		
 		redirect($redir);
 	}
@@ -105,7 +105,7 @@ $title = $minfo{'title'} ;
 lbs_common::print_header( $text{'tit_renamemac'}, "index", $VERSION);
 
 # tabs
-lbs_common::print_html_tabs(['system_backup', 'change_mac']);
+lbs_common::print_html_tabs(['list_of_machines', "clients_list"]);
 
 print "<h2><font color=\"red\">$error</font></h2>" if ($error ne "");
 

@@ -81,7 +81,7 @@ sub mainlist_status_callback() {
 
 sub mainlist_label() {
         return (
-                {'content' => "<div style='text-align: center'>"."WOL"."</div>", 'attribs' => 'width="50px"'}
+                {'content' => "<div style='text-align: center'>"."Admin"."</div>", 'attribs' => 'width="50px"'}
                 );
 }
 
@@ -94,8 +94,8 @@ my $hashref=shift;
                 my $params="mac=".main::urlize($mac);
                 my $name="lbswol"."_".main::mac_remove_columns($mac)."_img";
                 $name =~ tr|-/|__|;
-                my $imgout="/lbs/images/wake.gif";
-                my $imgover="/lbs/images/wake-shaded.gif";
+                my $imgout="/lbs/images/admin.gif";
+                my $imgover="/lbs/images/admin-shaded.gif";
                 my $timestamp="&nbsp";
 
                 my $link = "<div title=\"$timestamp\" 
@@ -105,7 +105,7 @@ my $hashref=shift;
                               <a
                                                 onmouseover=\"$name.src='$imgover';\"
                                                 onmouseout=\"$name.src='$imgout';\"
-                                                href=\"/$module_name/wol.cgi?$params\">
+                                                href=\"/$module_name/admin.cgi?$params\">
                                                 <img
                                                         border=0
                                                         name=\"$name\"
@@ -120,8 +120,8 @@ my $hashref=shift;
                 my $group=$hashref->{'group'};
                 my $profile=$hashref->{'profile'} || "";
                 my $params="group=".main::urlize($group)."&profile=".main::urlize($profile);
-                my $imgout="/lbs/images/wake.gif";
-                my $imgover="/lbs/images/wake-shaded.gif";
+                my $imgout="/lbs/images/admin.gif";
+                my $imgover="/lbs/images/admin-shaded.gif";
                 my $timestamp="&nbsp";
                 my $name="lbswol"."_".$group."_img";
                 $name =~ tr|-/|__|;
@@ -133,7 +133,7 @@ my $hashref=shift;
                               <a
                                                 onmouseover=\"$name.src='$imgover';\"
                                                 onmouseout=\"$name.src='$imgout';\"
-                                                href=\"/$module_name/wol.cgi?$params\">
+                                                href=\"/$module_name/admin.cgi?$params\">
                                                 <img
                                                         border=0
                                                         name=\"$name\"

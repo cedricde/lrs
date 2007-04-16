@@ -58,6 +58,7 @@ err_paramnf=Parameter <tt>$1</tt> not found in file <b>$2</b> .
 file=file
 
 lab_adminid=Password
+lab_administrative_tasks=Administrative tasks
 lab_allmacs=MAC addresses of network interfaces :
 lab_arguments=Arguments
 lab_backuppc=Backup
@@ -139,6 +140,7 @@ lab_used=Used
 lab_value=Value
 lab_woltasks=WOL tasks
 lab_wol=WOL
+lab_wol2=Wake on LAN
 lab_wol_one=New single wake on lan
 lab_wol_per=New periodic wake on lan
 lab_na=N/A

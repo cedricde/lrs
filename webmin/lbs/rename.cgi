@@ -58,7 +58,7 @@ if (not exists $in{'mac'}) {
 
 # redirect to the good page
 $mac = $in{'mac'};
-$redir = "bootmenu.cgi?mac=$mac";
+$redir = "/lbs_common/";
 
 $name = etherGetNameByMac(\%einfo, $mac) ;
 	
@@ -126,7 +126,7 @@ if (exists $in{'cancel'}) {
 	lbs_common::print_header( $text{'tit_name'}, "index", $VERSION);
 	
 	#tabs
-	lbs_common::print_html_tabs(['system_backup', 'rename']);
+	lbs_common::print_html_tabs(['list_of_machines', "clients_list"]);
 	
 	print_name_desc_form("rename.cgi", "<h2>Client $name ($mac) </h2>", $mac, $menu, $name, $redir) ;
 

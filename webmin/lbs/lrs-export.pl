@@ -264,11 +264,15 @@ my $hashref=shift;
                             </div>";
                 
                 
-		my $size=main::get_group_size($group, $profile, $hashref->{'ether'} );                                  # collect the size of the group
-		$size = int( $size >> 10 );
+		my $size;
+		my $nb;
+		
+		if ($hashref->{'name'} ne "ALLPROFILES") {
+			$size = main::get_group_size($group, $profile, $hashref->{'ether'} );                                  # collect the size of the group
+			$size = int( $size >> 10 );
+            		$nb = main::get_group_numofimages($group, $profile, $hashref->{'ether'} );                             # collect the number of image
+		}
 		$size = "<div style=\"text-align: right;\">$size</div>";                                 # and Justify results
-
-                my $nb=main::get_group_numofimages($group, $profile, $hashref->{'ether'} );                             # collect the number of image
 		$nb   = "<div style=\"text-align: right;\">$nb</div>";   			        # and Justify results
                 
                 if (defined ($hashref->{'currentprofile'}) && ($hashref->{'currentprofile'} ne "") && ($hashref->{'currentprofile'} ne "all") && ($hashref->{'currentprofile'} ne "none")) {

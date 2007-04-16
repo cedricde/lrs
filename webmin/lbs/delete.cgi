@@ -97,7 +97,7 @@ if (not exists $in{'mac'}) {
 
 		$mesg = text("msg_delete_ok",$name,$mac);
 		lbs_common::print_header( $text{'tit_delete'}, "index", $VERSION);
-            	lbs_common::print_html_tabs(['system_backup', "delete_machine"]);
+            	lbs_common::print_html_tabs(['list_of_machines', "clients_list"]);
 
 		# delete for other modules
 		# ...will be moved to lbs_common soon
@@ -124,7 +124,7 @@ if (not exists $in{'mac'}) {
 
 	lbs_common::print_header( $text{'tit_delete'}, "index", $VERSION);
 
-	lbs_common::print_html_tabs(['system_backup', "delete_machine"]);
+	lbs_common::print_html_tabs(['list_of_machines', "clients_list"]);
 
 	$mesg = text("msg_delete_confirm",$name,$mac) ;
 	$warning = $text{'msg_delete_warn'} ;
