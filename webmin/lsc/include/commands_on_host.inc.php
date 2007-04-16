@@ -377,8 +377,8 @@ class LSC_Scheduler_Command_on_Host
 			$this->uploaded = $database->f("uploaded");
 			$this->executed = $database->f("executed");
 			$this->deleted = $database->f("deleted");
-
 			$this->next_launch_date = $database->f("next_launch_date");
+			
 		} else if ($database->num_rows() == 0) {
 			return -1;
 		} else {
@@ -658,6 +658,72 @@ function lsc_command_on_host_set_next_attempt_date_time($id_command_on_host, $ne
 	$database->query($query);
 }
 
+/**
+ * Set next launch date
+ *
+ * @param $id_command_on_host
+ * @param new next attempt date time value
+ *
+ */
+function lsc_command_on_host_set_next_launch_date($id_command_on_host, $new_date_time)
+{
+	global $database, $DEBUG;
+
+	if (!isset($database)) {
+		$database = new LSC_DB();
+		if ($DEBUG >= 1) $database->Debug = true;
+	}
+
+	$query = sprintf(
+"
+	UPDATE
+		%s
+	SET
+		next_launch_date = '%s'
+	WHERE
+		id_command_on_host = \"%s\"
+",
+		COMMANDS_ON_HOST_TABLE,
+		$new_date_time,
+		$id_command_on_host
+	);
+	
+	$database->query($query);
+}
+
+/**
+ * Adjust next launch date
+ *
+ * @param $id_command_on_host
+ * @param new next attempt date time value
+ *
+ */
+function lsc_command_on_host_adjust_next_launch_date($id_command_on_host, $new_date_time)
+{
+	global $database, $DEBUG;
+
+	if (!isset($database)) {
+		$database = new LSC_DB();
+		if ($DEBUG >= 1) $database->Debug = true;
+	}
+
+	$query = sprintf(
+"
+	UPDATE
+		%s
+	SET
+		next_launch_date = next_launch_date %s
+	WHERE
+		id_command_on_host = \"%s\"
+",
+		COMMANDS_ON_HOST_TABLE,
+		$new_date_time,
+		$id_command_on_host
+	);
+	
+	$database->query($query);
+}
+
 function lsc_command_on_host_set_current_state($id_command_on_host, $new_state)
 {
 	global $database, $DEBUG;
@@ -685,6 +751,7 @@ function lsc_command_on_host_set_current_state($id_command_on_host, $new_state)
 	
 	$database->query($query);
 }
+
 
 /**
  * Test if one command on host exist

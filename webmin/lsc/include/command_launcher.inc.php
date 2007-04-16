@@ -562,6 +562,15 @@ class LSC_Command_Launcher {
 				) {
 					return 0;
 				}
+				
+				/* Check if next_attempt is not properly initialized (pre 1.0.3 transition) */
+				if ($this->command_on_host->next_launch_date == "0000-00-00 00:00:00" &&
+				    $this->command_on_host->start_date != "0000-00-00 00:00:00" ) {
+				
+				    	lsc_command_on_host_set_next_launch_date($this->id_command_on_host, $this->command_on_host->start_date);
+					return(0);
+				}
+				
 				$this->session = new LSC_Session($mac, $this->command->username);
 					
 				if ($this->session->ping_error == false) {
@@ -576,23 +585,10 @@ class LSC_Command_Launcher {
 							"scheduled"
 						);
 						return 0;
-					} else {
-						lsc_command_on_host_set_current_state(
-							$this->id_command_on_host,
-							"not_reachable"
-						);
-						lsc_command_history_append(
-							$this->id_command_on_host,
-							date("Y-m-d H:i:s"),
-							"not_reachable",
-							$this->session->ssh_stderr,
-							$this->session->msgerror
-						);
-						return -1;
 					}
 				} else {
 					/*
-					 * Wake on lan and retry
+					 * Ping error: Wake on lan and retry
 					 */
 					if ($this->command->wake_on_lan_enable) {
 						$this->wake_on_lan_mac($mac);
@@ -610,36 +606,42 @@ class LSC_Command_Launcher {
 							return 0;
 						}
 					}
-					/*
-					 * Connection error ...
-					 */
-					
-					lsc_command_on_host_set_current_state(
-						$this->id_command_on_host,
-						"not_reachable"
-					);
-					lsc_command_history_append(
-						$this->id_command_on_host,
-						date("Y-m-d H:i:s"),
-						"not_reachable",
-						"",
-						$this->session->msgerror
-					);
-		
-					lsc_command_on_host_set_remains_connection_attempt(
-						$this->id_command_on_host, 
-						--$remains_connection_attempt
-					);
-		
-					lsc_command_on_host_set_next_attempt_date_time(
-						$this->id_command_on_host,
-						time() + ($this->command->next_connection_delay * 60)
-					);
-					
-					if ($remains_connection_attempt <= 0) return -1;
-					
-					sleep($this->command->next_connection_delay * 60);
 				}
+				
+				/*
+				 * Connection error ...
+				 */
+
+				lsc_command_on_host_set_current_state(
+					$this->id_command_on_host,
+					"not_reachable"
+				);
+				lsc_command_history_append(
+					$this->id_command_on_host,
+					date("Y-m-d H:i:s"),
+					"not_reachable",
+					$this->session->ssh_stderr,
+					$this->session->msgerror
+				);
+
+    	    	    	    	/* decrement connection attempts */
+				lsc_command_on_host_set_remains_connection_attempt(
+					$this->id_command_on_host, 
+					--$remains_connection_attempt
+				);
+				
+    	    	    	    	/* re-schedule */
+				if ($this->command_on_host->next_launch_date == "0000-00-00 00:00:00") {
+				    	lsc_command_on_host_set_next_launch_date($this->id_command_on_host, date("Y-m-d H:i:s"));
+				}
+
+				lsc_command_on_host_adjust_next_launch_date(
+					$this->id_command_on_host,
+					"+ interval ".$this->command->next_connection_delay." minute"
+				);
+
+				return -1;					
+				
 			}
 			return -1;
 		} else {

@@ -313,7 +313,7 @@ WHERE
 			
 			$query = sprintf("
 				SELECT
-					A.id_command_on_host, A.start_date
+					A.id_command_on_host, A.next_launch_date
 				FROM
 					%s A,
 					%s B
@@ -331,7 +331,8 @@ WHERE
 					NOT (A.current_state = \"delete_failed\") and
 					NOT (A.current_state = \"inventory_failed\") and
 					(A.number_attempt_connection_remains > 0) and
-					(A.current_pid = \"-1\")
+					(A.current_pid = \"-1\") and 
+					(A.next_launch_date <= CURRENT_TIMESTAMP )
 				ORDER BY
 					B.date_created ASC
 				LIMIT 
@@ -347,15 +348,6 @@ WHERE
 			if ( $database->num_rows() > 0 ) {
 				// Iterate all command to dispatch
 				while ( $database->next_record() ) {
-					/*
-					 * Test if start_date < now < end_date
-					 */
-					if ($database->f("start_date") != "0000-00-00 00:00:00") {
-						if (strtotime($database->f("start_date"))>time()) {
-							debug(1, "Run start_date > now for ".$database->f("id_command_on_host"));
-							continue;
-						}
-					}
 
 					$start_command = "cd ".dirname(__FILE__)."/../;./phprun.sh \"./start_command_on_host.php -id_command_on_host ".$database->f("id_command_on_host")."\" > /dev/null & echo \$!";
 					debug(1, sprintf(

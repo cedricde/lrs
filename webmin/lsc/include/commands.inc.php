@@ -385,6 +385,7 @@ class LSC_Scheduler_Command
 					$new_command_on_host->host = $host["hostname"];
 					$new_command_on_host->start_date = $this->start_date;
 					$new_command_on_host->end_date = $this->end_date;
+					$new_command_on_host->next_launch_date = $this->start_date;
 
 					// Initialise field
 					$new_command_on_host->current_state = "scheduled";
@@ -393,7 +394,6 @@ class LSC_Scheduler_Command
 					$new_command_on_host->deleted = "TODO";
 					$new_command_on_host->current_pid = -1;
 
-					$new_command_on_host->next_launch_date = "0000-00-00 00:00:00";
 					
 					$new_command_on_host->number_attempt_connection_remains = $this->max_connection_attempt;
 					
