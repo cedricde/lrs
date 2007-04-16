@@ -110,7 +110,7 @@ print "</center>";
 lbs_common::print_end_menu();		
 lbs_common::print_end_menu();		
 
-footer("/lbs-common/", $text{'index'});
+footer("/lbs_common/", $text{'index'});
 
 # DEBUG
 #&showConfig() ;
