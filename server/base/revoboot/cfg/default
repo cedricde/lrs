@@ -1,6 +1,6 @@
 timeout 20
 color 7/1 15/3
-default 1
+default 0
 kbdfr
 
 title Disque Dur Local  / Local Hard Disk
