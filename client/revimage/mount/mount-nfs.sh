@@ -13,7 +13,7 @@ SUBDIR=`dirname $3`
 
 # get the mac address
 getmac() {
-    MAC=$(ifconfig `cat /etc/eth`|grep HWaddr|sed 's/.*HWaddr //'|sed 's/[: ]//g')
+    MAC=`cat /etc/eth`
 }
 
 
