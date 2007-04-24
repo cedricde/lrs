@@ -409,7 +409,7 @@ int process_packet(unsigned char *buf, char *mac, char *smac,
 	    //to.sin_family = AF_INET;
 	    //to.sin_port = htons(1001);
 	    //inet_aton(inet_ntoa(si_other.sin_addr), &to.sin_addr);        
-	    sendto(s, gBuff, strlen(gBuff)+1, 0,
+	    sendto(s, gBuff, strlen(gBuff)+1, MSG_NOSIGNAL,
 		   (struct sockaddr *) si_other, sizeof(*si_other));
 	}
 	return 0;
@@ -444,7 +444,7 @@ int process_packet(unsigned char *buf, char *mac, char *smac,
 	//printf("%c %d %d %d\n", pnum, bnum, to, wait);
 	
 	sprintf(buf, "%d", wait);
-	sendto(s, buf, strlen(buf), 0,
+	sendto(s, buf, strlen(buf), MSG_NOSIGNAL,
 	       (struct sockaddr *) si_other, sizeof(*si_other));
 	
 	return 0;
