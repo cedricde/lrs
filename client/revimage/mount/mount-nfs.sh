@@ -13,7 +13,7 @@ SUBDIR=`dirname $3`
 
 # get the mac address
 getmac() {
-    MAC=`cat /etc/eth`
+    MAC=`cat /etc/shortmac`
 }
 
 
