@@ -27,7 +27,7 @@ initrd: Makefile MAKEDEV pump/pump $(IMAGE_DIR)/autorestore/revoboot
 	#mke2fs -i $$((4096+512)) -m 0 -F $(INITRD)
 	#mount $(INITRD) $(LOOP) -o loop
 	tar cvf - --exclude .svn -C $(TREE) . | tar xf - -C $(LOOP)
-	(cd $(LOOP)/dev; $(MKDEV) console ptyp std hda hdb hdc hdd hde hdf hdg hdh sda sdb sdc sdd sde sdf sdg sdh fd0 cciss.0 cciss.1 ida.0 scd0 scd1; mknod -m 600 initctl p; mknod -m 600 log p)
+	(cd $(LOOP)/dev; $(MKDEV) console ptyp std hda hdb hdc hdd hde hdf hdg hdh sda sdb sdc sdd sde sdf sdg sdh fd0 cciss.0 cciss.1 ida.0 scd0 scd1 input; mknod -m 600 initctl p; mknod -m 600 log p)
 	# get the latest pump
 	strip pump/pump
 	cp -f pump/pump $(LOOP)/bin

@@ -46,6 +46,11 @@ ifconfig $ETH up && echo "$ETH"
 [ -z $NOPUMP ] && pump -i $ETH -h lrsclient --win-client-ident
 # multicast
 [ -z $NOPUMP ] && route add -net 224.0.0.0 netmask 240.0.0.0 dev $ETH
+
 # save the mac address
-ifconfig $ETH|grep HWaddr|sed 's/.*HWaddr //'|sed 's/[ ]//g' >/etc/mac
+if [ "$REVOMAC" ] ;then
+    echo $REVOMAC|sed 's/\(..\)/\1:/g'|sed 's/:$//' >/etc/mac
+else
+    ifconfig $ETH|grep HWaddr|sed 's/.*HWaddr //'|sed 's/[ ]//g' >/etc/mac
+fi
 sed 's/[: ]//g'</etc/mac >/etc/shortmac
