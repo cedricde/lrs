@@ -61,15 +61,26 @@ dectohex()
 
 diskinfo()
 {
-    NUM=-1
-    sfdisk -l -uS|grep /dev|tr -s " "|while read FIRST ALL
+    NUM=0
+    sfdisk -l -uS|grep /dev|tr -d "*"|tr -s " "|while read FIRST ALL
     do
 	if [ $FIRST = "Disk" ]
 	then
+	    PNUM=0
+	    C=`echo $ALL|cut -f 2 -d " "`
+	    H=`echo $ALL|cut -f 4 -d " "`
+	    S=`echo $ALL|cut -f 6 -d " "`
+	    TOT=$(($C*$H*$S))
+	    echo "D:(hd$NUM):CHS($C,$H,$S)=$TOT"
 	    NUM=$(($NUM+1))
-	    echo "D:(hd$NUM):CHS()$ALL"
 	else
-	    echo "P:$ALL"
+	    T=`echo $ALL|cut -f 4 -d " "`
+	    S=`echo $ALL|cut -f 1 -d " "`
+	    L=`echo $ALL|cut -f 3 -d " "`
+	    [ "$S" = "0" ] && continue
+	    [ "$T" = "5" ] && continue
+	    echo "P:$PNUM,t:$T,s:$S,l:$L"
+	    PNUM=$(($PNUM+1))
 	fi
     done
     exit
@@ -91,12 +102,13 @@ CPU4=`cat /proc/cpuinfo|grep "^stepping"|tr -cd 0123456789`
 CPUV=47
 grep AuthenticAMD /proc/cpuinfo && CPUV=41
 PCI=`pciinfo`
-#diskinfo
+DI=`diskinfo`
 
 DATA="M:280,U:$MEM
 $PCI
 C:$CPU1,$CPU2,0,$CPU4,0,0,0,0,0,0,0,0,$CPUV
-F:$FREQ"
+F:$FREQ
+$DI"
 
 if [ "$1" != "stdout" ]; then
     echo -en "\252$DATA\00Mc:$MAC" | nc -p 1001 -w 1 $SRV 1001

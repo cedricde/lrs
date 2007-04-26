@@ -423,14 +423,34 @@ char *misc_error (int argc, char **argv)
   newtBell();
   newtRefresh ();
 
-  while (getchar() != 'c')
-    sleep(1);
+  waitkey();
   
   newtPopWindow();
   newtFormDestroy (myForm);
   newtRefresh ();
 
   return "OK";
+}
+
+/*
+ * Wait for the 'c' key
+ */
+void waitkey(void)
+{
+    int fd;                                                                      
+                                                                                 
+    fd = open("/dev/input/event1", O_RDONLY);
+    if (fd != -1) {
+        unsigned short ev[8];
+
+        while (read(fd, &ev, sizeof(ev))) {
+            if (ev[5] == 0x2e) {
+                break;
+            }
+        }
+        close(fd);
+    }
+    sleep(1);
 }
 
 /*

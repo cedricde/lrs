@@ -615,8 +615,8 @@ int save(void)
 	    }
 	}
 
-	if (ttype[i] == 0x12) {
-	    /* Save as raw: compaq diag */
+	if (ttype[i] == 0x12 || ttype[i] == 0xee || ttype[i] == 0xef) {
+	    /* Save as raw: compaq diag, EFI partitions */
 	    tmprintf("%s/image_raw %s ?", revobin, device);
 	    if (mysystem(tmppath) == 0) {
 		tmprintf("%s/image_raw %s %s", revobin, device, destfile);
