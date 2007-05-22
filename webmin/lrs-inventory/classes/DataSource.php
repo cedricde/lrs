@@ -17,6 +17,7 @@ class DataSource
 	var $m_Default;
 	var $m_Sources;
 	var $m_SourceConfigurations;
+	var $m_ClassPrefix;
 
 	/**
 	 * Constructor. Creates a DataSource object.
@@ -27,6 +28,7 @@ class DataSource
 		
 		$this->m_Sources = array();
 		$this->m_SourceConfigurations = DataSourceConfiguration::loadFromFile($DATASOURCECONFIGURATION);
+		$this->m_ClassPrefix = "";
 	}
 	
 	/**
@@ -227,13 +229,31 @@ class DataSource
 		$driver->saveCustomFields($machine);
 	}
 	
+	/*
+	 * Load a component class
+	 */
 	function loadComponentClass($classname)
 	{
 		debug('DataSource::loadComponentClass');
 
 		global $INCLUDE_PATH;
+		
+		$pre = $this->m_ClassPrefix;
+		if (class_exists($pre.$classname))
+			return;
 
-		include_once($INCLUDE_PATH .'Components/'. $classname .'.php');
+		if ($pre == "" || $classname == "Component" || $classname == "Object") {
+			include_once($INCLUDE_PATH .'Components/'. $classname .'.php');
+		} else {
+			// rename the class name
+			ini_set("include_path", ".:".$INCLUDE_PATH .'Components/');
+			$class = join("", file($INCLUDE_PATH .'Components/'. $classname .'.php'));
+			$class = preg_replace("/class ".$classname." extends /", "class ".$pre.$classname." extends ", $class);
+			$class = preg_replace("/function ".$classname."\(\)/", "function ".$pre.$classname."()", $class);
+			$class = preg_replace("/^<.php/", "// $0", $class);
+			$class = preg_replace("/\\?>/", "// $0", $class);
+			eval($class);
+		}
 	}
 
 }

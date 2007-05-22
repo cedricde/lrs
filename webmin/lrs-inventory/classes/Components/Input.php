@@ -12,9 +12,11 @@ class Input extends Component
 	function Input()
 	{
 		$this->m_Properties = array(	'Type'=>'' , 
-										'StandardDescription'=>'' ,
-										'ExpandedDescription'=>'' ,
-										'Connector'=>'' );
+						'StandardDescription'=>'' ,
+						'ExpandedDescription'=>'' ,
+						'Manufacturer'=>'' ,
+						'PointType'=>'' ,
+						'Connector'=>'' );
 	}
 	
 	/**

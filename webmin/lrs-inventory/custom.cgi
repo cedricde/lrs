@@ -17,7 +17,6 @@
 
 	$driver = $datasource->getDefaultSourceDriver();
 	$types = $driver->getFields('Custom'); 
-
 	# SQL types for new fields
 	$newtypes = array(
 			array("t"=>"int", "en"=>"Integer", "fr"=>"Entier"),
@@ -38,7 +37,7 @@
 		{
 			// A field has to be delete
 			case 'delete':
-				//$machine->deleteCustomField( $_GET['field'] );
+				$driver->delCustomField( $_GET['field'] );
 				break;
 
 			// A new field has to be registered
@@ -101,7 +100,6 @@
 	// Display all fields
 	if (!$cust) $cust = $empty;
 	$props = $cust->getProperties();
-
 	foreach ( $props as $key => $value )
 	{
 		$deleteurl = 'custom.cgi?ac=delete&mac='. $_GET['mac'] .'&field='. $key;
@@ -118,13 +116,11 @@
 		$parity = $i%2==0 ? 'pair' : 'impair';
 		$template->set_var('ROWCLASS', $parity);
 		$template->set_var('delme', '');
-		// delete not activated
-		if (0) {
-			// can delete non standard fields only
-			if (!array_key_exists( $key, $empty->m_Properties)) {
-				$template->parse('delme', 'candelete');
-				$template->set_var('DELETE_URL', $deleteurl);
-			}
+
+		// can delete non standard fields only
+		if (!array_key_exists( $key, $empty->m_Properties)) {
+			$template->set_var('DELETE_URL', $deleteurl);
+			$template->parse('delme', 'candelete');
 		}
 		$template->parse('rows', 'row', true);
 		

@@ -21,6 +21,7 @@ class SqlDriver extends Driver
 	var $m_DefinedCustomFields;
 	var $m_InvIdDate;
 	var $m_InvIdTime;
+	var $m_DBName;
 
 	/**
 	 * Constructor. Build a SqlDriver object.
@@ -37,6 +38,7 @@ class SqlDriver extends Driver
 		$this->m_CachedQueries = array();
 		$this->m_CachedMachines = array();
 		$this->m_LatestMachineInventory = array();
+		$this->m_DBName = $parameters['Database'];
 	}
 
 	/**
@@ -601,6 +603,8 @@ class SqlDriver extends Driver
 				// special keyword to get all hosts in the main page
 				if ( $machine == "*ALL*") 
 					$getall = 1;
+				else 
+					$getall = 0;
 				// if it is a MAC address
 				if ( eregi('^[0-9a-f]{2}:[0-9a-f]{2}:[0-9a-f]{2}:[0-9a-f]{2}:[0-9a-f]{2}:[0-9a-f]{2}$', $machine) )
 					$macaddresses[] = $machine;
@@ -719,6 +723,8 @@ class SqlDriver extends Driver
 	function & readComponentToTable($type, & $machines, $inventory='')
 	{
 		global $datasource;
+
+		$pre = $datasource->m_ClassPrefix;
 		$datasource->loadComponentClass($type);
 
 		for ( $i=0 ; $i<count($machines) ; $i++ )
@@ -796,7 +802,8 @@ class SqlDriver extends Driver
 			{
 				$objectid = $connection->Record['id'];
 	
-				$object = new $type;
+				$pretype = $pre.$type;
+				$object = new $pretype;
 	
 				// Update host<=>component link
 				$object->setHost($host);
@@ -1013,10 +1020,24 @@ class SqlDriver extends Driver
 	{
 		$newname = eregi_replace("[^0-9a-z-]", "_", $name);
 		
-		$sql = "ALTER TABLE Custom ADD $newname $type;"; 
+                $def = "DEFAULT 0";
+                if (strstr($type, "varchar")) $def = "DEFAULT \"\"";
+                $sql = "ALTER TABLE Custom ADD $newname $type $def;";
 		$this->m_Connection->query($sql);
-
 	} 
+	
+	/**
+	 * Delete a field in the Custom table
+	 *
+	 * @param name 
+	 */
+	function delCustomField($name)
+	{
+		$newname = eregi_replace("[^0-9a-z-]", "_", $name);
+		
+		$sql = "ALTER TABLE Custom DROP COLUMN $newname;"; 
+		$this->m_Connection->query($sql);
+	}
 	
 	/**
 	 * Get hosts which did not sent an inventory
@@ -1050,7 +1071,12 @@ class SqlDriver extends Driver
 		return $ret;
 	} 
 	
-
+	/* Send a 'USE db' query to WA some PHP/Mysql bugs */
+	function forceUse()
+	{
+		$connection = $this->m_Connection;
+		$connection->query("USE ".$this->m_DBName);
+	}
 }
 
 ?>

@@ -11,7 +11,9 @@ class Hardware extends Component
 {
 	function Hardware()
 	{
-		$this->m_Properties = array(	'ProcessorType'=>'' ,
+		$this->m_Properties = array(	'Description'=>'',
+						'Type'=>'',
+						'ProcessorType'=>'' ,
 						'ProcessorFrequency'=>'' ,
 						'ProcessorCount'=>'' ,
 						'RamTotal'=>'' ,

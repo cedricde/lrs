@@ -13,6 +13,7 @@ class Memory extends Component
 	{
 		$this->m_Properties = array(	'Type'=>'' , 
 						'ExtendedDescription'=>'' ,
+						'Description'=>'' ,
 						'Size'=>'' ,
 						'ChipsetType'=>'' ,
 						'Frequency'=>'' ,

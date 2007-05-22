@@ -1,4 +1,4 @@
-webmin-lrs-inventory (2.1.4) stable; urgency=low
+webmin-lrs-inventory (2.1.5) stable; urgency=low
 
   * First package. Replaces webmin-lbs-inventory
 

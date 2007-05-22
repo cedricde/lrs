@@ -1,0 +1,15 @@
+--
+-- Inventory update
+--
+
+ALTER TABLE Storage ADD Manufacturer varchar(64) default NULL;
+ALTER TABLE Storage ADD DiskSize varchar(32) default NULL;
+
+ALTER TABLE Hardware ADD Description varchar(64) default NULL;
+ALTER TABLE Hardware ADD Type varchar(32) default NULL;
+ALTER TABLE Input ADD Manufacturer varchar(64) default NULL;
+ALTER TABLE Input ADD PointType varchar(64) default NULL;
+ALTER TABLE Memory ADD Description varchar(64) default NULL;
+
+DELETE FROM Version;
+INSERT INTO Version VALUES( '7' );

@@ -4,7 +4,7 @@
 #
 
 # lastest db version
-TOVER=6
+TOVER=7
 
 #
 function create() {

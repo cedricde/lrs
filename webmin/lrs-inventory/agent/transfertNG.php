@@ -85,7 +85,12 @@
 				}
 			}
 		}
-
+		
+		/* GLPI import */
+		if (1) {
+			$mach = ereg_replace('-[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{2}-[0-9]{2}-[0-9]{2}$', '', $DEVICEID);
+			system("/var/lib/lrs/php ./importGLPI.php $mach >/tmp/glpi.log 2>&1");
+		}
 	}
 
 	print gzcompress($resp);

@@ -12,12 +12,12 @@ class Bios extends Component
 	function Bios()
 	{
 		$this->m_Properties = array(	'Serial'=>'' , 
-										'Version'=>'' ,
-										'Vendor'=>'' ,
-										'Chipset'=>'' ,
-										'ChipsetSerial'=>'' ,
-										'ChipsetVendor'=>'' ,
-										'MachineType'=>'' );
+						'Version'=>'' ,
+						'Vendor'=>'' ,
+						'Chipset'=>'' ,
+						'ChipsetSerial'=>'' ,
+						'ChipsetVendor'=>'' ,
+						'TypeMachine'=>'' );
 	}
 
 	/**
@@ -147,7 +147,7 @@ class Bios extends Component
 	 */
 	function getMachineType()
 	{
-		return $this->getProperty('MachineType');
+		return $this->getProperty('TypeMachine');
 	}
 
 	/**
@@ -157,7 +157,7 @@ class Bios extends Component
 	 */
 	function setMachineType($machinetype)
 	{
-		$this->setProperty('MachineType',$machinetype);
+		$this->setProperty('TypeMachine',$machinetype);
 	}
 
 }

@@ -21,17 +21,20 @@
 		<MappedField from="WINCOMPANY" to="RegisteredCompany" />
 		<MappedField from="WINOWNER" to="RegisteredName" />
 		<MappedField from="WINPRODID" to="OSSerialNumber" />
+		<MappedField from="DESCRIPTION" to="Description" />
+		<MappedField from="TYPE" to="Type" />
 
 	</MappedObject>
 
 	<MappedObject name="BIOS" class="Bios">
 
-		<MappedField from="SMANUFACTURER" to="SmbManufacturer" />
-		<MappedField from="SMODEL" to="SmbProduct" />
-		<MappedField from="SSN" to="SmbSerial" />
+		<MappedField from="SMANUFACTURER" to="ChipVendor" />
+		<MappedField from="SMODEL" to="Chipset" />
+		<MappedField from="SSN" to="Serial" />
 		<MappedField from="BMANUFACTURER" to="BiosVendor" />
 		<MappedField from="BVERSION" to="BiosVersion" />
 		<MappedField from="BDATE" to="ChipSerial" />
+		<MappedField from="TYPE" to="TypeMachine" />
 
 	</MappedObject>
 
@@ -53,6 +56,8 @@
 		<MappedField from="CAPTION" to="StandardDescription" />
 		<MappedField from="DESCRIPTION" to="ExpandedDescription" />
 		<MappedField from="INTERFACE" to="Connector" />
+		<MappedField from="MANUFACTURER" to="Manufacturer" />
+		<MappedField from="POINTTYPE" to="PointType" />
 
 	</MappedObject>
 
@@ -64,6 +69,7 @@
 		<MappedField from="TYPE" to="ChipsetType" />
 		<MappedField from="SPEED" to="Frequency" />
 		<MappedField from="NUMSLOTS" to="SlotCount" />
+		<MappedField from="DESCRIPTION" to="Description" />
 
 	</MappedObject>
 

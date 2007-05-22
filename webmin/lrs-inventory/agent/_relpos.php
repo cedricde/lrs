@@ -1,0 +1,3 @@
+<?
+$phproot = "/var/www/glpi";
+?>
