@@ -4,3 +4,5 @@ adresse_mail=Adresse mail,0
 showempty=Afficher les clients sans inventaire,1,1-Oui,0-Non
 genfromocs=Afficher les informations générales en utilisant:,1,1-L'inventaire OCS,0-L'inventaire au boot PXE
 keep=Nombre d'inventaires conservés dans la BDD (par machine),0
+glpi_sync=Activer la synchro avec GLPI,1,1-Oui,0-Non
+glpi_dir=Répertoire d'installation GLPI,0

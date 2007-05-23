@@ -20,6 +20,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+# LRS paths init
+include_once(dirname(__FILE__).'/../../lbs_common/lbs_common.php');
+$config = lib_read_file("/etc/webmin/lrs-inventory/config");
+
 # GLPI init
 $NEEDED_ITEMS=array("computer", "device", "link", "monitor", "enterprise", "printer", "peripheral");
 include ("_relpos.php");
@@ -30,10 +34,8 @@ $db = new DB;
 
 # LRS Inventory init
 error_reporting(E_ALL);
-include_once('/usr/share/webmin/lrs-inventory/classes/DataSource.php');
+include_once(dirname(__FILE__).'/../classes/DataSource.php');
 $datasource = & DataSource::getDefaultDataSource();
-$mach = "TEST__LDM";
-
 
 /**
  * Import a dropdown from OCS table.
@@ -569,6 +571,8 @@ function import($mach)
 	}
 }
 
-import($argv[1]);
-
+if (isset($argv[1]) && $config["glpi_sync"]) 
+    import($argv[1]);
+else
+    print "Error: no host given on command line or GLPI sync disabled.\n";
 ?>

@@ -1,3 +1,3 @@
 <?
-$phproot = "/var/www/glpi";
+$phproot = $config["glpi_dir"];
 ?>
