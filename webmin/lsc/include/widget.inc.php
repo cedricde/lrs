@@ -456,11 +456,11 @@ function LSC_Widget_standard_host_actions(&$template, $script_list, $out_templat
 		"widget_standard_host_actions" => "widget_standard_host_actions.tpl"
 	));
 
-	$template->set_block("widget_standard_host_actions", "SCRIPT_LIST", "rows");
+	$template->set_block("widget_standard_host_actions", "SCRIPT_LIST", "rows_ha");
 	foreach( $script_list as $script ) {
 		$template->set_var("FILENAME", $script["filename"]);
 		$template->set_var("TITLE", isset($script["title".$lang]) ? $script["title".$lang] : $script["title"]);
-		$template->parse("rows", "SCRIPT_LIST", true);
+		$template->parse("rows_ha", "SCRIPT_LIST", true);
 	}
 
 	$template->parse($out_template_varname, "widget_standard_host_actions", "widget_standard_host_actions");
@@ -603,15 +603,15 @@ function LSC_Widget_command_detail(&$template, $id_command, $out_template_varnam
 	$template->set_var("COMMAND_PATH_SOURCE", $command->path_source);
 	
 	if ($command->create_directory_enable) {
-		$template->set_var("COMMAND_CREATE_DIRECTORY", "Activé");
+		$template->set_var("COMMAND_CREATE_DIRECTORY", "Activ?");
 	} else {
-		$template->set_var("COMMAND_CREATE_DIRECTORY", "Désactivé");
+		$template->set_var("COMMAND_CREATE_DIRECTORY", "D?sactiv?");
 	}
 	
 	if ($command->start_script_enable) {
-		$template->set_var("COMMAND_START_SCRIPT", "Activé");
+		$template->set_var("COMMAND_START_SCRIPT", "Activ?");
 	} else {
-		$template->set_var("COMMAND_START_SCRIPT", "Désactivé");
+		$template->set_var("COMMAND_START_SCRIPT", "D?sactiv?");
 	}
 	
 	if ($command->start_date == "0000-00-00 00:00:00") {
@@ -943,15 +943,15 @@ function LSC_Widget_command_on_host_detail(&$template, $id_command_on_host, $out
 	$template->set_var("COMMAND_PATH_SOURCE", $command->path_source);
 	
 	if ($command->create_directory_enable) {
-		$template->set_var("COMMAND_CREATE_DIRECTORY", "Activé");
+		$template->set_var("COMMAND_CREATE_DIRECTORY", "Activ?");
 	} else {
-		$template->set_var("COMMAND_CREATE_DIRECTORY", "Désactivé");
+		$template->set_var("COMMAND_CREATE_DIRECTORY", "D?sactiv?");
 	}
 	
 	if ($command->start_script_enable) {
-		$template->set_var("COMMAND_START_SCRIPT", "Activé");
+		$template->set_var("COMMAND_START_SCRIPT", "Activ?");
 	} else {
-		$template->set_var("COMMAND_START_SCRIPT", "Désactivé");
+		$template->set_var("COMMAND_START_SCRIPT", "D?sactiv?");
 	}
 	
 	if ($command->start_date == "0000-00-00 00:00:00") {

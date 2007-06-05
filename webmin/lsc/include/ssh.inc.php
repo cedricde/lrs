@@ -117,11 +117,12 @@ class LSC_Session {
 
 		/* safe defaults */
 		$this->root_path = CYGWIN_WINDOWS_ROOT_PATH;
-		$this->tmp_path = $this->root_path."/c/lsc";
+		$this->tmp_path = $config['path_destination'];;
+		debug(1, sprintf("Default path : '%s'", $this->tmp_path));
 		
-		/* Initialise mac adress */
+		/* Initialize mac address */
 		$this->mac = $mac;
-		debug(1, sprintf("Mac adress : '%s'", $mac));
+		debug(1, sprintf("Mac address : '%s'", $mac));
 
 		/* Load ether file */
 		$this->ether = etherLoadByMac();
@@ -186,9 +187,7 @@ class LSC_Session {
 		 if ($ping_enable && $config['explorer'] != 0) {
 			 $ls_command = "ls ".MOUNT_EXPLORER."/".$this->user."@".$this->ip."/";
 			 
-			 lsc_ssh(
-				$this->user, 
-				$this->ip, 
+			 lsc_exec(
 				$ls_command, 
 				$this->ssh_array_output, 
 				$this->ssh_return_var, 
@@ -207,12 +206,12 @@ class LSC_Session {
 			}
 		 }
 		
-		/* Set connection user home path */
-		if ($home == "") {
+		/* Set connection user home path. Not Used */
+		/* if ($home == "") {
 			$this->home = $this->LSC_getHomePath();
 		} else {
 			$this->home = $home;
-		}
+		}*/
 		
 		debug(1, sprintf("User home path : %s", $this->home));
 
@@ -398,20 +397,24 @@ class LSC_Session {
 	 */
 	function initialize_os_type($known_type = "")
 	{
+		global $config;
+		
 		$random = mt_rand();
 		if ($known_type === false) {
 			return;
 		}
 		if ($known_type == "") {
 			unset($output); unset($return_var); unset($stdout); unset($stderr);
-			lsc_exec("xprobe2 -M 6 ".$this->ip." 2>&1", $output, $return_var, $stdout, $stderr);
+			lsc_exec("./xprobe_safe ".$this->ip, $output, $return_var, $stdout, $stderr);
 			$key = LSC_arrayEreg("Running OS", $output);
 			$type = $output[$key];
 		} else {
 			$type = $known_type;
 		}
+		debug(2, "OS Type:".$type);
 		if ( strpos ( $type, "Windows" ) !== FALSE) {
 			$this->platform = "Windows";
+			$this->tmp_path = $config[path_destination];
 			return;
 		} elseif ( strpos ( $type, "Linux" ) !== FALSE) {
 			$this->platform = "Linux";
@@ -419,7 +422,8 @@ class LSC_Session {
 			$this->tmp_path = "/tmp/lsc$random";
 			return;
 		}
-		$this->platform = "Other";	// keep the default root path in case it's a windows system
+		$this->platform = "Other/N.A.";
+		$this->tmp_path = "";
 	}
 
 	/**

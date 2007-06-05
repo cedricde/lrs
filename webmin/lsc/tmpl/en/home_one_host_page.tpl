@@ -5,21 +5,21 @@
 <div class="lsc">
 <h2>General informations</h2>
 
-<h3>Distant control of this host :</h3>
+<h3>Remote control of :</h3>
 <div class="indent">
 <table class="vertical">
 	<tbody>
 		<tr>
-			<th>MAC address :</th>
-			<td>{HOST_INFO_MAC_ADDRESS}</td>
+			<th>Host name :</th>
+			<td>{HOST_INFO_HOSTNAME}</td>
 		</tr>
 		<tr>
 			<th>IP address :</th>
 			<td>{HOST_INFO_IP_ADDRESS}</td>
 		</tr>
 		<tr>
-			<th>Host name :</th>
-			<td>{HOST_INFO_HOSTNAME}</td>
+			<th>MAC address :</th>
+			<td>{HOST_INFO_MAC_ADDRESS}</td>
 		</tr>
 		<tr>
 			<th>Belongs to profile :</th>

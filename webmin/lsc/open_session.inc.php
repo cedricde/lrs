@@ -13,6 +13,7 @@ if ($getmac != "") {
 	/*
 	 * Open the session
 	 */
+		
 	if ($_COOKIE["session"][$getmac]["platform"]!="") {
 		$session = new LSC_Session(
 			$getmac, 
@@ -22,7 +23,9 @@ if ($getmac != "") {
 			$_COOKIE["session"][$getmac]["homepath"]
 		);
 	} else {
-		$session = new LSC_Session($getmac, "root", !$isgroup);
+		$ping_enable = !$isgroup;
+		if (strstr($_SERVER['REQUEST_URI'], "repository.cgi")) $ping_enable = false;
+		$session = new LSC_Session($getmac, "root", $ping_enable);
 	}
 	
 	if ($session->errors == 0) {

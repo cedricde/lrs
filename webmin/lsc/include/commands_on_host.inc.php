@@ -38,7 +38,7 @@ class LSC_Scheduler_Command_on_Host
 	var $executed;				/**< is command executed ? */
 	var $deleted;				/**< is command deleted ? */
 	var $next_launch_date;			/**< when this command will be started (YYYY-MM-DD HH:MM:SS) */
-	var $number_attempt_connection_remains;	/**< TODO */
+	var $number_attempt_connection_remains;	/**< number of attempts */
 	var $next_attempt_date_time;		/**< php time function value */
 	var $current_pid = -1;
 	var $errors = 0;			/**< number errors */
@@ -400,6 +400,27 @@ class LSC_Scheduler_Command_on_Host
 	}
 
 	/**
+	* Adjust next launch date
+	*
+	* @param $id_command_on_host
+	* @param new next attempt date time value
+	*
+	*/
+	function update_next_launch_date($date) {
+		global $database;
+
+		$query = sprintf("UPDATE %s
+			SET next_launch_date = %s
+			WHERE id_command_on_host = \"%s\" ",
+			COMMANDS_ON_HOST_TABLE,
+			$date,
+			$this->id_command_on_host
+		);
+		
+		$database->query($query);
+		$this->refresh();
+	}
+	/**
 	 * Return in array command history of current command on host
 	 *
 	 * @return array history list\n
@@ -691,39 +712,6 @@ function lsc_command_on_host_set_next_launch_date($id_command_on_host, $new_date
 	$database->query($query);
 }
 
-/**
- * Adjust next launch date
- *
- * @param $id_command_on_host
- * @param new next attempt date time value
- *
- */
-function lsc_command_on_host_adjust_next_launch_date($id_command_on_host, $new_date_time)
-{
-	global $database, $DEBUG;
-
-	if (!isset($database)) {
-		$database = new LSC_DB();
-		if ($DEBUG >= 1) $database->Debug = true;
-	}
-
-	$query = sprintf(
-"
-	UPDATE
-		%s
-	SET
-		next_launch_date = next_launch_date %s
-	WHERE
-		id_command_on_host = \"%s\"
-",
-		COMMANDS_ON_HOST_TABLE,
-		$new_date_time,
-		$id_command_on_host
-	);
-	
-	$database->query($query);
-}
-
 function lsc_command_on_host_set_current_state($id_command_on_host, $new_state)
 {
 	global $database, $DEBUG;
@@ -955,8 +943,7 @@ function lsc_command_on_host_set_pause($id_command_on_host)
 	UPDATE
 		%s
 	SET
-		current_state = \"pause\",
-		current_pid = \"-1\"
+		current_state = \"pause\"
 	WHERE
 		id_command_on_host = \"%s\" and
 		(
@@ -1002,32 +989,20 @@ WHERE
 
 	$database->next_record();
 	$current_state = $database->f("current_state");
-	if (
-		($current_state == "not_reachable") ||
-		($current_state == "scheduled") ||
-		($current_state == "upload_failed") ||
-		($current_state == "execution_failed") ||
-		($current_state == "delete_failed") ||
-		($current_state == "inventory_failed") ||
-		($current_state == "upload_in_progress") ||
-		($current_state == "execution_in_progress") ||
-		($current_state == "delete_in_progress") ||
-		($current_state == "inventory_in_progress")
-	) {
-		if ( $database->f("current_pid") != -1 ) {
-			posix_kill($database->f("current_pid"), 9);
+	if ( ($current_state != "done") ) {
+		if ( $database->f("current_pid") > 1 ) {
+		    	system("./killparent.sh ".$database->f("current_pid"));
+			//posix_kill($database->f("current_pid"), 9);
 		}
 
-		$query = sprintf(
-"
+		$query = sprintf("
 	UPDATE
 		%s
 	SET
 		current_state = \"stop\",
 		current_pid = \"-1\"
 	WHERE
-		id_command_on_host = \"%s\"
-",
+		id_command_on_host = \"%s\" ",
 			COMMANDS_ON_HOST_TABLE,
 			$id_command_on_host
 		);

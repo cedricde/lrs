@@ -44,6 +44,10 @@
 <h3>Détail de la commande : "{COMMAND_TITLE}"</h3>
 
 <table class="table-vertical" style="line-height:2em;">
+	<tr class="row-even">
+		<th style="text-align:right;">Destination de la commande :</th>
+		<td>{COMMAND_TARGET}</td>
+	</tr>
 	<tr class="row-odd">
 		<th style="text-align:right;">Date de création :</th>
 		<td>{COMMAND_DATE_CREATED}</td>
@@ -85,8 +89,8 @@
 		<td>{COMMAND_WAKE_ON_LAN}</td>
 	</tr>
 	<tr class="row-odd">
-		<th style="text-align:right;">Nombre de tentatives de connexion :</th>
-		<td>{COMMAND_MAX_CONNECTION_ATTEMPT}</td>
+		<th style="text-align:right;">Tentatives restantes :</th>
+		<td>{ATTEMPTS}/{COMMAND_MAX_CONNECTION_ATTEMPT}</td>
 	</tr>
 	<tr class="row-even">
 		<th style="text-align:right;">Délai entre deux tentatives de connexion :</th>
@@ -101,8 +105,8 @@
 		<td>{COMMAND_END_DATE}</td>
 	</tr>
 	<tr class="row-odd">
-		<th style="text-align:right;">Destination de la commande :</th>
-		<td>{COMMAND_TARGET}</td>
+		<th style="text-align:right;">Prochain lancement de la commande :</th>
+		<td>{COMMAND_RUN_DATE}</td>
 	</tr>
 </table>
 	

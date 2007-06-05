@@ -50,6 +50,10 @@
 
 <h3>Détail de la commande : "{COMMAND_TITLE}"</h3>
 <table class="table-vertical" style="line-height:2em;">
+	<tr class="row-even">
+		<th style="text-align:right;">Destination de la commande :</th>
+		<td>{COMMAND_TARGET}</td>
+	</tr>
 	<tr class="row-odd">
 		<th style="text-align:right;">Date de création :</th>
 		<td>{COMMAND_DATE_CREATED}</td>
@@ -105,10 +109,6 @@
 	<tr class="row-even">
 		<th style="text-align:right;">Date d'expiration de la commande :</th>
 		<td>{COMMAND_END_DATE}</td>
-	</tr>
-	<tr class="row-odd">
-		<th style="text-align:right;">Destination de la commande :</th>
-		<td>{COMMAND_TARGET}</td>
 	</tr>
 </table>
 	

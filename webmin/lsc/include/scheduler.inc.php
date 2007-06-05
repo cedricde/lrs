@@ -222,7 +222,7 @@ class LSC_Scheduler
 			"0000-00-00 00:00:00",
 			"0000-00-00 00:00:00",
 			"root",
-			$REMOTE_USER,
+			$REMOTE_USER."@".$_SERVER['REMOTE_ADDR'],
 			$desc,
 			false,
 			60,

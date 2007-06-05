@@ -47,20 +47,10 @@ function lsc_exec($command, &$output, &$return_var, &$stdout, &$stderr)
 function lsc_ssh($user, $ip, &$command, &$output, &$return_var, &$stdout, &$stderr)
 {
 	$keychain = get_keychain();
-
-	$ssh_command ="$keychain ssh -o StrictHostKeyChecking=no -o Batchmode=yes -o PasswordAuthentication=no ".$user."@".$ip." \"".$command."\" 2>&1";
 	
-	/*
-	exec($ssh_command, $output, $return_var);
-	$stdout="";
-	if (count($output)>0) {
-		$separator="";
-		foreach($output as $line) {
-			$stdout.=$separator.$line;
-			$separator="\n";
-		}
-	}
-	*/
+	/* -tt forces tty allocation so that signals like SIGINT
+	will be properly sent to the remote host */
+	$ssh_command ="$keychain ssh -tt -o StrictHostKeyChecking=no -o Batchmode=yes -o PasswordAuthentication=no ".$user."@".$ip." \"".$command."\" 2>&1";
 	
 	$handle = popen($ssh_command, "r");
 	$size_buffer=2096;
@@ -75,12 +65,10 @@ function lsc_ssh($user, $ip, &$command, &$output, &$return_var, &$stdout, &$stde
 			$output.=$read;
 		}
 	}
-	pclose($handle);
-	$handle = popen ("echo $?", "r");
-	$return_var = fread($handle, 10);
-	pclose($handle);
+	$return_var = pclose($handle);
 	$stdout = $output;
-	$stderr = ""; // TODO
+	$stderr = ""; // TODO. Problem: only one stream read with popen
+	if ($return_var != 0) $stderr .= "*** Exit code: $return_var ***";
 	$command = $ssh_command;
 }
 
@@ -89,7 +77,7 @@ function lsc_ssh($user, $ip, &$command, &$output, &$return_var, &$stdout, &$stde
  */
 function lsc_scp($user, $ip, $source, $destination, &$output, &$return_var, &$stdout, &$stderr, &$scp_command)
 {
-	$opts = "-o Batchmode=yes -o StrictHostKeyChecking=no";
+	$opts = "-o Batchmode=yes -o StrictHostKeyChecking=no -r";
 
 	$destination = ereg_replace(" ", "\\ ", $destination);
 

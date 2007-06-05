@@ -36,9 +36,9 @@ require_once(dirname(__FILE__) . "/include/commands_on_host.inc.php");
 
 /*$DEBUG=0;
 $OUTPUT_TYPE="TERMINAL";*/
-/* 
- * Init webmin
- */
+
+/* Init webmin */
+$module_name = "/lsc/null";
 lib_init_config();
 if ($config==-1) die("Error: config file not found\n");
 initLbsConf("/etc/lbs.conf", 1);

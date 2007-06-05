@@ -50,6 +50,10 @@
 
 <h3>"{COMMAND_TITLE}" task detail</h3>
 <table class="table-vertical" style="line-height:2em;">
+	<tr class="row-even">
+		<th style="text-align:right;">Command target :</th>
+		<td>{COMMAND_TARGET}</td>
+	</tr>
 	<tr class="row-odd">
 		<th style="text-align:right;">Creation date :</th>
 		<td>{COMMAND_DATE_CREATED}</td>
@@ -75,7 +79,7 @@
 		<td>{COMMAND_PATH_SOURCE}</td>
 	</tr>
 	<tr class="row-odd">
-		<th style="text-align:right;">Create distination directory :</th>
+		<th style="text-align:right;">Create destination directory :</th>
 		<td>{COMMAND_CREATE_DIRECTORY}</td>
 	</tr>
 	<tr class="row-even">
@@ -105,10 +109,6 @@
 	<tr class="row-even">
 		<th style="text-align:right;">Command expiry date :</th>
 		<td>{COMMAND_END_DATE}</td>
-	</tr>
-	<tr class="row-odd">
-		<th style="text-align:right;">Command target :</th>
-		<td>{COMMAND_TARGET}</td>
 	</tr>
 </table>
 	

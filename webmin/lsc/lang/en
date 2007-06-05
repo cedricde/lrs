@@ -56,3 +56,4 @@ yes=yes
 no=no
 success=success
 failed=failed
+not_tested=not tested

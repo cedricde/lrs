@@ -77,9 +77,9 @@ if (!isset($database)) {
  * Command detail
  */
 $query="SELECT
-	DATE_FORMAT(date_created, '%d-%m-%Y à %H:%i:%s'),
-	DATE_FORMAT(start_date, '%d-%m-%Y à %H:%i:%s'),
-	DATE_FORMAT(end_date, '%d-%m-%Y à %H:%i:%s'),
+	DATE_FORMAT(date_created, '%d-%m-%Y %H:%i:%s'),
+	DATE_FORMAT(start_date, '%d-%m-%Y %H:%i:%s'),
+	DATE_FORMAT(end_date, '%d-%m-%Y %H:%i:%s'),
 	title,
 	start_file,
 	parameters,
@@ -120,15 +120,15 @@ if ($database->next_record()) {
 	$template->set_var("COMMAND_PATH_DESTINATION",$database->f("path_destination"));
 	$template->set_var("COMMAND_PATH_SOURCE",$database->f("path_source"));
 	if ($database->f("create_directory")=="enable") {
-		$template->set_var("COMMAND_CREATE_DIRECTORY","oui");
+		$template->set_var("COMMAND_CREATE_DIRECTORY",$text{"yes"});
 	} else {
-		$template->set_var("COMMAND_CREATE_DIRECTORY","non");
+		$template->set_var("COMMAND_CREATE_DIRECTORY",$text{"no"});
 	}
 	
 	if ($database->f("start_script")=="enable") {
-		$template->set_var("COMMAND_START_SCRIPT", "oui");
+		$template->set_var("COMMAND_START_SCRIPT", $text{"yes"});
 	} else {
-		$template->set_var("COMMAND_START_SCRIPT", "non");
+		$template->set_var("COMMAND_START_SCRIPT", $text{"no"});
 	}
 	
 	if ($database->f("start_date") == "0000-00-00 00:00:00") {
@@ -145,15 +145,15 @@ if ($database->next_record()) {
 	$template->set_var("COMMAND_TARGET",$database->f("target"));
 	
 	if ($database->f("start_inventory")=="enable") {
-		$template->set_var("COMMAND_START_INVENTORY","oui");
+		$template->set_var("COMMAND_START_INVENTORY",$text{"yes"});
 	} else {
-		$template->set_var("COMMAND_START_INVENTORY","non");
+		$template->set_var("COMMAND_START_INVENTORY",$text{"no"});
 	}
 
 	if ($database->f("wake_on_lan")=="enable") {
-		$template->set_var("COMMAND_WAKE_ON_LAN","oui");
+		$template->set_var("COMMAND_WAKE_ON_LAN",$text{"yes"});
 	} else {
-		$template->set_var("COMMAND_WAKE_ON_LAN","non");
+		$template->set_var("COMMAND_WAKE_ON_LAN",$text{"no"});
 	}	
 	
 	$template->set_var("COMMAND_NEXT_CONNECTION_DELAY", $database->f("next_connection_delay"));

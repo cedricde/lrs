@@ -5,7 +5,7 @@
 {where_I_m_connected}
 <div class="lsc">
 <h2>General informations</h2>
-<h3>Distant control these hosts :</h3>
+<h3>Remote control these hosts :</h3>
 
 <!-- BEGIN HOSTS_LIST -->
 <table class="table-horizontal">

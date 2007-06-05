@@ -762,31 +762,14 @@ function lsc_command_set_stop($id_command)
 		if ($DEBUG >= 1) $database->Debug = true;
 	}
 
-    	// should we kill the running job if available ?
-
-	$query = sprintf(
-"
-	UPDATE
-		%s
-	SET
-		current_state = \"stop\",
-		current_pid = -1
-	WHERE
-		id_command = \"%s\" and
-		(
-		current_state = \"not_reachable\" or
-		current_state = \"scheduled\" or
-		current_state = \"upload_failed\" or
-		current_state = \"execution_failed\" or
-		current_state = \"delete_failed\" or
-		current_state = \"inventory_failed\"
-		)
-",
-		COMMANDS_ON_HOST_TABLE,
-		$id_command
-	);
+    	$database->query("SELECT id_command_on_host FROM ".COMMANDS_ON_HOST_TABLE.
+	    	" WHERE id_command = \"$id_command\";");
 	
-	$database->query($query);
+	// stop and kill each job
+	while ( $database->next_record() ) {
+	    	lsc_command_on_host_set_stop($database->f("id_command_on_host"));
+	}
+	
 }
 
 function lsc_command_set_play($id_command)

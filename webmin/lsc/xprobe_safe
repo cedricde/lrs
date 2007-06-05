@@ -1,0 +1,17 @@
+#!/usr/bin/perl
+
+$pid = open(PIPE, "xprobe2 -M 6 $ARGV[0] 2>&1 |") or die $!;
+eval {
+    local $SIG{ALRM} = sub { die "TIMEDOUT" };
+    alarm(10);
+    while (<PIPE>) { print <PIPE>; };
+    close(PIPE);
+    alarm(0);
+};
+if ($@) {
+    die $@ unless $@ =~ /TIMEDOUT/;
+    kill 9, $pid;
+    close(PIPE);  ## needed??
+    $? ||= 9;
+}
+#print $out;

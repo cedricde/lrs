@@ -186,7 +186,6 @@ class LSC_Command_Launcher {
 			}
 			
 			// Launch $start_command
-			
 			unset($output);unset($return_var);unset($return_var);unset($stdout);unset($stderr);
 			lsc_ssh(
 				$this->session->user, 
@@ -395,6 +394,14 @@ class LSC_Command_Launcher {
 			}
 		}
 		
+		/* No OS detected yet, let's retry */
+		if ($this->command->path_destination == "") {
+			debug(2, "LSC_Command_Launcher->execute: os detect");
+			$this->session->initialize_os_type();
+			$this->command->path_destination = $this->session->tmp_path;
+			debug(2, "LSC_Command_Launcher->execute: path=".$this->session->tmp_path);
+		}
+		
 		debug(2, "LSC_Command_Launcher->execute: copy files step");
 		/*
 		 * First step : copy files
@@ -535,6 +542,9 @@ class LSC_Command_Launcher {
 			// 
 			lsc_command_on_host_set_current_state($this->id_command_on_host, "done");
 		}
+
+		/* handle repeats */
+		$this->repeat_resched();
 	}
 
 	/**
@@ -550,16 +560,15 @@ class LSC_Command_Launcher {
 		global $database, $debug, $config;
 		
 		$mac = get_mac_address_from_full_hostname($this->command_on_host->host);
-		                  
+		$coh = $this->command_on_host;
+		
 		if ( $mac != "" ) {
-			$remains_connection_attempt = lsc_command_on_host_get_remains_connection_attempt($this->id_command_on_host);
+			$remains_connection_attempt = $coh->number_attempt_connection_remains;
 			while($remains_connection_attempt > 0) {
-				$this->command_on_host->refresh();
+				$coh->refresh();
 				
-				if (
-					($this->command_on_host->current_state=="stop") ||
-					($this->command_on_host->current_state=="pause")
-				) {
+				if ( ($coh->current_state=="stop") ||
+					($coh->current_state=="pause")) {
 					return 0;
 				}
 				
@@ -633,13 +642,18 @@ class LSC_Command_Launcher {
     	    	    	    	/* re-schedule */
 				if ($this->command_on_host->next_launch_date == "0000-00-00 00:00:00") {
 				    	lsc_command_on_host_set_next_launch_date($this->id_command_on_host, date("Y-m-d H:i:s"));
+				} 
+
+				if ($remains_connection_attempt > 0) {
+					/* more attempts: schedule a retry */
+					$coh->update_next_launch_date(
+						"next_launch_date + interval ".intval($this->command->next_connection_delay)." minute"
+					);
+				} else {
+					/* no more attempts remaining, check if periodic */
+					$this->repeat_resched();
 				}
-
-				lsc_command_on_host_adjust_next_launch_date(
-					$this->id_command_on_host,
-					"+ interval ".$this->command->next_connection_delay." minute"
-				);
-
+				
 				return -1;					
 				
 			}
@@ -667,6 +681,33 @@ class LSC_Command_Launcher {
 		}
 	}
 	
+	/* check if a task is periodic, and reschedule it */
+	function repeat_resched()
+	{
+		$coh = $this->command_on_host;
+		
+		if ($this->command->repeat == 0) {
+			return;
+		}
+		if ($coh->end_date != "0000-00-00 00:00:00") {
+			if (strtotime($coh->end_date) < time()) {
+				/* stop after end date */
+				return;
+			}
+		}
+		/* to re-schedule: next_date = start_date + interval */
+		$coh->update_next_launch_date("start_date + interval 30 minute");
+		$coh->start_date = $coh->next_launch_date;
+		$coh->number_attempt_connection_remains = $this->command->max_connection_attempt;
+		$coh->current_state = "scheduled";
+		$coh->uploaded = "TODO";
+		$coh->executed = "TODO";
+		$coh->deleted = "TODO";
+		$coh->update();
+		/* should set state done if next > end_date */
+	}
+	
+	/* wake on lan */
 	function wake_on_lan_mac($mac)
 	{
 		// read the lbs config file for WOL binary ? this would create a dependency

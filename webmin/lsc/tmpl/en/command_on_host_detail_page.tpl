@@ -44,6 +44,10 @@
 <h3>"{COMMAND_TITLE}" command detail</h3>
 
 <table class="table-vertical" style="line-height:2em;">
+	<tr class="row-even">
+		<th style="text-align:right;">Command target :</th>
+		<td>{COMMAND_TARGET}</td>
+	</tr>
 	<tr class="row-odd">
 		<th style="text-align:right;">Creation date :</th>
 		<td>{COMMAND_DATE_CREATED}</td>
@@ -69,7 +73,7 @@
 		<td>{COMMAND_PATH_SOURCE}</td>
 	</tr>
 	<tr class="row-odd">
-		<th style="text-align:right;">Create distination directory :</th>
+		<th style="text-align:right;">Create destination directory :</th>
 		<td>{COMMAND_CREATE_DIRECTORY}</td>
 	</tr>
 	<tr class="row-even">
@@ -85,8 +89,8 @@
 		<td>{COMMAND_WAKE_ON_LAN}</td>
 	</tr>
 	<tr class="row-odd">
-		<th style="text-align:right;">Number of attempt :</th>
-		<td>{COMMAND_MAX_CONNECTION_ATTEMPT}</td>
+		<th style="text-align:right;">Remaining attempts :</th>
+		<td>{ATTEMPTS}/{COMMAND_MAX_CONNECTION_ATTEMPT}</td>
 	</tr>
 	<tr class="row-even">
 		<th style="text-align:right;">Delay between two connections :</th>
@@ -101,8 +105,8 @@
 		<td>{COMMAND_END_DATE}</td>
 	</tr>
 	<tr class="row-odd">
-		<th style="text-align:right;">Command target :</th>
-		<td>{COMMAND_TARGET}</td>
+		<th style="text-align:right;">Command next run date :</th>
+		<td>{COMMAND_RUN_DATE}</td>
 	</tr>
 </table>
 	

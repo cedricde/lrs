@@ -10,16 +10,16 @@
 <table class="vertical">
 	<tbody>
 		<tr>
-			<th>Adresse MAC :</th>
-			<td>{HOST_INFO_MAC_ADDRESS}</td>
+			<th>Nom du poste :</th>
+			<td>{HOST_INFO_HOSTNAME}</td>
 		</tr>
 		<tr>
 			<th>Adresse IP :</th>
 			<td>{HOST_INFO_IP_ADDRESS}</td>
 		</tr>
 		<tr>
-			<th>Nom du poste :</th>
-			<td>{HOST_INFO_HOSTNAME}</td>
+			<th>Adresse MAC :</th>
+			<td>{HOST_INFO_MAC_ADDRESS}</td>
 		</tr>
 		<tr>
 			<th>Appartient au profil :</th>

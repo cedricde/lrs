@@ -39,23 +39,23 @@ $template->set_var("IP", $session->ip);
 $template->set_var("HOSTNAME",$session->hostname);
 
 if ($session->ping_error) {
-	$template->set_var("PING", "échec");
-	$template->set_var("TEST_SSH", "non testé");
-	$template->set_var("TEST_AUTOFS", "non testé");
+	$template->set_var("PING", $text{"failed"});
+	$template->set_var("TEST_SSH", $text{"not_tested"});
+	$template->set_var("TEST_AUTOFS", $text{"not_tested"});
 	$template->set_var("SSH_COMMAND", "");
 	$template->set_var("SSH_RETURN_VAL", "");
 	$template->set_var("SSH_OUTPUT", "");
 	
 } else {
-	$template->set_var("PING", "succès");
+	$template->set_var("PING", $text{"success"});
 	if ($session->error_ssh_failed) {
-		$template->set_var("TEST_SSH", "échec");
-		$template->set_var("TEST_AUTOFS", "non testé");
+		$template->set_var("TEST_SSH", $text{"failed"});
+		$template->set_var("TEST_AUTOFS", $text{"not_tested"});
 	} else {
-		$template->set_var("TEST_SSH", "succès");
+		$template->set_var("TEST_SSH", $text{"success"});
 	
-		if ($session->error_autofs_failed) $template->set_var("TEST_AUTOFS", "échec");
-		else $template->set_var("TEST_AUTOFS", "succès");
+		if ($session->error_autofs_failed) $template->set_var("TEST_AUTOFS", $text{"failed"});
+		else $template->set_var("TEST_AUTOFS", $text{"success"});
 	}
 
 

@@ -245,18 +245,10 @@ if ($_POST["repository_launch_action"] != "") {
 	$i = 0;
 	
 	foreach($_POST["select_to_copy"] as $i) {
-		$item=$_POST["filename"][$i];
-		if (is_dir($path_source."/".$item)) {
-			$files = array_merge(
-				$files,
-				return_all_files_of_directory_recursive(
-					$path_source."/".$item, 
-					$item."/"
-				)
-			);
-		} else {
-			array_push($files, $item);
-		}
+		// push files even if they are directories since they will 
+		// be uploaded with a 'scp -r'
+		$item = $_POST["filename"][$i];
+		array_push($files, $item);
 		if ( $_POST["select_to_execute"] == $i ) {
 			$start_file = $item;
 		}
@@ -279,9 +271,9 @@ if ($_POST["repository_launch_action"] != "") {
 	}
 	$delete_file_after_execute_successful_enable = $_POST['repository_delete_file_after_execute_successful'];
 	if (
-		($repository_start_date!="dès que possible" && $repository_start_date!="ASAP" )
+		($repository_start_date!="d?s que possible" && $repository_start_date!="ASAP" )
 	) {
-		list($date, $time) = split(" à ", $repository_start_date);
+		list($date, $time) = split(" ? ", $repository_start_date);
 		list($day, $month, $year) = split("-", $date);
 		$start_date = $year."-".$month."-".$day." ".$time.":00";
 	} else {
@@ -291,7 +283,7 @@ if ($_POST["repository_launch_action"] != "") {
 	if (
 		($repository_end_date!="aucune" && $repository_end_date!="none")
 	) {
-		list($date, $time) = split(" à ", $repository_end_date);
+		list($date, $time) = split(" ? ", $repository_end_date);
 		list($day, $month, $year) = split("-", $date);
 		$end_date = $year."-".$month."-".$day." ".$time.":00";
 	} else {
@@ -345,7 +337,7 @@ if ($_POST["repository_launch_action"] != "") {
 		$start_date,
 		$end_date,
 		$username,
-		$REMOTE_USER,
+		$REMOTE_USER."@".$_SERVER['REMOTE_ADDR'],
 		$title,
 		$wake_on_lan_enable,
 		$next_connection_delay,
@@ -489,7 +481,7 @@ if ($_GET["mac"] != "") {
 $template->set_var("OS", $session->platform);
 
 /*
- * Transmission des paramètres vers le template
+ * Transmission des param?tres vers le template
  */
 
 /*

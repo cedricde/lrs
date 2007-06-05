@@ -1112,7 +1112,7 @@ class LSC_Distant_File extends LSC_File
 
 
 /**
- * to send file via the POST methode
+ * to send file via the POST method
  */
 function LSC_fileSend($session, $path)
 {

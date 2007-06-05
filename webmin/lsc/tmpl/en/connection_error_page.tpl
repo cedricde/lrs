@@ -1,5 +1,5 @@
 
-<p>Connection error !</p>
+<h3>Connection error !</h3>
 
 <p>MAC address : {MAC}</p>
 <p>IP address : {IP}</p>
