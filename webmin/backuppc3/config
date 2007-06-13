@@ -1,0 +1,3 @@
+lbs_conf=/etc/lbs.conf
+config_path=/etc/backuppc
+pool_path=/var/lib/backuppc

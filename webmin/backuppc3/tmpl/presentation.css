@@ -1,0 +1,266 @@
+.fond_designation
+{
+	background-color:#9999ff; 
+}
+.fond_champs
+{
+	background-color:#97bcc9;
+}
+
+.fond_normal
+{
+	background-color:#FCD3C2;
+}
+
+.fond_recapitulatif
+{
+	background-color:#ffb656;
+}
+
+.fond_normal2
+{
+	background-color:#e2d1f9;
+}
+/*
+ * BackupPC standard CSS definitions
+ *
+ * Version 3.0.0, released 28 Jan 2007.
+ *
+ * See http://backuppc.sourceforge.net.
+ *
+ * AUTHOR
+ *   Craig Barratt  <cbarratt@users.sourceforge.net>
+ *
+ * COPYRIGHT
+ *   Copyright (C) 2004  Craig Barratt
+ */
+
+
+/* body {
+    font-family:tahoma,arial,sans-serif,helvetica;
+    font-size:10pt;
+    background-color:#ffffff;
+    margin:2px 5px 0px 2px;
+    height:100%
+} */
+
+
+table {
+    border-collapse: collapse;
+    color: #000000;
+    padding: 2px;
+}
+
+h1 {
+    font-family:Trebuchet MS,Trebuchet,tahoma,arial,sans-serif,helvetica;
+    font-size:16pt;
+    color:#000000
+}
+
+h2 {
+    font-family:Trebuchet MS,Trebuchet,tahoma,arial,sans-serif,helvetica;
+    font-size:12pt;
+    color:#000000
+}
+
+/* a {
+    font-family:tahoma,arial,sans-serif,helvetica;
+    color:#3333ff
+} */
+
+dt {
+    color:#3333ff
+}
+
+a:hover {
+    color:#cc0000;
+    text-decoration:none
+}
+
+a.NavCurrent {
+    font-weight:bold;
+}
+
+a.navbar {
+    padding-left:5px;
+    padding-right:5px;
+}
+
+.h1 {
+    font-family:Trebuchet MS,Trebuchet,tahoma,arial,sans-serif,helvetica;
+    font-size:16pt;
+    color:#000000;
+    font-weight:bold;
+    background-color:#FCD3C2;
+    padding:3px;
+    padding-left:6px;
+    margin-bottom:5px;
+}
+
+.h2 {
+    font-family:Trebuchet MS,Trebuchet,tahoma,arial,sans-serif,helvetica;
+    font-size:12pt;
+    color:#000000;
+    font-weight:bold;
+    background-color:#FCF7F5;
+    padding:3px;
+    padding-left:6px;
+    margin-top:3px;
+    margin-bottom:1px;
+}
+
+.tableStnd {
+    font-size:10pt;
+    border: 1px solid #FF3300;
+}
+
+.tableheader {
+    font-size:10pt;
+    font-weight:bold;
+    background-color:#FCF7F5;
+    border: 1px solid #FF3300;
+}
+
+.border {
+    font-size:10pt;
+    border: 1px solid #FF3300;
+}
+
+.editHeader {
+    font-family:arial,sans-serif;
+    font-size:12pt;
+    color:#000000;
+    font-weight:bold;
+    background-color:#FCD3C2;
+    border: 1px solid #FF3300;
+}
+
+.editTabSel {
+    font-family:arial,sans-serif;
+    font-size:14pt;
+    color:#000000;
+    font-weight:bold;
+    background-color:#FCD3C2;
+    padding:3px;
+    padding-left:6px;
+    margin-bottom:5px;
+    border: 1px solid #FF3300;
+}
+
+.editTabNoSel {
+    font-family:arial,sans-serif;
+    font-size:14pt;
+    color:#000000;
+    font-weight:bold;
+    padding:3px;
+    padding-left:6px;
+    margin-bottom:5px;
+}
+
+.editSaveButton {
+    color:#c0c0c0;
+    font-size:14pt;
+    font-weight:bold;
+}
+
+.editError {
+    color:#ff0000;
+    font-weight:bold;
+}
+
+.editComment {
+    font-size:10pt;
+}
+
+.editTextInput {
+    font-family:courier;
+    font-size:10pt;
+}
+
+.fviewheader {
+    font-weight:bold;
+    font-size:9pt;
+    color:#ffffff;
+    background-color:#999999;
+}
+
+.fviewborder {
+    border-left:1px solid #666666;
+    border-bottom:1px solid #000000;
+    border-right:1px solid #666666;
+    background-color:#eeeeee;
+    font-size:9pt;
+}
+
+.fviewon {
+    background-color:#cccccc;
+}
+
+.fviewoff {
+    background-color:#ffffff;
+}
+
+.fview {
+    font-size:9pt;
+    font-family:tahoma,arial,sans-serif,helvetica;
+    text-decoration:none;
+    line-height:15px;
+}
+
+.fviewbold {
+    font-size:9pt;
+    font-family:tahoma,arial,sans-serif,helvetica;
+    text-decoration:none;
+    line-height:15px;
+    font-weight:bold;
+}
+
+.histView {
+    border-bottom:1px solid #000000;
+    border-left:1px solid #000000;
+    background-color:#eeeeee;
+    font-size:10pt;
+}
+
+.histViewMis {
+    border-bottom:1px solid #000000;
+    border-left:1px solid #000000;
+    background-color:#ffdddd;
+}
+
+div.NavMenu {
+    font-size:9pt;
+    /* background-color:#FCD3C2; */
+    border: 1px solid #ff3300;
+}
+
+.spacerbpc {
+  clear: right;
+}
+  
+div.NavMenu a {
+    font-size:9pt;
+    font-family:arial,sans-serif;
+    display:block;
+    margin-left:8px;
+    padding:2px;
+}
+
+div.NavTitle {
+    font-size:12pt;
+    padding-left:10px;
+    font-family:Trebuchet MS,Trebuchet,tahoma,arial,sans-serif,helvetica;
+    color:#000000;
+    font-weight:bold;
+    margin-bottom:2px;
+}
+
+#Content {
+    width:100%;
+}
+
+pre {
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap; 
+    word-wrap: break-word;
+}

@@ -1,0 +1,12 @@
+err_basedirnf=Le répertoire racine LRS <b>$1</b> est inaccessible. Veuillez vérifier le paramètre <tt>basedir</tt> dans le fichier <tt>lbs.conf</tt> .
+err_paramnf=Paramètre <tt>$1</tt> introuvable dans <b>$2</b> .
+gen_conf_title=Configuration générale
+lab_add=Ajouter
+lab_apply=Appliquer
+lab_avail_shares=Partages disponibles
+lab_backup=Fichiers
+lab_selected_shares=Partages sauvegardés
+lab_submit=Valider
+lab_ok=OK
+tit_conf=Configuration Sauvegarde
+tit_error=Erreur

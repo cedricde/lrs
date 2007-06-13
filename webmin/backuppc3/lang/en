@@ -1,0 +1,11 @@
+err_basedirnf=LRS root directory <b>$1</b> not found. You should check <tt>basedir</tt> located into <tt>lbs.conf</tt> .
+err_paramnf=Parameter <tt>$1</tt> not found in file <b>$2</b> .
+gen_conf_title=General configuration
+lab_add=Add
+lab_apply=Apply
+lab_avail_shares=Available shares
+lab_backup=Files
+lab_selected_shares=Selected shares
+lab_submit=Submit
+tit_conf=Backup Configuration
+tit_error=Error
