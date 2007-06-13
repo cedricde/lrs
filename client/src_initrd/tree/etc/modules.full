@@ -35,6 +35,7 @@ forcedeth
 tlan
 epic100
 sis190
+uli526x mode=5
 # cannot autoprobe...
 # cs89x0
 # lance
