@@ -91,10 +91,17 @@ function LSC_Copy($session, $path_source, $files_source, $path_destination)
 		if ($dirname == ".") $dirname = "";
 		$basename = trim(basename($f));
 		debug(2, "LSC_COPY : Dirname : \"".$dirname."\" Basename : \"".trim($basename)."\"");
+
+		/*
+		 * chmod +x on *.bat and *.exe
+		 */
+		$chmod_command = "find $path_source -iname '*.exe' -or -iname '*.bat' -exec chmod 755 {} \\;";
+		unset($output); unset($stdout);	unset($stderr);	unset($return_var);
+		lsc_exec($chmod_command, $output, $return_var, $stdout, $stderr);
+
 		/*
 		 * Make directory step
-		 */
-		
+		 */		
 		unset($output); unset($return_var); unset($stdout); unset($stderr);
 		$mkdir_command = "test -d '".$path_destination."' || mkdir -p '".$path_destination."'";
 		lsc_ssh(
@@ -159,17 +166,6 @@ function LSC_Copy($session, $path_source, $files_source, $path_destination)
 			$result["stdout"] .= implode("\n", $output);
 		}
 		debug(1, sprintf("File successfully copied, command is %s", $scp_command));
-		
-		/*
-		 * chmod +x on *.bat and *.exe
-		 */
-		$chmod_command = "chmod ugo+x -R \"$path_destination_mount_ssh\"/*.exe";
-		unset($output); unset($stdout);	unset($stderr);	unset($return_var);
-		lsc_exec($chmod_command, $output, $return_var, $stdout, $stderr);
-
-		$chmod_command = "chmod ugo+x -R \"$path_destination_mount_ssh\"/*.bat";
-		unset($output); unset($stdout);	unset($stderr);	unset($return_var);
-		lsc_exec($chmod_command, $output, $return_var, $stdout, $stderr);
 	}
 	return $result;
 }

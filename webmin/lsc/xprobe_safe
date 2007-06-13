@@ -1,10 +1,10 @@
 #!/usr/bin/perl
 
-$pid = open(PIPE, "xprobe2 -M 6 $ARGV[0] 2>&1 |") or die $!;
+$pid = open(PIPE, "ssh -tt -o StrictHostKeyChecking=no -o Batchmode=yes root@".$ARGV[0]." 'echo \$OS;uname' |") or die $!;
 eval {
     local $SIG{ALRM} = sub { die "TIMEDOUT" };
     alarm(10);
-    while (<PIPE>) { print <PIPE>; };
+    while(<PIPE>) { print $_; };
     close(PIPE);
     alarm(0);
 };

@@ -406,8 +406,7 @@ class LSC_Session {
 		if ($known_type == "") {
 			unset($output); unset($return_var); unset($stdout); unset($stderr);
 			lsc_exec("./xprobe_safe ".$this->ip, $output, $return_var, $stdout, $stderr);
-			$key = LSC_arrayEreg("Running OS", $output);
-			$type = $output[$key];
+			$type = join("\n", $output);
 		} else {
 			$type = $known_type;
 		}

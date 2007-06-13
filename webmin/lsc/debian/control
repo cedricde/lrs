@@ -8,7 +8,7 @@ Standards-Version: 3.6.1
 Package: webmin-lsc
 Section: utils
 Architecture: all
-Depends: webmin, php4, php4-cgi, webmin-lbs-common, php4-mysql, mysql-client (>> 4.0.0) | mysql-client-4.1, xprobe (>> 0.2.0)
+Depends: webmin, php4, php4-cgi, webmin-lbs-common, php4-mysql, mysql-client (>> 4.0.0) | mysql-client-4.1
 Recommends: samba-common
 Suggests: lbs
 Conflicts: mysql-server (<< 4.0.23)
