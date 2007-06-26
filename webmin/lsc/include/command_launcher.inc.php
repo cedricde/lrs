@@ -175,8 +175,9 @@ class LSC_Command_Launcher {
 			lsc_command_on_host_set_current_state($this->id_command_on_host, "execution_in_progress");
 			lsc_command_on_host_set_executed_state($this->id_command_on_host, "WORK_IN_PROGRESS");
 			
-			// Make go to directory command
-			if ($this->command->path_destination == "") {
+			// Go to destination directory 
+			if ($this->command->path_destination == "none") {
+				// Quick launch: no file copy needed
 				$start_command = sprintf($this->command->start_file." ".$this->command->parameters);
 			} else {
 				$cdirname = dirname($this->command->start_file);
@@ -291,7 +292,7 @@ class LSC_Command_Launcher {
 		);*/
 
 		unset($output);unset($return_var);unset($return_var);unset($stdout);unset($stderr);
-		$tries = 3;
+		$tries = 6;
 		do {
 			$dir = clean_path($this->session->root_path.$this->command->path_destination);
 			if (ereg('^(/+cygdrive/+./+)?[ \.//\]+$', $dir)) break;

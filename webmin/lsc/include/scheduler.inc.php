@@ -193,7 +193,7 @@ class LSC_Scheduler
 		global $config, $session, $REMOTE_USER;
 	
 		$path_source = "";
-		$path_dest = "";
+		$path_dest = "none";
 		$files = array();
 		$create_delete = false;
 		

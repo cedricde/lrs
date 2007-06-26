@@ -273,7 +273,7 @@ if ($_POST["repository_launch_action"] != "") {
 	if (
 		($repository_start_date!="d?s que possible" && $repository_start_date!="ASAP" )
 	) {
-		list($date, $time) = split(" ? ", $repository_start_date);
+		list($date, $time) = split(" [^ ]* ", $repository_start_date);
 		list($day, $month, $year) = split("-", $date);
 		$start_date = $year."-".$month."-".$day." ".$time.":00";
 	} else {
@@ -283,7 +283,7 @@ if ($_POST["repository_launch_action"] != "") {
 	if (
 		($repository_end_date!="aucune" && $repository_end_date!="none")
 	) {
-		list($date, $time) = split(" ? ", $repository_end_date);
+		list($date, $time) = split(" [^ ]* ", $repository_end_date);
 		list($day, $month, $year) = split("-", $date);
 		$end_date = $year."-".$month."-".$day." ".$time.":00";
 	} else {
