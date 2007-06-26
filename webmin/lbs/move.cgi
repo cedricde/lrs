@@ -92,7 +92,7 @@ if ($mode eq "MONO") {
         $cfgpath = "$lbs_home/images/$macfile/";
         $cfgfile = "$cfgpath/header.lst";
 } elsif ($mode eq "MULTI") {
-        $cfgpath="$lbs_home/imgprofiles/$in{'profile'}/$in{'group'}";
+        $cfgpath = "$lbs_home/imgprofiles/$in{'profile'}/$in{'group'}";
         $cfgfile = "$cfgpath/header.lst";
         create_group_dir($cfgpath);
 }

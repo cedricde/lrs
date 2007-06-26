@@ -193,12 +193,11 @@ if ( exists( $in{'cancel'} ) ) {
                 if ($mode eq "MONO") {
                         $cfgfile = "$lbs_home/images/$macfile/header.lst";
                 } else {
-                        $cfgpath="$lbs_home/imgprofiles/$in{'profile'}/$in{'group'}";
+                        $cfgpath = "$lbs_home/imgprofiles/$in{'profile'}/$in{'group'}";
                         $cfgfile = "$cfgpath/header.lst";
                 }
 
                 save_bootmenu_options($cfgfile, %einfo);
-
                 if ($mode eq "MULTI") { # in multi mode we have to to the while thing once again for every client TODO: subfunction for this ?
                         # to do this, we need the entire mac list to be loaded
                         my $home=$lbs_common::lbsconf{'basedir'};
@@ -207,8 +206,10 @@ if ( exists( $in{'cancel'} ) ) {
                         my $profile = $in{'profile'} or "";
                         my $group = $in{'group'} or "";
 
+			if ($profile eq "all") {$profile = "";}
+			
                         lbs_common::etherLoad("$home/etc/ether", \%ether);
-                        lbs_common::filter_machines_names($oprofile, $in{'group'}, \%ether);
+                        lbs_common::filter_machines_names($profile, $group, \%ether);
 
                         foreach my $name (etherGetNames(\%ether)) {
                                 my $macaddr = etherGetMacByName (\%ether, $name);
@@ -220,7 +221,7 @@ if ( exists( $in{'cancel'} ) ) {
                                 }
                                 my $origpath = "$lbs_home/imgprofiles/$in{'profile'}/$in{'group'}";
                                 if (opendir ORIGPATH, $origpath) {
-                                        my $cmd = "cp -a " . join " ", map "$origpath/$_", grep { -l "$origpath/$_" or $_ eq "header.lst" } readdir(ORIGPATH);
+                                        my $cmd = "cp -a " . join " ", map "\"$origpath/$_\"", grep { -l "$origpath/$_" or $_ eq "header.lst" } readdir(ORIGPATH);
                                         closedir CFGPATH;
                                         $cmd .= " $cfgpath";
                                         system($cmd);

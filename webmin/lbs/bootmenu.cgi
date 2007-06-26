@@ -140,7 +140,7 @@ if ( exists( $in{'cancel'} ) ) {			# back to the main menu
 	@menus = hdrGetMenuNames( \%hdr );
 
         # load the needed header.lst.$WOL_EXTENSION (schedule mode), create it if needed (should'nt append here)
-        system("cp -a $cfgfile $cfgfile.$WOL_EXTENSION") unless -f "$cfgfile.$WOL_EXTENSION";
+        system("cp -a \"$cfgfile\" \"$cfgfile.$WOL_EXTENSION\"") unless -f "$cfgfile.$WOL_EXTENSION";
 	hdrLoad( "$cfgfile.$WOL_EXTENSION", \%schedhdr ) or error( lbsGetError() );
 	# and parse it
 	@schedmenus = hdrGetMenuNames( \%schedhdr );
@@ -200,7 +200,7 @@ if ( exists( $in{'cancel'} ) ) {			# back to the main menu
                         }
                         my $origpath = "$lbs_home/imgprofiles/$in{'profile'}/$in{'group'}";
                         if (opendir ORIGPATH, $origpath) {
-                                my $cmd = "cp -a " . join " ", map "$origpath/$_", grep { -l "$origpath/$_" or $_ eq "header.lst" or $_ eq "header.lst.$WOL_EXTENSION" } readdir(ORIGPATH);
+                                my $cmd = "cp -a " . join " ", map "\"$origpath/$_\"", grep { -l "$origpath/$_" or $_ eq "header.lst" or $_ eq "header.lst.$WOL_EXTENSION" } readdir(ORIGPATH);
                                 closedir CFGPATH;
                                 $cmd .= " $cfgpath";
                                 system($cmd);
@@ -363,8 +363,7 @@ my $mode = "";                                                  # describe how t
 	@menus = hdrGetMenuNames( \%hdr );
 
         # load the needed header.lst.$WOL_EXTENSION (schedule mode), create it if needed
-	$cfgfile =~ s/[^a-z0-9\.\/_-]//gi;
-        system("cp -a $cfgfile $cfgfile.$WOL_EXTENSION") unless -f "$cfgfile.$WOL_EXTENSION";
+        system("cp -a \"$cfgfile\" \"$cfgfile.$WOL_EXTENSION\"") unless -f "$cfgfile.$WOL_EXTENSION";
 	hdrLoad( "$cfgfile.$WOL_EXTENSION", \%schedhdr ) or error( lbsGetError() );
 	# and parse it
 	@schedmenus = hdrGetMenuNames( \%schedhdr );
@@ -418,6 +417,7 @@ my $mode = "";                                                  # describe how t
 	# tabs
 	lbs_common::print_html_tabs(['system_backup', 'boot_menu']);
 	lbs_common::checkforspace();
+	
 	# boot menu, FIXME i18n
         if (($mode eq "MONO")) {          # only one client selected
 	        print "<h2 align=center>Client $name ($macaddr)</h2>";

@@ -136,10 +136,14 @@ my @toprow = (
 
 		if ( ($siz =~ m/\d+k/i) || ($siz =~ m/\d+o/i)) {	# images below 1 MB aren't shown
 			push @burn, "<center>&nbsp;</center>";
-			push @details, "<center>&nbsp;</center>";	    
 		} else {
 			push @burn, "<center><a href='/lbs-cd/?dir=".urlize($lbs_home."/imgbase/$k/")."'><img border=1 src='images/burn.gif'></a></center>";
-			push @details, "<center><a href='details.cgi?conf=".urlize("/imgbase/$k/")."&mac=".urlize($in{'mac'})."'><img border=1 src='images/detail.gif'></a></center>";	    
+		}
+
+		if ( (($siz =~ m/\d+k/i) || ($siz =~ m/\d+o/i)) && !($k =~ m/Base-/i)) { # images below 1 MB aren't shown
+			push @details, "<center>&nbsp;</center>";
+		} else {
+			push @details, "<center><a href='details.cgi?conf=".urlize("/imgbase/$k/")."&mac=".urlize($in{'mac'})."'><img border=1 src='images/detail.gif'></a></center>";
 		}
 
 		$siz="<div align=right>$siz</div>";
@@ -1225,17 +1229,17 @@ sub create_group_dir() {
         my ($cfgpath) = shift;
         my $lbs_home  = $lbs_common::lbsconf{'basedir'};
 	
-	$cfgpath =~ s/[^a-z0-9\/_-]//gi;
+	$cfgpath =~ s/[^a-z0-9\/_ -]//gi;
 	
         my $cfgfile="$cfgpath/header.lst";
         
         if (not -e $cfgfile) {
-                `mkdir -p $cfgpath`;
-                `cp -a $lbs_home/imgskel/header.lst $cfgpath`;
-                `cp -a $lbs_home/imgskel/COPYNUM $cfgpath`;
-                `cp -a $lbs_home/imgskel/symlinks $cfgpath`;
-                `cat $lbs_home/imgskel/symlinks | sed "s/\\.\\.\\/\\.\\./\\/tftpboot\\/revoboot/" > $cfgpath/symlinks`;
-                `cd $cfgpath && ./symlinks`;
+                `mkdir -p "$cfgpath"`;
+                `cp -a $lbs_home/imgskel/header.lst "$cfgpath"`;
+                `cp -a $lbs_home/imgskel/COPYNUM "$cfgpath"`;
+                `cp -a $lbs_home/imgskel/symlinks "$cfgpath"`;
+                `cat $lbs_home/imgskel/symlinks | sed "s/\\.\\.\\/\\.\\./\\/tftpboot\\/revoboot/" > "$cfgpath/symlinks"`;
+                `cd "$cfgpath" && ./symlinks`;
         }
         
         return;

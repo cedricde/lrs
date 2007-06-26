@@ -90,13 +90,13 @@ if (exists $in{'cancel'}) {
         chomp($g);                      # remove leading and trailing spaces
         $g =~ s|^/+(.*)$|$1|;           # remove leading "/"
         $g =~ s|^(.*)/$|$1|gi;          # remove trailing "/"
-        $g =~ s|[^a-z0-9\.\-/\+]|_|gi;  # translate unauthorized characters into underscores
+        $g =~ s|[^a-z0-9\.\-/\+ ]|_|gi;  # translate unauthorized characters into underscores
 
         # profile parsing:
         chomp($p);                      # remove leading and trailing spaces
         $p =~ s|^/+(.*)$|$1|;           # remove leading "/"
         $p =~ s|^(.*)/$|$1|gi;          # remove trailing "/"
-        $p =~ s|[^a-z0-9\.\-/\:\+]|_|gi;# translate unauthorized characters into underscores
+        $p =~ s|[^a-z0-9\.\-/\:\+ ]|_|gi;# translate unauthorized characters into underscores
 
         $t = "$p:$g/$t";
 	$t =~ s/^:\/?//;
