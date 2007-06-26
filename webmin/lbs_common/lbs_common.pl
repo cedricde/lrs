@@ -1568,10 +1568,10 @@ sub dup_machines_list {
 # cleanup common get/post variables
 sub InClean() {
 	if (exists($main::in{'profile'})) {
-		$main::in{'profile'} =~ s/[^a-z0-9_-]//gi;
+		$main::in{'profile'} =~ s/[^a-z0-9_ -]//gi;
 	}
 	if (exists($main::in{'group'})) {
-		$main::in{'group'} =~ s/[^a-z0-9_\/-]//gi;
+		$main::in{'group'} =~ s/[^a-z0-9_\/ -]//gi;
 	}
 	if (exists($main::in{'mac'})) {
 		$main::in{'mac'} =~ s/[^a-f0-9:]//gi;
