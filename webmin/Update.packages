@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#DEST=/home/weex/ftp/base/deb/
+DEST_ORG=/home/weex/lrsorg/bin/
+
+#cd /home/weex/ftp/base/deb/
+#./mkpack
+cd $DEST_ORG
+./mkpack~
