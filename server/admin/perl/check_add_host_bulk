@@ -47,6 +47,5 @@ fi
 
 while read A B
 do
-    $BASEDIR/bin/check_add_host $A $B $1
-done 
-
+    $BASEDIR/bin/check_add_host $A "$B" $1
+done
