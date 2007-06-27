@@ -64,15 +64,6 @@ if ($_GET["repository_pwd"] == "") {
 }
 
 /*
- * Handle user action
- */
-if ( $_GET["go_to_directory"] != "" ) {
-	$current_repository_directory .= "/" .$_GET["go_to_directory"];
-	$current_repository_directory = clean_path($current_repository_directory);
-	setcookie("repository_pwd", $current_repository_directory);
-}
-
-/*
  * Initialise webmin
  */
 lib_init_config();

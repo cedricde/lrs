@@ -21,7 +21,7 @@
 			alt="{FILE_LIST_MIMETYPE}"
 		/></td>
 		<td class="filename-column"
-			><!-- BEGIN FILE_LIST_FILENAME_COLUMN -->{FILE_LIST_FILENAME}<input type="hidden" name="filename[{INDEX}]" value="{FILE_LIST_FILENAME}"><!-- END FILE_LIST_FILENAME_COLUMN --><!-- BEGIN FILE_LIST_DIRECTORYNAME_COLUMN --><a href="{SCRIPT_NAME}?mac={MAC}&profile={PROFILE}&group={GROUP}&go_to_directory={FILE_LIST_DIRECTORY_PATH}">{FILE_LIST_DIRECTORY_NAME}</a><input type="hidden" name="filename[{INDEX}]" value="{FILE_LIST_DIRECTORY_NAME}"><!-- END FILE_LIST_DIRECTORYNAME_COLUMN --></td>
+			><!-- BEGIN FILE_LIST_FILENAME_COLUMN -->{FILE_LIST_FILENAME}<input type="hidden" name="filename[{INDEX}]" value="{FILE_LIST_FILENAME}"><!-- END FILE_LIST_FILENAME_COLUMN --><!-- BEGIN FILE_LIST_DIRECTORYNAME_COLUMN --><a href="{SCRIPT_NAME}?mac={MAC}&profile={PROFILE}&group={GROUP}&repository_pwd={CURRENT_DIRECTORY_PATH}%2F{FILE_LIST_DIRECTORY_PATH}">{FILE_LIST_DIRECTORY_NAME}</a><input type="hidden" name="filename[{INDEX}]" value="{FILE_LIST_DIRECTORY_NAME}"><!-- END FILE_LIST_DIRECTORYNAME_COLUMN --></td>
 		<td class="size-column" title="{FILE_LIST_SIZE} bytes">{FILE_LIST_HUMAN_SIZE}</td>
 		<td class="date-column">{FILE_LIST_CTIME}</td>
 		<td class="action-column">
