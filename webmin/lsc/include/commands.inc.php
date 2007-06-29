@@ -814,7 +814,7 @@ function lsc_command_set_play($id_command)
 		executed = \"TODO\"
 	WHERE
 		id_command = \"%s\" and
-		current_state = \"execute_failed\"
+		current_state = \"execution_failed\"
 ",
 		COMMANDS_ON_HOST_TABLE,
 		$id_command

@@ -245,7 +245,7 @@ while($database->next_record()) {
 		($current_state != "pause") &&
 		($current_state != "not_reachable") &&
 		($current_state != "upload_failed") &&
-		($current_state != "execution_failed'") &&
+		($current_state != "execution_failed") &&
 		($current_state != "delete_failed") &&
 		($current_state != "inventory_failed")
 		

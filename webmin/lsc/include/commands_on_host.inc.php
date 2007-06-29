@@ -1060,7 +1060,7 @@ function lsc_command_on_host_set_play($id_command_on_host)
 		executed = \"TODO\"
 	WHERE
 		id_command_on_host = \"%s\" and
-		current_state = \"execute_failed\"
+		current_state = \"execution_failed\"
 ",
 		COMMANDS_ON_HOST_TABLE,
 		$id_command_on_host
