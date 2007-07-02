@@ -1,0 +1,200 @@
+diff -uNr pump-0.8.11/Makefile pump-0.8.11.new/Makefile
+--- pump-0.8.11/Makefile	Mon Aug 29 12:08:37 2005
++++ pump-0.8.11.new/Makefile	Thu Feb  3 14:57:36 2005
+@@ -3,7 +3,7 @@
+ USRLIBPATH = $(libdir)
+ INCPATH = $(includedir)
+ MAN8PATH = $(mandir)/man8
+-CFLAGS = $(DEB_CFLAGS) -I. -Wall -g $(RPM_OPT_FLAGS) -D__STANDALONE__ -DVERSION=\"$(VERSION)\"
++CFLAGS = -Os $(DEB_CFLAGS) -I. -Wall -g $(RPM_OPT_FLAGS) -D__STANDALONE__ -DVERSION=\"$(VERSION)\"
+ CVSROOT = $(shell cat CVS/Root)
+ 
+ LOADLIBES = /usr/lib/libpopt.a -lresolv
+Binary files pump-0.8.11/config.o and pump-0.8.11.new/config.o differ
+diff -uNr pump-0.8.11/debian/pump.postinst pump-0.8.11.new/debian/pump.postinst
+--- pump-0.8.11/debian/pump.postinst	Mon Aug 29 12:08:37 2005
++++ pump-0.8.11.new/debian/pump.postinst	Wed May 12 12:52:13 2004
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# $Id: pump.postinst,v 1.2 2001/12/25 04:54:43 herbert Exp $
++# $Id: pump.postinst,v 1.1 2002/10/18 08:53:44 ludo Exp $
+ 
+ set -e
+ 
+diff -uNr pump-0.8.11/debian/pump.prerm pump-0.8.11.new/debian/pump.prerm
+--- pump-0.8.11/debian/pump.prerm	Mon Aug 29 12:08:37 2005
++++ pump-0.8.11.new/debian/pump.prerm	Wed May 12 12:52:13 2004
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# $Id: pump.prerm,v 1.1 2001/12/25 04:57:57 herbert Exp $
++# $Id: pump.prerm,v 1.1 2002/10/18 08:53:44 ludo Exp $
+ 
+ set -e
+ 
+diff -uNr pump-0.8.11/dhcp.c pump-0.8.11.new/dhcp.c
+--- pump-0.8.11/dhcp.c	Mon Aug 29 12:08:37 2005
++++ pump-0.8.11.new/dhcp.c	Thu Feb  3 14:55:59 2005
+@@ -81,6 +81,9 @@
+ #define DHCP_OPTION_MAXSIZE		57
+ #define DHCP_OPTION_T1			58
+ #define DHCP_OPTION_CLIENT_IDENTIFIER	61
++#define DHCP_OPTION_177			177
++#define DHCP_OPTION_178			178
++#define DHCP_OPTION_179			179
+ 
+ #define BOOTP_CLIENT_PORT	68
+ #define BOOTP_SERVER_PORT	67
+@@ -583,6 +586,33 @@
+ 		syslog (LOG_DEBUG, "intf: numXdm: %i", intf->numXdm);
+ 		break;
+ 
++	    case DHCP_OPTION_177:
++		if ((intf->option177 = malloc(length + 1))) {
++		    memcpy(intf->option177, chptr, length);
++		    intf->option177[length] = '\0';
++		    intf->set |= PUMP_NETINFO_HAS_OPTION177;
++		    syslog (LOG_DEBUG, "intf: option-177: %s", intf->option177);
++		}
++		break;
++
++	    case DHCP_OPTION_178:
++		if ((intf->option178 = malloc(length + 1))) {
++		    memcpy(intf->option178, chptr, length);
++		    intf->option178[length] = '\0';
++		    intf->set |= PUMP_NETINFO_HAS_OPTION178;
++		    syslog (LOG_DEBUG, "intf: option-178: %s", intf->option178);
++		}
++		break;
++
++	    case DHCP_OPTION_179:
++		if ((intf->option179 = malloc(length + 1))) {
++		    memcpy(intf->option179, chptr, length);
++		    intf->option179[length] = '\0';
++		    intf->set |= PUMP_NETINFO_HAS_OPTION179;
++		    syslog (LOG_DEBUG, "intf: option-179: %s", intf->option179);
++		}
++		break;
++
+ 	    case DHCP_OPTION_OVERLOAD:
+ 		/* FIXME: we should pay attention to this */
+ 		break;
+@@ -1210,6 +1240,9 @@
+     optionsRequested[numOptions++] = DHCP_OPTION_NTPSRVS;
+     optionsRequested[numOptions++] = DHCP_OPTION_XFNTSRVS;
+     optionsRequested[numOptions++] = DHCP_OPTION_XDMSRVS;
++    optionsRequested[numOptions++] = DHCP_OPTION_177;
++    optionsRequested[numOptions++] = DHCP_OPTION_178;
++    optionsRequested[numOptions++] = DHCP_OPTION_179;
+     addVendorCode(req, DHCP_OPTION_OPTIONREQ, numOptions, 
+ 		  optionsRequested);
+ 
+Binary files pump-0.8.11/dhcp.o and pump-0.8.11.new/dhcp.o differ
+Binary files pump-0.8.11/libpump.a and pump-0.8.11.new/libpump.a differ
+Binary files pump-0.8.11/net.o and pump-0.8.11.new/net.o differ
+Binary files pump-0.8.11/netconfig and pump-0.8.11.new/netconfig differ
+Binary files pump-0.8.11/pump and pump-0.8.11.new/pump differ
+diff -uNr pump-0.8.11/pump.c pump-0.8.11.new/pump.c
+--- pump-0.8.11/pump.c	Mon Aug 29 12:08:37 2005
++++ pump-0.8.11.new/pump.c	Fri Oct 18 15:12:12 2002
+@@ -88,6 +88,9 @@
+ 	    char domain[1024];
+ 	    char bootFile[1024];
+ 	    char nisDomain[1024];
++	    char option177[1024];
++	    char option178[1024];
++	    char option179[1024];	    
+ 	} status;
+     } u;
+ };
+@@ -625,6 +628,22 @@
+ 			    intf->nisDomain, sizeof(cmd.u.status.nisDomain));
+ 		    cmd.u.status.nisDomain[sizeof(cmd.u.status.nisDomain)-1] = 
+ 		    							'\0';
++
++		    if (intf[i].set & PUMP_NETINFO_HAS_OPTION177)
++			strncpy(cmd.u.status.option177,
++			    intf->option177, sizeof(cmd.u.status.option177));
++		    cmd.u.status.option177[sizeof(cmd.u.status.option177)-1] = 
++		    							'\0';
++		    if (intf[i].set & PUMP_NETINFO_HAS_OPTION178)
++			strncpy(cmd.u.status.option178,
++			    intf->option178, sizeof(cmd.u.status.option178));
++		    cmd.u.status.option178[sizeof(cmd.u.status.option178)-1] = 
++		    							'\0';
++		    if (intf[i].set & PUMP_NETINFO_HAS_OPTION179)
++			strncpy(cmd.u.status.option179,
++			    intf->option179, sizeof(cmd.u.status.option179));
++		    cmd.u.status.option179[sizeof(cmd.u.status.option179)-1] = 
++		    							'\0';
+ 		}
+ 
+ 	      case CMD_STATUS:
+@@ -728,7 +747,7 @@
+ }
+ 
+ void printStatus(struct pumpNetIntf i, char * hostname, char * domain,
+-		 char * bootFile, char * nisDomain) {
++		 char * bootFile, char * nisDomain, char * option177, char * option178, char * option179) {
+     int j;
+     time_t now,upnow,localAt,localExpiration;
+ 
+@@ -737,8 +756,8 @@
+     printf("\tNetmask: %s\n", inet_ntoa(i.netmask));
+     printf("\tBroadcast: %s\n", inet_ntoa(i.broadcast));
+     printf("\tNetwork: %s\n", inet_ntoa(i.network));
+-    printf("\tBoot server %s\n", inet_ntoa(i.bootServer));
+-    printf("\tNext server %s\n", inet_ntoa(i.nextServer));
++    printf("\tBoot server: %s\n", inet_ntoa(i.bootServer));
++    printf("\tNext server: %s\n", inet_ntoa(i.nextServer));
+ 
+     if (i.set & PUMP_NETINFO_HAS_GATEWAY)
+ 	printf("\tGateway: %s\n", inet_ntoa(i.gateway));
+@@ -797,6 +816,15 @@
+ 	printf("\n");
+     }
+ 
++    if (i.set & PUMP_NETINFO_HAS_OPTION177)
++	printf("\tOption 177: %s\n", option177);
++
++    if (i.set & PUMP_NETINFO_HAS_OPTION178)
++	printf("\tOption 178: %s\n", option178);
++
++    if (i.set & PUMP_NETINFO_HAS_OPTION179)
++	printf("\tOption 179: %s\n", option179);
++
+     if (i.set & PUMP_INTFINFO_HAS_LEASE) {
+ 	upnow = pumpUptime();
+ 	tzset();
+@@ -950,7 +978,8 @@
+     } else if (response.type == CMD_STATUS) {
+ 	printStatus(response.u.status.intf, response.u.status.hostname, 
+ 		    response.u.status.domain, response.u.status.bootFile,
+-		    response.u.status.nisDomain);
++		    response.u.status.nisDomain, response.u.status.option177,
++		    response.u.status.option178, response.u.status.option179);
+     }
+ 
+     return 0;
+diff -uNr pump-0.8.11/pump.h pump-0.8.11.new/pump.h
+--- pump-0.8.11/pump.h	Mon Aug 29 12:08:37 2005
++++ pump-0.8.11.new/pump.h	Fri Oct 18 12:22:40 2002
+@@ -36,6 +36,10 @@
+ #define PUMP_NETINFO_HAS_DNS		(1 << 23)
+ #define PUMP_NETINFO_HAS_NISDOMAIN	(1 << 24)
+ 
++#define PUMP_NETINFO_HAS_OPTION177	(1 << 29)
++#define PUMP_NETINFO_HAS_OPTION178	(1 << 30)
++#define PUMP_NETINFO_HAS_OPTION179	(1 << 31)
++
+ #define PUMP_FLAG_NODAEMON	(1 << 0)
+ #define PUMP_FLAG_NOCONFIG	(1 << 1)
+ #define PUMP_FLAG_FORCEHNLOOKUP	(1 << 2)
+@@ -71,6 +75,7 @@
+     int numXdm;
+     int numDns;
+     int flags;
++    char * option177, * option178, * option179;
+ };
+ 
+ #define OVERRIDE_FLAG_NODNS		(1 << 0)
+Binary files pump-0.8.11/pump.o and pump-0.8.11.new/pump.o differ
