@@ -18,7 +18,7 @@ kernel:
 	@(read ANS; [ "$$ANS" != "n" ])
 # kernel compile
 	[ -f $(SRC)/linux/.config ]
-	cp -f logo_linux_vga16.ppm $(SRC)/linux/drivers/video/logo/
+	cp -f media/logo_linux_vga16.ppm $(SRC)/linux/drivers/video/logo/
 	(cd $(SRC)/linux/;make all CC=$(CC))
 # bcm5700 compile
 #	(cd 3rd_party/bcm/bcm5700-8.2.18/src; make; cp bcm5700.ko $(SRC)/linux/drivers/net/)
