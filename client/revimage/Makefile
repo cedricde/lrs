@@ -1,8 +1,10 @@
-all: atftp-0.7/atftp
+ATFTP_DIR=./3rd_party/atftp/atftp-0.7
 
-atftp-0.7/atftp:
-	cd atftp-0.7 ;\
-	./configure --disable-libreadline ;\
-	make
+all: atftp
+
+
+atftp:
+	[ -d $(ATFTP_DIR) ]
+	(cd $(ATFTP_DIR); ./configure --disable-libreadline; make;)
+	cp $(ATFTP_DIR)/$@ .
 	strip $@
-	cp atftp-0.7/atftp atftp
