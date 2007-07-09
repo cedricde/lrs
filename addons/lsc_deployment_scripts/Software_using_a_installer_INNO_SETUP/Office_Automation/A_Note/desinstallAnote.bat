@@ -11,6 +11,7 @@ goto %ERRORLEVEL%
 :1
 
 echo Le logiciel A Note n est pas installe
+exit 1
 GOTO end
 
 
