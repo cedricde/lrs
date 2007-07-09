@@ -1,0 +1,6 @@
+Please replace doxygen-1.5.2-setup.exe with the original installer you may found on: http://www.stack.nl/~dimitri/doxygen/download.html#latestsrc
+
+Version: 1.5.2
+Installed-Size: 13.5 
+Description: Doxygen is a documentation system for C++, C, Java, Objective-C, Python, IDL (Corba and Microsoft flavors) and to some extent PHP, C#, and D.
+Source: http://www.stack.nl/~dimitri/doxygen/download.html#latestsrc
