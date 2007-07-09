@@ -1,0 +1,8 @@
+Please replace ij137-nojre-setup.exe with the original installer you may found on: http://rsb.info.nih.gov/ij/download.html
+
+Version: 1.37
+Installed-Size: 2.5 
+Description: Image J can display, edit, analyze, process, save and print 8-bit, 16-bit and 32-bit images. It can read many image formats including TIFF, GIF, JPEG, BMP, DICOM, FITS and "raw". It supports "stacks", a series of images that share a single window. It is multithreaded, so time-consuming operations such as image file reading can be performed in parallel with other operations. 
+
+
+Source: http://rsb.info.nih.gov/ij/download.html
