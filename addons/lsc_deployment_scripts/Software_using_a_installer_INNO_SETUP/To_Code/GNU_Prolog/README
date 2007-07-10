@@ -1,7 +1,9 @@
-Please replace setup-gprolog-1.3.0.exe with the original installer you may found on: http://www.gprolog.org/#download
+Please replace setup-gprolog-1.3.0.exe with the original installer you may found
+on: http://www.gprolog.org/#download
 
 Version: 1.3.0
 Installed-Size: 11.5 Mo
-Description: GNU Prolog is a free Prolog compiler with constraint solving over finite domains developed by Daniel Diaz.
-GNU Prolog accepts Prolog+constraint programs and produces native binaries (like gcc does from a C source).
+Description: GNU Prolog is a free Prolog compiler with constraint solving over 
+finite domains developed by Daniel Diaz. GNU Prolog accepts Prolog+constraint 
+programs and produces native binaries (like gcc does from a C source).
 Source: http://www.gprolog.org/#download
