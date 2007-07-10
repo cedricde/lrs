@@ -1,6 +1,8 @@
-Please replace putty-0.60-installer.exe with the original installer you may found on: http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html
+Please replace putty-0.60-installer.exe with the original installer you may 
+found on: http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html
 
 Version: 0.60
 Installed-Size: 3.23 Mo
-Description: PuTTY is a free implementation of Telnet and SSH for Win32 and Unix platforms, along with an xterm terminal emulator.
+Description: PuTTY is a free implementation of Telnet and SSH for Win32 and Unix
+platforms, along with an xterm terminal emulator.
 Source: http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html
