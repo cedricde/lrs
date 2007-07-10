@@ -1,5 +1,7 @@
-Please replace fpc-2.1.4.i386-win32.exe with the original installer you may found on: http://sourceforge.net/project/showfiles.php?group_id=2174
+Please replace fpc-2.1.4.i386-win32.exe with the original installer you may 
+found on: http://sourceforge.net/project/showfiles.php?group_id=2174
 
 Version: 2.1.4
 Installed-Size: 109 Mo
-Description: open source compiler for pascal and object pascalhttp://sourceforge.net/project/showfiles.php?group_id=2174
+Description: open source compiler for pascal and object pascal
+Source: http://sourceforge.net/project/showfiles.php?group_id=2174
