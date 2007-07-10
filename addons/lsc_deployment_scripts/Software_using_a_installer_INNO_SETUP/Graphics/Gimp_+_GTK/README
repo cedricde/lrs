@@ -1,7 +1,7 @@
 Please replace gimp-2.2.15-i586-setup-1.exe and gtk+-2.10.11-setup.exe with the original installer you may found on: http://www.gimp.org/downloads/ and http://sourceforge.net/project/showfiles.php?group_id=121075
 
 Version: Gimp 2.2.15   GTK 2.10.11
-Installed-Size: Gimp 31 + GTK 26.3 
+Installed-Size: Gimp 31 Mo + GTK 26.3 Mo
 Description: GIMP is an acronym for GNU Image Manipulation Program. It is a freely distributed program for such tasks as photo retouching, image composition and image authoring.
 GTK is a library to build graphical user interfaces (GUIs) originally for X Window
 Source: http://www.gimp.org/downloads/ and http://sourceforge.net/project/showfiles.php?group_id=121075
