@@ -4,3 +4,9 @@ Version: r4.11.10
 Installed-Size: 4.10 Mo
 Description: GeoShell is a replacement shell for Windows™ to replace the standard desktop interface. 
 Source: http://sourceforge.net/projects/geoshell/
+
+The file "installGeoShell.bat" is useful of executable "shortcut.exe", to create shortcuts.
+
+Source: http://www.optimumx.com/download/#Shortcut
+
+
