@@ -1,0 +1,13 @@
+Please replace FolderSize-2.3.msi with the original installer you may found on: 
+http://sourceforge.net/projects/foldersize/
+
+Version: 2.3
+Installed-Size: 276 Ko
+Description: Folder Size for Windows adds a new column to the Details view in 
+Windows Explorer. The new column shows not only the size of files, 
+but also the size of folders. It keeps track of which folders you view, and 
+scans them in the background so you can see complete size of all files within 
+the folder. It's very useful for cleaning up your disk. Once you get used to 
+having that information available, a directory listing simply looks incomplete 
+without it!
+Source: http://sourceforge.net/projects/foldersize/

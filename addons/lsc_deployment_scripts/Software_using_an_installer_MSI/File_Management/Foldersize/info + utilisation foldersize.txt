@@ -1,0 +1,13 @@
+Dans la série les petits utilitaires qui rendent service, voici Folder Size qui comme son nom l’indique permet de d’afficher la taille d’un répertoire depuis l’explorateur Windows (qui curieusement ne possède pas cette fonction par défaut, seule la taille des fichiers est donnée).
+
+Tout à fait pratique pour avoir une meilleure vue d’ensemble à partir d’une arborescence de votre disque dur.
+
+On notera qu’il est également possible de faire afficher le nombre de fichiers contenu dans un répertoire (File count), le nombre de sous-répertoires d’un répertoire donné (Folder Count) ainsi que la taille exacte à l’octet près (Folder Size Sort).
+
+L’installation se fait via un fichier .msi (l’installeur Windows bof bof). Et il conviendra de faire afficher la fonction de la manière suivante :
+
+    * Après installation lancer l’explorateur Windows (en mode "Détails")
+    * Cliquer droit dans une colonne, décocher "Taille" et cocher "Folder Size" (plus éventuellement les autres fonctions mentionnées ci-dessus)
+    * Ensuite aller dans la barre des menus "Outils" -> "Options des dossiers" -> "Affichage" -> "Appliquer à tous les dossiers"
+
+On notera qu’il ne fonctionne pas sous Win98 ni pour les disques en réseau et qu’il ne possède pas (encore) de désinstalleur : vous devrez désinstaller manuellement l’ancienne version avant de réinstaller la nouvelle 

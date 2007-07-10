@@ -1,0 +1,15 @@
+Please replace owb.1.1.4.exe with the original installer you may 
+found on: http://www.openworkbench.org/index.php?option=com_docman&Itemid=26
+
+Version: 1.1.4
+Installed-Size: 17.7 Mo
+Description: Open Workbench is an open source Windows-based desktop application
+that provides robust project scheduling and management functionality and is free
+to distribute throughout the enterprise.
+Source: http://www.openworkbench.org/index.php?option=com_docman&Itemid=26
+
+Warning:
+
+To silent install Open Workbench, you can use "owb.1.1.4.exe" or 
+"Open Workbench.msi"
+But to silent uninstall, you can use "Open Workbench.msi"

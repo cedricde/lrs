@@ -1,0 +1,23 @@
+Please replace openofficeorg22.msi with the original installer you may 
+found on: http://fr.openoffice.org/about-downloads.html
+
+Version: 2.2.0.0
+Installed-Size: 275 Mo
+Description: OpenOffice.org is a multiplatform and multilingual office suite and
+an open-source project. Compatible with all other major office suites, the 
+product is free to download, use, and distribute.
+Source: http://fr.openoffice.org/about-downloads.html
+
+Warning:
+
+To perform a silent install, you must have installed normally OpenOffice,to be 
+able to recover the following files, which will be necessary to silent install.
+-directory : java, licences, readmes
+-files ".cab" : openofficeorg1.cab, openofficeorg2.cab, openofficeorg3.cab,
+openofficeorg4.cab
+-instmsia.exe
+-instmsiw.exe
+-setup.exe
+-setup.ini
+
+But to silent uninstall, you can use just "openofficeorg22.msi"

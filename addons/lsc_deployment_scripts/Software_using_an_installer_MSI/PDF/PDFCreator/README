@@ -1,0 +1,9 @@
+Please replace zPDFCreator-0_9_3-AD_DeploymentPackage-WithoutToolbar.msi with 
+the original installer you may found on: 
+http://sourceforge.net/projects/pdfcreator/
+
+Version: 0.9.3
+Installed-Size: 23.9 Mo
+Description: PDFCreator is a free tool to create PDF files from nearly any 
+Windows application.
+Source: http://sourceforge.net/projects/pdfcreator/

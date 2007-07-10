@@ -1,0 +1,13 @@
+Please replace 
+google-toolbar_google_toolbar_4.0.1601_internet_explorer_francais_10208.exe 
+with the original installer you may found on: 
+http://www.clubic.com/lancer-le-telechargement-8392-0-google-toolbar.html
+
+Version: 4.0.1601
+Installed-Size: 4 Mo
+Description: Search smarter with instant suggestions as you type in the search 
+box
+Source:http://www.clubic.com/lancer-le-telechargement-8392-0-google-toolbar.html
+
+To silent uninstall google toolbar, use "GoogleToolbarInstaller4.0.0.002.msi" in
+the directory : C:\Program Files\Google\Installers
