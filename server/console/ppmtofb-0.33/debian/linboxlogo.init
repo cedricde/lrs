@@ -1,0 +1,50 @@
+#! /bin/sh
+#
+
+NAME=ppmtofblinbox
+
+[ ! -f /etc/default/linboxlogo ] || . /etc/default/linboxlogo
+
+PATH=/bin:/usr/bin:/sbin:/usr/sbin
+
+start () {
+
+IP=`ifconfig eth0|grep inet.addr:|cut -d: -f 2|cut -d " " -f 1`
+# display the logo
+if /usr/bin/ppmtofb.linbox /etc/linboxlogo/lrs-console.ppm 2>/dev/null
+then
+    # move the cursor and set scrolling region
+    echo -en "\033[15;30r"
+    echo -en "\033[15;1f"
+    linux_logo -t "IP Address: $IP" -g -L 1
+else
+    linux_logo -t "IP Address: $IP"
+fi 
+
+}
+
+stop () {
+    true
+}
+
+case "$1" in
+    start)
+	start
+	;;
+    stop)
+	stop verbose
+	;;
+    reload|force-reload)
+	;;
+    restart)
+	stop
+	start
+	;;
+    *)
+	echo "Usage: /etc/init.d/$NAME {start|stop|reload|force-reload|restart}"
+	exit 1
+	;;
+esac
+
+exit 0
+

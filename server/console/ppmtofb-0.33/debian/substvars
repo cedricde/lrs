@@ -1,0 +1,1 @@
+shlibs:Depends=libc6 (>= 2.2.3-1), libnetpbm9, libpopt0 (>= 1.6.2-1)

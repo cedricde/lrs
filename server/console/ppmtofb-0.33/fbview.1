@@ -1,0 +1,92 @@
+.TH fbview 1 "June 2001" \" -*- nroff -*-
+.\" Edited slightly by Stephen Stafford <bagpuss@debian.org>
+.\" to change the pointer to documentation from /usr/doc to
+.\" /usr/share/doc.
+.SH NAME
+fbview \- display various picture formats on a framebuffer
+.SH SYNOPSIS
+.B fbview
+[options] file [file2...]
+.SH DESCRIPTION
+Reads at least one graphic file as input, and renders it (or them,
+in sequence) to a free virtual terminal.  You must specify at least
+one filename.  This requires the
+.B ppmtofb
+program and
+.B netpbm
+to work.
+.SH OPTIONS
+.TP
+.B "\-h, \-\-help"
+Show a brief summary of the options permitted.
+.TP
+.B "\-v, \-\-verbose"
+Write information about each image to stderr.
+.TP
+.B "\-q, \-\-quiet"
+Don't write information about each image to stderr.
+.TP
+.B "\-V, \-\-ppmtofb\-verbose"
+Tell
+.B ppmtofb
+to be verbose too.
+.TP
+.B "\-c, \-\-center, \-\-centre"
+Center the image on the visible display area (if possible).
+.TP
+.B "\-\-no\-center, \-\-no\-centre"
+Don't center the image on the visible display area.
+.TP
+.B "\-w, \-\-delay, \-\-pause"
+Set the mininum delay between images, in seconds. (Default: 5). Note
+that the time an image is displayed while another is loading is
+included in this delay period (so if it takes longer than the delay
+period to load the next image, the delay will be extended).
+.TP
+.B "\-d, \-\-depth, \-\-bpp"
+Set the color depth for images.  Defaults to the depth of the current mode.
+.TP
+.B "\-g, \-\-grayscale, \-\-greyscale"
+Render all images in grayscale.  This can be significantly faster than
+color display on low-color displays.
+.TP
+.B "\-C, \-\-color, \-\-colour"
+Render non-grayscale images in color.
+.TP
+.B "\-m, \-\-maxcolors, \-\-maxcolours"
+If non-zero, run
+.B ppmquant
+on images to reduce them to, at most, this many colors.  (Default: 0)
+.TP
+.B "\-W, \-\-width"
+Tell
+.B fbview
+how wide your display is; if the image width is greater than this
+width, the image will be scaled appropriately.  (Default: 640)
+.TP
+.B "\-H, \-\-height"
+Tell
+.B fbview
+how high your display is; if the image height is greater than this
+height, the image will be scaled appropriately. (Default: 480)
+.TP
+.B "\-f, \-\-framebuffer, \-\-frame\-buffer"
+Specify the framebuffer device to use.  This defaults to
+.BR /dev/fb0 .
+.SH CONFIGURATION
+.B fbview
+reads a configuration file from /etc/fbview.conf or .fbview.conf in
+the user's home directory which overrides its default settings.  See
+the example in /usr/share/doc/ppmtofb/examples/fbview.conf for details.
+.SH BUGS
+Only supports certain file formats.
+.SH "SEE ALSO"
+file(1), ppmtofb(1), fb.modes(5), ppm(5),
+/usr/src/linux/Documentation/fb/framebuffer.txt
+.SH AUTHOR
+Chris Lawrence <lawrencc@debian.org>
+
+Copyright (C) 1996-2000 Chris Lawrence.
+
+May be redistributed under the terms of the GNU General Public
+License, version 2 (or, at your option, a later version).

@@ -1,0 +1,163 @@
+.TH ppmtofb 1 "12 November 1998" \" -*- nroff -*-
+.SH NAME
+ppmtofb \- display a portable pixmap on a framebuffer
+.SH SYNOPSIS
+.B ppmtofb
+[\-h] [\-V] [\-v] [\-c] [\-w
+.I delay
+] [\-d
+.I depth
+] [\-g] [\-f 
+.I device
+] [\-s] [\-n] [\-H] [\-x
+.I cutoff
+]
+[\-\-help] [\-\-version] [\-\-verbose] [\-\-center] [\-\-centre]
+[\-\-delay
+.I delay
+] [\-\-depth
+.I depth
+] [\-\-grayscale] [\-\-greyscale] [\-\-framebuffer
+.I device
+] [\-\-stdin] [\-\-no\-histogram] [\-\-no\-ham] [\-\-cutoff
+.I cutoff
+] [ file... ]
+.SH DESCRIPTION
+Reads at least one portable pixmap as input, and renders it (or them,
+in sequence) to a free virtual terminal.  You must specify at least
+one filename or use
+.B \-\-stdin
+to represent standard input (for use in a pipeline).
+.SH OPTIONS
+.TP
+.B "\-h, \-\-help"
+Show a brief summary of the options permitted.
+.TP
+.B "\-V, \-\-version"
+Display the version and copyright of
+.BR ppmtofb .
+.TP
+.B "\-v, \-\-verbose"
+Write information about each image to stderr.
+.TP
+.B "\-c, \-\-center, \-\-centre"
+Center the image on the visible display area (if possible).
+.TP
+.B "\-w, \-\-delay"
+Set the mininum delay between images, in seconds. (Default: 5). Note
+that the time an image is displayed while another is loading is
+included in this delay period (so if it takes longer than the delay
+period to load the next image, the delay will be extended).
+.TP
+.B "\-d, \-\-depth"
+Set the color depth for images.  Defaults to the depth of the current mode.
+.TP
+.B "\-s, \-\-stdin"
+Use standard input instead of reading files from the command line.
+.TP
+.B "\-g, \-\-grayscale, \-\-greyscale"
+Render all images in grayscale.  This can be significantly faster than
+color display on low-color displays.
+.TP
+.B "\-r, \-\-random\-dither"
+Use a random dithering algorithm to improve the grayscale display by
+simulating a 256-grayscale display.  Only effective if \-g is also
+specified or the image just happens to be grayscale.
+.TP
+.B "\-f, \-\-framebuffer, \-\-frame\-buffer"
+Specify the framebuffer device to use.  This defaults to
+.BR /dev/fb0 .
+.TP
+.B "\-n, \-\-no\-histogram"
+Don't make any attempt to profile the image; instead, use the default
+palette.  This is much faster for Amiga HAM displays (and only affects
+HAM), but the resulting output is somewhat lower in quality.
+.TP
+.B "\-H, \-\-no\-ham"
+Don't use HAM modes, even if available.
+.TP
+.B "\-x, \-\-cutoff"
+Ignore colors that have fewer than N pixels in the image of that color
+when determining the palette (HAM only).  Defaults to 0.01% of the
+pixels in the image.
+.SH ENVIRONMENT
+.TP
+.B FRAMEBUFFER
+The framebuffer device to use. (Default: /dev/fb0.)
+.SH EXAMPLES
+.TP
+.B "ppmtofb linux-logo.ppm"
+Display the PPM file
+.B linux-logo.ppm
+and exit, using the default options.
+.TP
+.B "djpeg humberto-flores.jpg | ppmtofb \-\-stdin"
+Display the JPEG file
+.B humberto-flores.jpg
+and exit, using the default options (via the \-\-stdin feature of
+ppmtofb).
+.SH BUGS/LIMITATIONS
+Displaying images with more than 256 colors only works on Amigas with
+the AGA chipset (and works somewhat on Amigas with other chipsets), or
+on DIRECTCOLOR/TRUECOLOR visuals.  You can work around this limitation
+using ppmquant or ppmdither.  The 
+.B \-\-grayscale
+and
+.B \-\-random\-dither
+options will also be useful in this regard.  See
+.B fbview
+for an automated solution to this problem.
+
+PSEUDOCOLOR only works with up to 256 colors.  However, no existing
+framebuffer device supports PSEUDOCOLOR with more than 256 colors.
+
+The DIRECTCOLOR and TRUECOLOR implementation expects each pixel to
+start and end at a byte-boundary.  This means that modes like NeXT
+12-bit truecolor (4 bits per gun) are not supported.  However, this
+limitation does not affect any existing framebuffer device.
+
+Depths greater than 32 bpp are not supported.  Anyone who needs more
+than 32 bpp has significantly better vision than I do.
+
+Static-color modes other than grayscale (such as macfb) are completely
+unsupported.  Supporting them properly would require incorporating
+quantization and dithering routines.
+
+Supporting palette-based image formats (like PNG and GIF) directly
+would increase speed on non-truecolor/directcolor systems.
+
+Various dialects of the English language permit too many spellings of
+useful parameters.
+
+The program probably keeps the root UID too long.
+.SH "SEE ALSO"
+ppmdither(1), ppmquant(1), fbview(1), fb.modes(5), ppm(5), fbset(8),
+/usr/src/linux/Documentation/fb/framebuffer.txt
+.SH AUTHORS
+Geert Uytterhoeven <Geert.Uytterhoeven@cs.kuleuven.ac.be> and
+Chris Lawrence <lawrencc@debian.org>
+
+HAM8 rendering code originally written by Guenther Roehrich
+<Guenther@studbox.uni-stuttgart.de> (as part of the AmigaOS jpegAGA
+package), although it has been more-or-less rewritten multiple times
+by Chris.
+
+The VGA16 rendering code was unabashedly lifted from the
+.B bogl
+library, by Ben Pfaff <pfaffben@debian.org>.
+
+Copyright (C) 1996 Geert Uytterhoeven and (C) 1996-2000 Chris Lawrence.
+
+This software may be redistributed under the terms of the GNU General
+Public License, version 2 (or, at your option, a later version).
+
+Portions of the HAM code were taken from ppmtoilbm, which is copyright
+(C) 1989 by Jef Poskanzer and modified by Ingo Wilken.  Those portions
+are licensed as follows:
+
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted, provided
+that the above copyright notice appear in all copies and that both that
+copyright notice and this permission notice appear in supporting
+documentation.  This software is provided "as is" without express or
+implied warranty.

@@ -1,0 +1,54 @@
+ppmtofb: PPM to Framebuffer
+---------------------------
+Originally by Geert Uytterhoeven <geert@linux-m68k.org>
+Extensive modifications by Chris Lawrence <lawrencc@debian.org>
+
+** Source Dependencies: Debian packages popt, netpbm-dev, libc6-dev
+
+** To build and run in place, use 'make root' as root, or
+   the sequence 'make ppmtofb' 'su' 'make root'
+
+   To build and install, use 'make install' as root, or 
+   the sequence 'make ppmtofb' 'su' 'make install'
+
+(The revision history that used to be here is now in the consolidated
+ changelog file.)
+
+This program is designed to support rendering P?M graphics to
+framebuffer devices under Linux 2.2 (and the Linux/m68k framebuffer
+under Linux 2.0).
+
+The following framebuffers are known to work:
+  amifb
+  pm2fb
+  vga16fb
+  vesafb
+
+It includes at least rudimentary code for packed pixels, interleaved
+bitplanes and normal (full-screen) bitplanes.
+
+Packed pixels are supported at 1, 2, 4, 8 bits per pixel (using a
+palette) and at 8, 16, 24 and 32 bits per pixel (in directcolor and
+truecolor modes).  Other bits per pixel settings are supported in
+directcolor and truecolor where it is implemented on byte boundaries
+(e.g. most 15 bpp modes).
+
+Interleaved bitplanes and normal bitplanes are supported at 1-8 bits
+per pixel (using a palette).  Interleaves of 2 bytes and the screen
+width are supported.
+
+The Amiga's special Hold-and-Modify modes (HAM6 for 4096 colors; HAM8
+for 262,144 colors on AGA) are supported at 6 and 8 bits per pixel
+(HAM6 is currently somewhat broken, however).
+
+Support is NOT currently included for NeXT-style 12 bit color or for
+fixed-palette, non-grayscale graphics (e.g. macfb).  The latter would
+require building in some dithering support.
+
+Contributions of code, patches, etc. are greatly welcomed,
+particularly patches to fix modes which I can't test here.
+
+NOTE: ppmtofb requires the freely-available popt library for compilation.
+
+
+Chris

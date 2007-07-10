@@ -1,0 +1,23 @@
+Source: ppmtofb
+Section: graphics
+Priority: optional
+Maintainer: Linbox <libre@linbox.org>
+Standards-Version: 3.5.10
+Build-Depends: debhelper (>> 4), libpopt-dev, libnetpbm9-dev
+
+Package: linboxlogo
+Architecture: any
+Depends: ${shlibs:Depends}, linuxlogo
+Description: Display netpbm graphics on Linux framebuffer devices at boot
+ The ppmtofb package supports displaying netpbm-format graphics (PBM,
+ PGM and PPM) on Linux systems with framebuffer devices (available
+ with 2.1 kernels on all platforms and 2.0 kernels on m68k).  With the
+ included fbview program, you can display virtually any picture format
+ on any framebuffer.
+ .
+ ppmtofb supports virtually all framebuffer devices, including vesafb
+ and the VGA16 framebuffer for PCs.  On Amigas it can take advantage
+ of the Hold and Modify (HAM) modes for virtual truecolor display on
+ both standard and AGA systems.
+ .
+ Home Page: http://www.lordsutch.com/chris/ppmtofb.html

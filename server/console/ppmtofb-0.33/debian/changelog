@@ -1,0 +1,312 @@
+ppmtofb (0.32.1) unstable; urgency=low
+
+  * New release based on ppmtofb 0.32
+
+ -- Linbox <libre@linbox.org>  Thu, 12 Oct 2006 17:30:08 +0200
+
+ppmtofb (0.32) unstable; urgency=low
+
+  * Patches from Nick Estes to make the --framebuffer option work, add
+    support for the devfs names, and a new switch to select the virtual
+    console to use.
+  * Make installable with Python 2.3.
+
+ -- Chris Lawrence <lawrencc@debian.org>  Sun, 10 Aug 2003 20:13:58 -0400
+
+ppmtofb (0.31) unstable; urgency=low
+
+  * Remove recommendation for python-base.  (Closes: #124013)
+
+ -- Chris Lawrence <lawrencc@debian.org>  Sun,  3 Mar 2002 02:41:05 -0600
+
+ppmtofb (0.30) unstable; urgency=low
+
+  * Updated control file for python repackaging.  (Closes: #119210)
+  * Updated debian/rules to DH_COMPAT=3
+  * Cleaned up the changelog a bit.
+  * Added home page URL to control file.
+
+ -- Chris Lawrence <lawrencc@debian.org>  Sun, 18 Nov 2001 22:42:10 -0600
+
+ppmtofb (0.29) unstable; urgency=low
+
+  * Corrected manpage for fbview.  (Closes: #103185)  Thanks to Stephen
+    Stafford for a patch.
+
+ -- Chris Lawrence <lawrencc@debian.org>  Sun,  8 Jul 2001 23:55:02 -0500
+
+ppmtofb (0.28) unstable; urgency=low
+
+  * Rebuild against new libnetpbm9 library.
+  * Update to Standards-Version 3.5.0.0, including $DEB_BUILD_OPTIONS
+    support.
+  * #include <string.h> to avoid several compiler warnings.
+  * Cleanup all -Wall errors.
+  
+ -- Chris Lawrence <lawrencc@debian.org>  Sun, 18 Mar 2001 23:46:25 -0600
+
+ppmtofb (0.27) frozen unstable; urgency=high
+
+  * Fix compilation problem on architectures without <sys/io.h>.
+    (Closes: #59820)
+
+ -- Chris Lawrence <lawrencc@debian.org>  Wed, 15 Mar 2000 18:41:15 -0600
+
+ppmtofb (0.26) unstable; urgency=low
+
+  * Update copyright location in binary to reflect the correct FHS
+    location for woody+. (Closes: #58599)
+  * Add build dependencies; update to Standards-Version 3.1.1.0
+
+ -- Chris Lawrence <lawrencc@debian.org>  Sun, 20 Feb 2000 22:04:12 -0600
+
+ppmtofb (0.25) unstable; urgency=low
+
+  * fbview now supports BMP, PCX, TIFF and XPM via NetPBM (before, it
+    would use "convert").
+  * Standards-Version: 3.0.1.1
+
+ -- Chris Lawrence <lawrencc@debian.org>  Thu,  9 Sep 1999 03:18:59 -0500
+
+ppmtofb (0.24) unstable; urgency=low
+
+  * Recompile against new libpopt-dev.
+
+ -- Chris Lawrence <lawrencc@debian.org>  Sat, 17 Jul 1999 11:36:37 -0500
+
+ppmtofb (0.23) unstable; urgency=low
+
+  * Remove dependency on python-misc.  (Closes: #41344)
+  * Apply patches from Gerd Knorr to make ppmtofb play nicely on Red Hat
+    systems.
+
+ -- Chris Lawrence <lawrencc@debian.org>  Fri, 16 Jul 1999 02:14:40 -0500
+
+ppmtofb (0.22) unstable; urgency=low
+
+  * fbview now accepts configuration files /etc/fbview.conf and
+    ~/.fbview.conf; see /usr/doc/ppmtofb/examples/fbview.conf for an
+    example configuration file.
+  * Fixed delay to work correctly (before, the time taken to display the
+    image was added to, not subtracted from, the delay period).
+  * Actually updated the fbview man page.
+  
+ -- Chris Lawrence <lawrencc@debian.org>  Thu, 13 May 1999 00:09:15 -0500
+
+ppmtofb (0.21) unstable; urgency=low
+
+  * Fixed numerous bugs again; notably in planar and grayscale display.
+  * Enhanced fbview to take lots of command line arguments; see man page
+    for details.
+
+ -- Chris Lawrence <lawrencc@debian.org>  Fri,  7 May 1999 02:03:33 -0500
+
+ppmtofb (0.20) unstable; urgency=low
+
+  * Set var.nonstd to 0 before initial FBIOPUT_VSCREENINFO ioctl; fixes a
+    bug that stopped some depth changes from working after a HAM screen was
+    displayed on an Amiga.
+  * Fixed numerous stupid bugs in the HAM code.
+  * HAM6 now works.  CBM's engineers decided to make HAM6 and HAM8 use
+    different bitplane layouts; now ppmtofb takes account of it.
+  * New options: --cutoff and --no-ham; both are HAM-specific.  See the
+    man page for details.
+  
+ -- Chris Lawrence <lawrencc@debian.org>  Sat, 17 Apr 1999 04:05:35 -0500
+
+ppmtofb (0.19) unstable; urgency=low
+
+  * For some reason, the '-r' option would cause ppmtofb to seg fault (at
+    least in VGA16 mode).  Simplifying a ?: expression seemed to fix the
+    problem...
+
+ -- Chris Lawrence <lawrencc@debian.org>  Tue, 13 Apr 1999 01:42:16 -0500
+
+ppmtofb (0.18) unstable; urgency=low
+
+  * Added "python-misc" to the Recommends list. (Closes: #35890)
+
+ -- Chris Lawrence <lawrencc@debian.org>  Sun, 11 Apr 1999 04:26:32 -0500
+
+ppmtofb (0.17) unstable; urgency=low
+
+  * Sort colors in planar modes to put darkest colors toward the beginning
+    of the palette (only when we can't allocate black).
+  * Random dithering added for grayscale modes to reduce banding; must be
+    enabled with new "-r" switch.
+  * Changes to fbview to use random dithering in grayscale modes.
+  * Automated version number handling in Makefile.
+
+ -- Chris Lawrence <lawrencc@debian.org>  Fri,  9 Apr 1999 01:59:15 -0500
+
+ppmtofb (0.16) unstable; urgency=low
+
+  * Fixed lintian "executable-manpage" error.
+  * Put correct date in version string (need to automate somehow).
+  * Optimized DisplayImage() for VGA16 somewhat.
+  * Removed a spurious fprintf() from ReadImage().
+  * Reduced debugging clutter with verbose mode on.
+  
+ -- Chris Lawrence <lawrencc@debian.org>  Sun,  4 Apr 1999 04:59:20 -0500
+
+ppmtofb (0.15) unstable; urgency=low
+
+  * Corrected spelling of "relevant".
+  * Added examples to the man page.
+  * Added VGA16 framebuffer support based on Ben Pfaff's "bogl"
+    implementation (4 bitplanes only).  Only built on i386 at present
+    (although the kernel driver may work on Alpha as well).
+  * Fixed numerous stupid bugs in fbview.
+  * Added "Provides: ppmtoagafb", since it does, more or less.
+  
+ -- Chris Lawrence <lawrencc@debian.org>  Sat,  3 Apr 1999 22:37:47 -0600
+
+ppmtofb (0.14) unstable; urgency=low
+
+  * Modified debian/rules to do the suid stuff "correctly" (thanks to Joey
+    Hess for pointing me in the right direction).
+  * Fixed FORMATS in debian/rules (fixes #33986).
+  * Use current depth of framebuffer instead of 8 as the default.  Based on
+    a suggestion from Robert de Bath.
+  * Bug#33802 (segfaults on 24 bpp display) was actually fixed in 0.13.
+  * Fixed the help to include --stdin.
+
+ -- Chris Lawrence <lawrencc@debian.org>  Thu, 18 Mar 1999 23:48:20 -0600
+
+ppmtofb (0.13) unstable; urgency=low
+
+  * Added (slightly) informative message for why vga16 framebuffers don't
+    work (if you compile against 2.2 headers).
+  * Updated VERSION string correctly.
+  * Patches/notes from Robert de Bath:
+    1. Allocate enough buffer memory when depth > 8
+    2. Somehow ppmtofb wasn't installed suid root; fixed by using
+       dh_suidregister and adding debian/suid
+    3. #define RDB_DEBUG will disable VT controls for debugging purposes
+  * Handle STATIC_PSEUDOCOLOR visuals with fix.grayscale; I don't know if
+    any of these actually exist, but now it's supported (implies --grayscale).
+  
+ -- Chris Lawrence <lawrencc@debian.org>  Fri, 26 Feb 1999 00:06:55 -0600
+
+ppmtofb (0.12) unstable; urgency=low
+
+  * Disabled verbose flag in fbview's calls of ppmtofb
+  * Various cleanups in fbview
+  * Changes from before ppmto(aga)fb was a Debian package are now at the end of
+    this changelog (as experimental).  I have no idea what the correct
+    dates are, however.  Some guesses are in brackets.
+  * Cleaned up and updated the README file.
+  * Modified debian/rules to specify which framebuffer organizations
+    should be built for particular architectures:
+    * m68k builds all supported organizations
+    * powerpc builds all but IPLAN2Px (which only exists on Ataris)
+    * All other architectures build only PACKED_PIXELS (as of 2.2.2,
+      no framebuffer for these architectures uses bitplanes)
+  * Colors that appear in the HAM color table are now pre-cached.
+  * New HAM color allocation algorithms taken from ppmtoilbm.
+    --epsilon and --exact-colors options removed.
+  * --grayscale should now work on truecolor/directcolor screens.
+  * Now requires the popt library to compile.  This means:
+    * Reading from standard input now uses --stdin instead of - for the
+      option name.
+    * You can now use --option=x instead of --option x
+    * You can define aliases in $HOME/.popt, e.g.:
+      "ppmtofb alias --matrox --frame-buffer=/dev/fb1 --depth=16 --center"
+      would let you use 'ppmtofb --matrox' instead of the longer command line.
+    * The command line parsing is generally less hokey.
+  * Changed DisplayWidth to DisplayHeight in DisplayImage(); should fix
+    Bug#33802.
+  
+ -- Chris Lawrence <lawrencc@debian.org>  Wed, 24 Feb 1999 09:28:42 -0600
+
+ppmtofb (0.11) unstable; urgency=low
+
+  * Packed pixels should now properly advance the framebuffer pointer.
+    Thanks to Geert Uytterhoeven for pointing out the bug.
+
+ -- Chris Lawrence <lawrencc@debian.org>  Fri,  1 Jan 1999 17:09:11 -0600
+
+ppmtofb (0.10) unstable; urgency=low
+
+  * Support planar graphics on little-endian machines.
+  * DIRECTCOLOR and TRUECOLOR visuals should sort-of work.
+  * Renamed to "ppmtofb" to reflect the fact that ppmtoagafb
+    works on other framebuffers now.
+  * agaview is now fbview; see rationale above.
+  * mfb, cfb2 and cfb4 mode support (untested).
+  * Atari interleaved planes support included in binary.
+  * HAM code no longer included if VIDEO_HAM not defined.
+  
+ -- Chris Lawrence <lawrencc@debian.org>  Fri, 13 Nov 1998 00:55:45 -0600
+
+ppmtoagafb (0.9) unstable; urgency=low
+
+  * Rudimentary support for packed pixels, non-PSEUDOCOLOR visuals, depth !=
+    8, Atari interleaved planes, HAM6 (mostly not-working)
+  * Added support for selecting which modes are enabled in the binary
+  * Fixed bug in interleaved bitmap support.
+  * Use "/dev/fb0" instead of "/dev/fb0current" to comply with current
+    practice.
+
+ -- Chris Lawrence <lawrencc@debian.org>  Wed, 11 Nov 1998 00:42:11 -0600
+
+ppmtoagafb (0.8) unstable; urgency=low
+
+  * Initial Debian Release.
+
+ -- Chris Lawrence <lawrencc@debian.org>  Sun,  2 Aug 1998 02:28:52 -0500
+
+ppmtoagafb (0.7) experimental; urgency=low
+
+  * Some bugs were fixed.
+  * Added man pages.
+  * Rewrote EncodeHAM8() in "native" C.
+  
+ -- Chris Lawrence <lawrencc@debian.org>  Sun,  2 Aug 1998 02:28:52 -0500
+
+ppmtoagafb (0.6) experimental; urgency=low
+
+  * Some bugs were fixed.
+    * Now uses /dev/tty0 instead of /dev/console to allocate a VT
+    * Fixed seg fault on screens that are not a multiple of 64 pixels wide.
+  * Default for --epsilon lowered to 5 (from 8).
+  
+ -- Chris Lawrence <lawrencc@debian.org>  Sun,  2 Aug 1998 02:28:52 -0500
+
+ppmtoagafb (0.5) experimental; urgency=low
+
+  * Added --verbose option.
+  * New HAM8 color allocation algorithm.
+  
+ -- Chris Lawrence <lawrencc@debian.org>  Sun,  2 Aug 1998 02:28:52 -0500
+
+ppmtoagafb (0.4) experimental; urgency=low
+
+  * New --grayscale option.
+  * Planar color mode added (for <= 256 color images).
+  * --center can now be spelled --centre.
+  
+ -- Chris Lawrence <lawrencc@debian.org>  Sun,  2 Aug 1998 02:28:52 -0500
+
+ppmtoagafb (0.3) experimental; urgency=low
+
+  * New --delay and --center options.
+  * Can now read images from stdin, using the filename "-"
+  * Updated agaview to support piping to ppmtoagafb.
+  
+ -- Chris Lawrence <lawrencc@debian.org>  Sun,  2 Aug 1998 02:28:52 -0500
+
+ppmtoagafb (0.2) experimental; urgency=low
+
+  * New maintainer. [late 1996]
+  * Histogram facility added.
+  * HAM8 rendering code replaced with code from Günther Röhrich's jpegAGA
+    program for AmigaOS.
+  
+ -- Chris Lawrence <lawrencc@debian.org>  Sun,  2 Aug 1998 02:28:52 -0500
+
+ppmtoagafb (0.1) experimental; urgency=low
+
+  * Initial release. [during 1996]
+  
+ -- Geert Uytterhoeven <geert@linux-m68k.org>  Sun,  2 Aug 1998 02:28:52 -0500

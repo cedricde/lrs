@@ -1,0 +1,102 @@
+#!/usr/bin/make -f
+# Made with the aid of dh_make, by Craig Small -*- makefile -*-
+# Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
+# Some lines taken from debmake, by Cristoph Lameter.
+
+export DH_COMPAT=3
+
+DEST=./debian/linboxlogo
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+# IPLAN2Px is Atari-only
+# All other modes besides packed pixels only happen on Amiga and Atari
+# VGA16 only happens on Intel and Alpha
+
+architecture:=$(shell dpkg --print-architecture)
+ifeq ($(strip $(architecture)),m68k)
+FORMATS:=-DVIDEO_PLANES -DVIDEO_INTERLEAVED_PLANES -DVIDEO_HAM \
+	 -DVIDEO_PACKED_PIXELS -DVIDEO_IPLAN2Px
+else
+ifeq ($(strip $(architecture)),powerpc)
+FORMATS:=-DVIDEO_PLANES -DVIDEO_INTERLEAVED_PLANES -DVIDEO_HAM \
+	 -DVIDEO_PACKED_PIXELS
+else
+ifeq ($(strip $(architecture)),i386)
+FORMATS:=-DVIDEO_PACKED_PIXELS -DVIDEO_VGA16
+else
+ifeq ($(strip $(architecture)),alpha)
+FORMATS:=-DVIDEO_PACKED_PIXELS -DVIDEO_VGA16
+else
+FORMATS:=-DVIDEO_PACKED_PIXELS
+endif
+endif
+endif
+endif
+
+CFLAGS = -O2 -Wall -I.
+ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
+CFLAGS += -g
+endif
+
+build: build-stamp
+build-stamp:
+	dh_testdir
+
+	# Add here commands to compile the package.
+	$(MAKE) CFLAGS="$(CFLAGS)" FORMATS="$(FORMATS)"
+
+	touch build-stamp
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp debian/post*.debhelper
+
+	# Add here commands to clean up after the build process.
+	-$(MAKE) clean
+
+	dh_clean
+
+# Build architecture-independent files here.
+binary-indep: build
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: build
+#	dh_testversion
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs
+
+	# Add here commands to install the files into debian/ppmtofb
+	$(MAKE) install DESTDIR=`pwd`/$(DEST)
+	mv $(DEST)/usr/bin/ppmtofb $(DEST)/usr/bin/ppmtofb.linbox
+	mv $(DEST)/usr/share/man/man1/ppmtofb.1 $(DEST)/usr/share/man/man1/ppmtofb.linbox.1
+	rm $(DEST)/usr/bin/fbview
+	cp -a debian/*.ppm $(DEST)/etc/linboxlogo
+	dh_installdocs
+	dh_installexamples fbview.conf
+	dh_installmenu
+	dh_installinit -- defaults 99
+	dh_installcron
+	dh_installmanpages
+#	dh_undocumented
+	dh_installchangelogs
+	dh_strip
+	dh_compress
+	dh_fixperms -Xusr/bin/ppmtofb
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+#	dh_makeshlibs
+	dh_md5sums
+	dh_builddeb
+
+source diff:                                                                  
+	@echo >&2 'source and diff are obsolete - use dpkg-source -b'; false
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary

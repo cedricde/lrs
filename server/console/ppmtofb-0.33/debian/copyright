@@ -1,0 +1,20 @@
+This package was originally written by Geert Uytterhoeven
+<geert@linux-m68k.org>, but is now maintained by Chris Lawrence
+<lawrencc@debian.org>.  It was packaged by Chris on Sun, 2 Aug 1998
+02:28:52 -0500, from the source tree residing on his system.
+
+License: GPL (see /usr/share/common-licenses/GPL)
+
+Portions of this software are taken from bogl, copyright (C) 1999 Ben
+Pfaff.  Those portions are also subject to the GPL.
+
+Portions of this software are taken from ppmtoilbm, which is copyright
+(C) 1989 by Jef Poskanzer and modified by Ingo Wilken.  Those portions
+are licensed as follows:
+
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted, provided
+that the above copyright notice appear in all copies and that both that
+copyright notice and this permission notice appear in supporting
+documentation.  This software is provided "as is" without express or
+implied warranty.
