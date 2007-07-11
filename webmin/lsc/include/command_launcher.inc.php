@@ -697,7 +697,7 @@ class LSC_Command_Launcher {
 			}
 		}
 		/* to re-schedule: next_date = start_date + interval */
-		$coh->update_next_launch_date("start_date + interval 30 minute");
+		$coh->update_next_launch_date("start_date + interval ".$this->command->repeat." hour");
 		$coh->start_date = $coh->next_launch_date;
 		$coh->number_attempt_connection_remains = $this->command->max_connection_attempt;
 		$coh->current_state = "scheduled";

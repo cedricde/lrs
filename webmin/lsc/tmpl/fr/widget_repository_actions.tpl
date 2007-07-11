@@ -49,13 +49,13 @@
 		<tr><td>
 			<table style="width:100%">
 			<tr>
-			<td style="width:5px;"><div style="white-space:nowrap;">Date de démarrage de la commande :</div></td><td>
+			<td style="width:5px;"><div style="white-space:nowrap;">Date de d&eacute;marrage de la commande :</div></td><td>
 			<input
 				type="text"
 				name="repository_start_date"
 				id="repository_start_date"
 				size="20"
-				value="dès que possible"
+				value="d&egrave;s que possible"
 				readonly="readonly"
 			/>
 			<input 
@@ -63,11 +63,11 @@
 				src="images/calendar.gif"
 				id="repository_start_date_button"
 			/></td><td>
-			ou <a href="javascript:;" onclick="javascript:document.getElementById('repository_start_date').value='dès que possible';">dès que possible</a>
+			ou <a href="javascript:;" onclick="javascript:document.getElementById('repository_start_date').value='d?s que possible';">d&egrave;s que possible</a>
 			</td>
 			</tr>
 			<tr>
-			<td style="width:5px;"><div style="white-space:nowrap;">Date limite d'exécution de la commande :</div></td><td>
+			<td style="width:5px;"><div style="white-space:nowrap;">Date limite d'ex&eacute;cution de la commande :</div></td><td>
 			<input
 				type="text"
 				name="repository_end_date"
@@ -84,12 +84,23 @@
 			ou <a href="javascript:;" onclick="javascript:document.getElementById('repository_end_date').value='aucune';">aucune</a>
 			</td>
 			</tr>
+			<tr>
+			<td style="width:5px;white-space:nowrap;">R&eacute;p&eacute;tition :</td><td>
+				<select name="repeat">
+				<option value="0">Aucune</option>
+				<option value="1">Chaque heure</option>
+				<option value="24">Chaque jour</option>
+				<option value="168">Chaque semaine</option>
+				</select>
+			</td>
+			</tr>
+
 			</table>
 		</td></tr>
 		<tr><td>
 			<table style="width:100%">
 			<tr>
-			<td style="width:5px;"><div style="white-space:nowrap;">Passer les paramètres suivants au fichier à exécuter :</div></td><td>
+			<td style="width:5px;"><div style="white-space:nowrap;">Passer les param&ecirc;tres suivants au fichier &agrave; ex&eacute;cuter :</div></td><td>
 			<input 
 				type="text"
 				name="repository_parameters"
@@ -109,7 +120,7 @@
 				value="1"
 				style="border:none;"
 			/>
-			Supprimer les fichiers après exécution avec succès
+			Supprimer les fichiers apr&egrave;s ex&eacute;cution avec succ&egrave;s
 			</td>
 		</tr>
 		<tr>
@@ -121,7 +132,7 @@
 				value="1"
 				style="border:none;"
 			/>
-			Exécuter l'agent d'inventaire après l'exécution de la commande
+			Lancer l'agent d'inventaire apr&egrave;s l'ex&eacute;cution de la commande
 			</td>
 		</tr>
 		<tr>
@@ -133,7 +144,7 @@
 				value="1"
 				style="border:none;"
 			/>
-			Si un poste client n'est pas accessible émettre une requète "Wake On Lan"
+			Si un poste client n'est pas accessible &eacute;mettre une requ&ecirc;te "Wake On Lan"
 			</td>
 		</tr>
 		<tr>
@@ -145,7 +156,7 @@
 				value="{MAX_CONNECTION_ATTEMPT}"
 				size="3"
 			/>.
-			Délai entre deux tentatives de connexion :
+			D&eacute;lai entre deux tentatives de connexion :
 			<input 
 				type="text"
 				name="repository_next_connection_delay"

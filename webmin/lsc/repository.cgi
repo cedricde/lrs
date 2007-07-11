@@ -262,7 +262,7 @@ if ($_POST["repository_launch_action"] != "") {
 	}
 	$delete_file_after_execute_successful_enable = $_POST['repository_delete_file_after_execute_successful'];
 	if (
-		($repository_start_date!="d?s que possible" && $repository_start_date!="ASAP" )
+		($repository_start_date!="d&egrave;s que possible" && $repository_start_date!="ASAP" )
 	) {
 		list($date, $time) = split(" [^ ]* ", $repository_start_date);
 		list($day, $month, $year) = split("-", $date);
@@ -312,6 +312,12 @@ if ($_POST["repository_launch_action"] != "") {
 	} else {
 		$start_inventory_enable = false;
 	}
+	if (!$_POST["repeat"]) {
+		$repeat = 0;
+	} else {
+		$repeat = intval($_POST["repeat"]);
+		if ($start_date == "0000-00-00 00:00:00") $start_date = date("Y-m-d G:i:00");
+	}
 
 	$scheduler = new LSC_Scheduler();
 
@@ -333,7 +339,8 @@ if ($_POST["repository_launch_action"] != "") {
 		$wake_on_lan_enable,
 		$next_connection_delay,
 		$max_connection_attempt,
-		$start_inventory_enable
+		$start_inventory_enable,
+		$repeat
 	);
 	/*
 	 * Dispatch all command

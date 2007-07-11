@@ -84,6 +84,16 @@
 			or <a href="javascript:;" onclick="javascript:document.getElementById('repository_end_date').value='none';">none</a>
 			</td>
 			</tr>
+			<tr>
+			<td style="width:5px;white-space:nowrap;">Repeat :</td><td>
+				<select name="repeat">
+				<option value="0">None</option>
+				<option value="1">Hourly</option>
+				<option value="24">Daily</option>
+				<option value="168">Weekly</option>
+				</select>
+			</td>
+			</tr>
 			</table>
 		</td></tr>
 		<tr><td>

@@ -50,7 +50,7 @@ function lsc_ssh($user, $ip, &$command, &$output, &$return_var, &$stdout, &$stde
 	
 	/* -tt forces tty allocation so that signals like SIGINT
 	will be properly sent to the remote host */
-	$ssh_command ="$keychain ssh -tt -o StrictHostKeyChecking=no -o Batchmode=yes -o PasswordAuthentication=no ".$user."@".$ip." \"".$command."\" 2>&1";
+	$ssh_command ="$keychain ssh -tt -R30080:127.0.0.1:80 -o StrictHostKeyChecking=no -o Batchmode=yes -o PasswordAuthentication=no ".$user."@".$ip." \"".$command."\" 2>&1";
 	
 	$handle = popen($ssh_command, "r");
 	$size_buffer=2096;
