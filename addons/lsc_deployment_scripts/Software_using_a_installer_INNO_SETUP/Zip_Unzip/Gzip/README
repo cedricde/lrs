@@ -1,0 +1,10 @@
+Please replace gzip-1.3.12-setup.exe with the original installer you may 
+found on: http://sourceforge.net/projects/gnuwin32/
+
+Version: 1.3.12
+Installed-Size: 0.7 Mb
+Description: gzip (GNU zip) is a compression utility designed to be a 
+replacement for compress. Its main advantages over compress are much better 
+compression and freedom from patented algorithms. It has been adopted by the 
+GNU project and is now relatively popular on the Internet.
+Source: http://sourceforge.net/projects/gnuwin32/
