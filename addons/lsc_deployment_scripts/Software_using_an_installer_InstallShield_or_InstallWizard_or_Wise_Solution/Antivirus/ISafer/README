@@ -1,0 +1,9 @@
+Please replace iSafer-3.0.0.1-setup.exe with the original installer you may 
+found on: http://sourceforge.net/projects/isafer/
+
+Version: 3.0.0.1
+Installed-Size: 2.39 Mo
+Description: iSafer is a Firewall which runs in socket layer - Winsock firewall
+is a filter which checks all the network packages against the specific rule set.
+
+Source: http://sourceforge.net/projects/isafer/

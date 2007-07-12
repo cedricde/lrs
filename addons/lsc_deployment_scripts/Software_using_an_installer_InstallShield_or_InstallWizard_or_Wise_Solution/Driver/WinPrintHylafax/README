@@ -1,0 +1,13 @@
+Please replace WinprintHylaFAX-1.2.8.exe with the original installer you may 
+found on: http://sourceforge.net/projects/winprinthylafax/
+
+Version: 1.2.8
+Installed-Size: <2 Mo
+Description: Winprint HylaFAX is a Windows print monitor designed to send its 
+output directly to a HylaFAX Server. Once installed, you can print to a HylaFAX
+Server from any application, and it will pop up a simple dialog box, allowing 
+you to enter the destination FAX number. It's not intended to be fancy or all 
+encompassing, just a quick and easy way to send FAXes from any Windows 
+application
+
+Source: http://sourceforge.net/projects/winprinthylafax/
