@@ -1,0 +1,14 @@
+Please replace ruby186-25.exe with the original installer you may 
+found on: http://www.ruby-lang.org/en/downloads/
+
+Version: 186-25
+Installed-Size: 86.2 Mo
+Description: Ruby is a dynamic, open source programming language with a focus on
+simplicity and productivity. It has an elegant syntax that is natural to read 
+and easy to write.
+
+Source: http://www.ruby-lang.org/en/downloads/
+
+The file "installruby.bat" is useful of executable "shortcut.exe", to create
+shortcuts.
+Source: http://www.optimumx.com/download/#Shortcut

@@ -1,0 +1,21 @@
+Please replace ganttproject-2.0.4.exe with the original installer you may 
+found on: http://sourceforge.net/projects/ganttproject/
+
+Version: 2.0.4
+Installed-Size: 13.1 Mo
+Description: GanttProject is a free and easy to use Gantt chart based project 
+scheduling and management tool. Our major features include:
+Task hierarchy and dependencies 
+Gantt chart 
+Resource load chart 
+Generation of PERT chart 
+PDF and HTML reports 
+MS Project import/export 
+WebDAV based groupwork 
+
+
+Source: http://sourceforge.net/projects/ganttproject/
+
+The file "installGanttProject.bat" is useful of executable "shortcut.exe", to 
+create shortcuts.
+Source: http://www.optimumx.com/download/#Shortcut

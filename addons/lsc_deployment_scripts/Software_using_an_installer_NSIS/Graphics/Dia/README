@@ -1,0 +1,13 @@
+Please replace dia-setup-0.96.1-3.exe with the original installer you may found 
+on: http://sourceforge.net/projects/dia-installer/
+
+Version: 0.96.1-3
+Installed-Size: 40.6 Mo
+Description: Dia is roughly inspired by the commercial Windows program 'Visio', 
+though more geared towards informal diagrams for casual use. It can be used to 
+draw many different kinds of diagrams. It currently has special objects to help 
+draw entity relationship diagrams, UML diagrams, flowcharts, network diagrams, 
+and many other diagrams. It is also possible to add support for new shapes by 
+writing simple XML files, using a subset of SVG to draw the shape.
+
+Source: http://sourceforge.net/projects/dia-installer/

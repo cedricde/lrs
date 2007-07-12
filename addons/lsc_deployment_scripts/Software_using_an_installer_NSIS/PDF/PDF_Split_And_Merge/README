@@ -1,0 +1,14 @@
+Please replace pdfsam-win32inst-v0_6_sr3.exe with the original installer you may 
+found on: http://sourceforge.net/projects/pdfsam/
+
+Version: 0.6 sr 3
+Installed-Size: 2.8 Mo
+Description: pdfsam is an open source tool (GPL license) designed to handle 
+pdf files. It requiers a Java Virtual Machine 1.4.2 or higher and it’s released
+in 2 versions, basic and enhanced.
+
+Source: http://sourceforge.net/projects/pdfsam/
+
+The file "installpdfsam.bat" is useful of executable "shortcut.exe", to 
+create shortcuts.
+Source: http://www.optimumx.com/download/#Shortcut

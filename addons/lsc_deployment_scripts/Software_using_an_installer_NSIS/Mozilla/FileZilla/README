@@ -1,0 +1,13 @@
+Please replace FileZilla_2_2_32_setup.exe with the original installer you may 
+found on: http://sourceforge.net/projects/filezilla/
+
+Version: 2.2.32
+Installed-Size: 12.5 Mo
+Description: FileZilla is a fast and reliable FTP client and server with lots 
+of useful features and an intuitive interface.
+
+Source: http://sourceforge.net/projects/filezilla/
+
+The file "installFileZilla.bat" is useful of executable "shortcut.exe", to create
+shortcuts.
+Source: http://www.optimumx.com/download/#Shortcut

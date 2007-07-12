@@ -1,0 +1,17 @@
+Please replace gnumeric-1.6.3-win32-2.exe with the original installer you may 
+found on: http://www.gnome.org/projects/gnumeric/downloads.shtml
+
+Version: 1.6.3
+Installed-Size: 57.6 Mo
+Description: The Gnumeric spreadsheet is part of the GNOME desktop environment: 
+a project to create a free, user friendly desktop environment.
+The goal of Gnumeric is to be the best possible spreadsheet. We are not 
+attempting to clone existing applications. However, Gnumeric can read files 
+saved with other spreadsheets and we offer a customizable feel that attempts 
+to minimize the costs of transition.
+
+Source: http://www.gnome.org/projects/gnumeric/downloads.shtml
+
+The file "installgnumeric.bat" is useful of executable "shortcut.exe", to 
+create shortcuts.
+Source: http://www.optimumx.com/download/#Shortcut

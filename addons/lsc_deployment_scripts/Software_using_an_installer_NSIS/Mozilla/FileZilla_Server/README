@@ -1,0 +1,13 @@
+Please replace FileZilla_Server-0_9_23.exe with the original installer you may 
+found on: http://sourceforge.net/projects/filezilla/
+
+Version: 0.9.23
+Installed-Size: 7.7 Mo
+Description: FileZilla is a fast FTP and SFTP client for Windows with a lot of 
+features. FileZilla Server is a reliable FTP server.
+
+Source: http://sourceforge.net/projects/filezilla/
+
+The file "installFileZillaServer.bat" is useful of executable "shortcut.exe", 
+to create shortcuts.
+Source: http://www.optimumx.com/download/#Shortcut

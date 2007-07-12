@@ -1,0 +1,13 @@
+Please replace grisbi-0.5.9-win32-gcc-gtk-2.6.9-060725-full.exe with the 
+original installer you may found on: 
+http://sourceforge.net/projects/grisbi4win/
+
+Version: 0.5.9
+Installed-Size: 22 Mo
+Description: Grisbi is a personnal accounting application running under 
+GNU/Linux and Windows, released under the GPL licence. Grisbi can manage 
+multiple accounts, currencies and users. It manages third party, expenditure 
+and receipt categories, as well as budgetary lines, financial years, and other
+informations that makes it quite adapted for associations. 
+
+Source: http://sourceforge.net/projects/grisbi4win/

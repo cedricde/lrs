@@ -1,0 +1,25 @@
+Please replace LameFE240_setup.exe with the original installer you may 
+found on: http://sourceforge.net/projects/lamefe/
+
+Version: 2.4
+Installed-Size: 3.1 Mo
+Description: LameFE is a leightweight CD-Ripper for the Windows NT operating 
+system. Its userinterface is designed for ease of use and speed. LameFE’s 
+features include:
+Encode CDs directly to MP3 
+Encode CDs directly to Ogg/Vorbis 
+Encode CDs directly to Wave-Audio 
+Encode CDs directly to Monkeys-Audio 
+MusicBrainz lookup, to get CD information 
+CD-Text support (if supported by your drive) 
+Analog Audio-CD playback 
+powerfull tag-editor 
+Highly customizable filename layouts 
+batch-processing to easily rip multiple CDs with multiple drives 
+much more  
+
+Source: http://sourceforge.net/projects/lamefe/ 
+
+The file "installLameFE.bat" is useful of executable "shortcut.exe", to create
+shortcuts.
+Source: http://www.optimumx.com/download/#Shortcut

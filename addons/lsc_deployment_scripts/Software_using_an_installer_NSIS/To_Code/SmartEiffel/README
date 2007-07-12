@@ -1,0 +1,13 @@
+Please replace SmartEiffel-2-2.exe with the original installer you may found 
+on: http://gforge.inria.fr/frs/?group_id=184
+
+Version: 2.2
+Installed-Size: 91.9 Mo
+Description: SmartEiffel is a research and free software project that provides 
+the Eiffel community with:
+- a mature and free compiler (GPL licence) 
+- an extensive and entirely object-oriented class library (MIT/X-11 licence) 
+- all those Eiffel-specific tools needed for a complete development environment, 
+as an Eiffel-level symbolic debugger or a documentation tool 
+
+Source: http://gforge.inria.fr/frs/?group_id=184
