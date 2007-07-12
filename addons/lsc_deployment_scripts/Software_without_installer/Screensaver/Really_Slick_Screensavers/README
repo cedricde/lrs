@@ -1,0 +1,14 @@
+The software "Really Slick Screensavers" has not an installer. It's a "zip file".
+Then, we create a directory "screensaver", and we unzip "rssavers-0.1.zip" 
+inside.
+
+File name: rssavers-0.1.zip
+Directory name: screensaver
+Version: 0.1
+Installed-Size: 10.4 Mo
+Description: Screensavers
+
+Source: http://sourceforge.net/projects/rssavers/
+
+The file "installscreensaver.bat" had need of executable "OpenALwEAX.exe", to 
+able a good display of this screensaver. 

@@ -1,0 +1,24 @@
+The software Coccinella has not an installer. It's a "zip file". Then, we create
+a directory, and we unzip "Coccinella-0.95.16Win.zip" inside.
+
+File name: Coccinella-0.95.16Win.zip
+Directory name: Coccinella
+Version: 0.95.16
+Installed-Size: 5.53 Mo
+Description: Coccinella is a free and open-source cross-platform chat client 
+with a built-in whiteboard for improved collaboration with other people. 
+Other key features of Coccinella include:
+- File transfer 
+- Plugin system 
+- Group chat (MUC) 
+- Avatars and emoticons 
+- Multi-lingual and internationalized 
+- Secured connections (TLS and SASL) 
+- Open standard instant messaging protocol  
+
+
+Source: http://sourceforge.net/projects/coccinella/
+
+The file "installcoccinella.bat" is useful of executable "shortcut.exe", to 
+create shortcuts.
+Source: http://www.optimumx.com/download/#Shortcut

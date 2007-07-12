@@ -1,0 +1,18 @@
+The software POM has not an installer. It's a "zip file". Then, we 
+create a directory, and we unzip "pom-1_9.tar.gz " inside.
+
+File name: pom-1_9.tar.gz 
+Directory name: pom-1_9
+Version: 1.9
+Installed-Size: 1.75 Mo
+Description: POM-Pdf documents Modifier.A 100% pure java GUI,based upon the 
+iText library.Features are(or will be) 
+[1]Merging(Complete documents*Range of pages*Set bookmark for each merged document) 
+[2]Converting(pdf2ps*pdf2a)[3]Batch[4]Creation(ps2pdf*a2pdf*doc2pdf)
+
+ 
+Source: http://sourceforge.net/projects/nrmpom/
+
+The file "installPOM1_9.bat" is useful of executable "shortcut.exe", to 
+create shortcuts.
+Source: http://www.optimumx.com/download/#Shortcut

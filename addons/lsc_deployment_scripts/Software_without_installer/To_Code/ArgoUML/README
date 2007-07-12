@@ -1,0 +1,16 @@
+The software ArgoUML has not an installer. Then, we create a directory, and we 
+puts executable "argouml-0.24.jnlp" inside.
+
+File name: argouml-0.24.jnlp
+Directory name: argoUML
+Version: 0.24
+Installed-Size: <1 Mo
+Description: ArgoUML is the leading open source UML modeling tool and includes 
+support for all standard UML 1.4 diagrams. It runs on any Java platform and is 
+available in ten languages.
+
+Source: http://argouml-downloads.tigris.org/argouml-0.24/
+
+The file "installargoUML.bat" is useful of executable "shortcut.exe", to create
+shortcuts.
+Source: http://www.optimumx.com/download/#Shortcut

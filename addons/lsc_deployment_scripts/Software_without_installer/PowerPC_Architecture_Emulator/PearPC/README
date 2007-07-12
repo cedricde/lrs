@@ -1,0 +1,15 @@
+The software PearPC has not an installer. It's a "zip file". Then, we 
+create a directory, and we unzip "pearpc-0.4-win32-jitc.zip" inside.
+
+File name: pearpc-0.4-win32-jitc.zip
+Directory name: pearpc 0.4
+Version: 0.4
+Installed-Size: 966 Ko
+Description: PearPC is an architecture-independent PowerPC platform emulator 
+capable of running most PowerPC operating systems. 
+
+Source: http://sourceforge.net/projects/pearpc/
+
+The file "installpearpc.bat" is useful of executable "shortcut.exe", to 
+create shortcuts.
+Source: http://www.optimumx.com/download/#Shortcut

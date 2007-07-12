@@ -1,0 +1,19 @@
+The software Infrarecorder has not an installer. It's a "zip file". Then, we 
+create a directory, and we unzip "ir0431_unicode.zip " inside.
+
+File name: ir0431_unicode.zip 
+Directory name: ir043_unicode
+Version: 0.43.1
+Installed-Size: 8.95 Mo
+Description: InfraRecorder is a free CD/DVD burning solution for Microsoft 
+Windows. It offers a wide range of powerful features; all through an easy to 
+use application interface and Windows Explorer integration.
+
+
+
+ 
+Source: http://sourceforge.net/projects/infrarecorder/
+
+The file "installinfrarecorder.bat" is useful of executable "shortcut.exe", to 
+create shortcuts.
+Source: http://www.optimumx.com/download/#Shortcut

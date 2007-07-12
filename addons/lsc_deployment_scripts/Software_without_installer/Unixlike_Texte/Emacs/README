@@ -1,0 +1,16 @@
+The software Emacs has not an installer. It's a "zip file". Then, we create
+a directory "emacs-21.3", and we unzip "emacs-21.3.zip" inside.
+
+File name: emacs-21.3.zip
+Directory name: emacs-21.3
+Version: 21.3
+Installed-Size: 44.6 Mo
+Description: Emacs is the extensible, customizable, self-documenting real-time 
+display editor.
+
+
+Source: http://www.gnu.org/order/ftp.html
+
+The file "installemacs" is useful of executable "shortcut.exe", to 
+create shortcuts.
+Source: http://www.optimumx.com/download/#Shortcut

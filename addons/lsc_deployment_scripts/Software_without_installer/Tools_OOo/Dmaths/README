@@ -1,0 +1,11 @@
+Tools "Dmaths" for Open Office has not an installer. It's a "zip file". Then, 
+we create a directory "dmaths", and we puts "dmaths300.zip" inside.
+
+File name: dmaths300.zip
+Directory name: dmaths300
+Version: 3.0
+Installed-Size: 3.78 Mo
+Description: Dmaths is adressed to people who use regularly the formula editor 
+of OpenOffice, StarOffice (maths students, teachers...) and NeoOffice. 
+
+Source: http://www.dmaths.com/documentation/doku.php?id=description:dl

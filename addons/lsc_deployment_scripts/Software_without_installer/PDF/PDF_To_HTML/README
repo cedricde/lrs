@@ -1,0 +1,17 @@
+The software PDFtoHTML has not an installer. It's a "zip file". Then, we 
+create a directory, and we unzip "pdf2htmlgui.zip " inside.
+
+File name: pdf2htmlgui.zip
+Directory name: pdf2html
+Version: 1.3
+Installed-Size: 803 Ko
+Description: pdftohtml is a utility which converts PDF files into HTML and XML 
+formats. 
+
+Source: http://www.framasoft.net/article1563.html
+=> click on PDF2HTMLgui v1.3 (téléchargement alternatif)   
+or (old version) http://sourceforge.net/projects/pdftohtml/
+
+The file "installpdf2html.bat" is useful of executable "shortcut.exe", to 
+create shortcuts.
+Source: http://www.optimumx.com/download/#Shortcut

@@ -1,0 +1,19 @@
+The software Eclipse has not an installer. It's a "zip file". Then, we create a 
+directory, and we unzip "eclipse-SDK-3.2-win32.zip" inside.
+
+File name: eclipse-SDK-3.2-win32.zip
+Directory name: eclipse
+Version: 3.2
+Installed-Size: 133 Mo
+Description: clipse is an open source community whose projects are focused on 
+building an open development platform comprised of extensible frameworks, tools 
+and runtimes for building, deploying and managing software across the lifecycle.
+A large and vibrant ecosystem of major technology vendors, innovative start-ups,
+universities, research institutions and individuals extend, complement and 
+support the Eclipse platform. 
+ 
+Source: http://xmlgraphics.apache.org/batik/download.cgi#distributon
+
+The file "installbatik.bat" is useful of executable "shortcut.exe", to create
+shortcuts.
+Source: http://www.optimumx.com/download/#Shortcut

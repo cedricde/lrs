@@ -1,0 +1,21 @@
+Enigmail is an extension (format .xpi).
+
+File name: enigmail-0.95.1-tb+sm.xpi
+Version: 0.95.1
+Description: Enigmail is an extension to the mail client of Mozilla Thunderbird 
+and Mozilla Seamonkey which allows users to access the authentication and 
+encryption features provided by GnuPG 
+
+
+Source: http://enigmail.mozdev.org/download.html
+
+
+In order to be able to use Enigmail, you need to install:
+
+- GnuPG ? 1.4.7, see our step-by-step GnuPG setup guide for Windows; PGP from 
+  PGP Inc. is not supported. 
+- Mozilla Thunderbird or the MailNews component of SeaMonkey 
+- an Enigmail package listed below that matches your operating system and e-mail 
+  client 
+- and a language pack that matches the Enigmail package if your client is 
+  localised. 

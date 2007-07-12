@@ -1,0 +1,17 @@
+The software Picophone has not an installer. It's an executable. Then, we 
+create a directory "Picophone", and we put "PicoPhone164.exe" inside.
+
+File name: PicoPhone164.exe
+Directory name: Picophone
+Version: 1.64
+Installed-Size: 56.5 Ko
+Description: PicoPhone is a simple Internet phone application with chat. If you 
+want a more advanced application, that has also video, file transfer, address 
+book, that can call regular phones, send SMS messages to cellphones and more, 
+take v-Phone. 
+
+Source: http://www.vitez.it/picophone/index.html
+
+The file "installpicophone.bat" is useful of executable "shortcut.exe", to 
+create shortcuts.
+Source: http://www.optimumx.com/download/#Shortcut

@@ -1,0 +1,19 @@
+The software Qcad has an installer. But this installer don't accept quiet switch.
+Then we install Qcad normally and we recover directory which contains software.
+
+File name: qcad_1_5_1.exe
+Directory name: QCad
+Version: 1.5.1
+Installed-Size: 4.33 Mo
+Description: QCad is an application for computer aided drafting in two 
+dimensions (2d). With QCad you can create technical drawings such as plans for 
+buildings, interiors, mechanical parts or schemas and diagrams. QCad works on 
+Windows, Mac OS X and many Linux and Unix Systems. The source code of the QCad 
+community edition is released under the GPL 
+
+ 
+Source: http://gnuwin.epfl.ch/apps/qcad/en/install/
+
+The file "installqcad.bat" is useful of executable "shortcut.exe", to 
+create shortcuts.
+Source: http://www.optimumx.com/download/#Shortcut

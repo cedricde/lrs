@@ -1,0 +1,18 @@
+The software Tail has not an installer. It's a "zip file". Then, we 
+create a directory, and we unzip "Tail-4.2.12.zip" inside.
+
+File name: Tail-4.2.12.zip 
+Directory name: Tail 4.2.12
+Version: 4.2.12
+Installed-Size: 177 Ko
+Description: Tail for Win32 is used to monitor changes to files; displaying the 
+changed lines in realtime. This makes Tail ideal for watching log files.
+Tail has a plugin architecture, which allows notifications to occur when certain
+keywords are detected in monitored files. At the moment a MAPI plugin is 
+available, and work is in progress on an SMTP version.
+ 
+Source: http://sourceforge.net/projects/tailforwin32
+
+The file "installtail.bat" is useful of executable "shortcut.exe", to 
+create shortcuts.
+Source: http://www.optimumx.com/download/#Shortcut

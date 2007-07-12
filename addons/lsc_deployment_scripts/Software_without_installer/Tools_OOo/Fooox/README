@@ -1,0 +1,15 @@
+Tools "fooox" for Open Office has not an installer. It's a "zip file". Then, 
+we create a directory "fooox", and we unzip "fooox001b10.zip" inside.
+
+File name: fooox001b10.zip
+Directory name: fooox
+Version: 1 beta 10
+Installed-Size: 2.48 Mo
+Description: Some people set up their files on their computer in a similar 
+fashion that Heathrow International Airport organizes its luggage department: 
+you fly to Tokyo and your suitcases wind up in L.A.
+You suddenly don’t remember where the H... you’ve saved this or that file on you
+r PC? Relax. FoooX will help you to search and find very easily all the 
+documents containing a word or another, but also a word AND another.
+
+Source: http://oootools.free.fr/fooox/

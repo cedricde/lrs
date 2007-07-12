@@ -1,0 +1,16 @@
+The software BlackBox has not an installer. It's a "zip file". Then, we create a 
+directory, and we unzip "0.0.92_Pack_Sep13.zip" inside.
+
+File name: 0.0.92_Pack_Sep13.zip
+Directory name: BlackBox 4 Win 0.0.92
+Version: 0.0.92
+Installed-Size: 766 Ko
+Description: Blackbox shells allow you to interact with your operating system in
+much the same way as Windows Explorer. However, Blackbox dispenses with some, or
+many, of the graphical features which are a staple of the Windows model.
+
+Source: http://www.bb4win.org/e107_plugins/content/content.php?content.6
+
+The file "installBlackBox.bat" is useful of executable "shortcut.exe", to create
+shortcuts.
+Source: http://www.optimumx.com/download/#Shortcut

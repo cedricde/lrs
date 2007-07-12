@@ -1,0 +1,17 @@
+The software Ased has not an installer. Then, we create a directory, and we 
+puts executable "ased3.0b16.exe" inside.
+
+File name: ased3.0b16.exe
+Directory name: ased
+Version: 3.0 beta 16
+Installed-Size: 4.73 Mo
+Description: ASED is an easy to use Tcl/Tk Editor written in pure Tcl/Tk using 
+the BWidget Toolkit and an adopted version of the ctext package from George 
+Peter Staplin.
+
+
+Source: http://www.mms-forum.de/ased/asedhome.htm
+
+The file "installargoUML.bat" is useful of executable "shortcut.exe", to create
+shortcuts.
+Source: http://www.optimumx.com/download/#Shortcut

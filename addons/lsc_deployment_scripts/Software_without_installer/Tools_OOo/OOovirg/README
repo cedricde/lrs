@@ -1,0 +1,12 @@
+Tools "OOovirg" for Open Office has not an installer. It's a "zip file". Then, 
+we create a directory "OOovirg", and we unzip "OOovirg.zip" inside.
+
+File name: OOovirg.zip
+Directory name: OOovirg
+Version: 1.0.0.1
+Installed-Size: 231 Ko
+Description: OOOVirg will enable you to transform the point of the numeric 
+keypad into comma, which will enable you to seize more easily and quickly the 
+data with OpenOffice.
+
+Source: http://www.via.ecp.fr/~remi/win/ooovirg/ooovirg.php3

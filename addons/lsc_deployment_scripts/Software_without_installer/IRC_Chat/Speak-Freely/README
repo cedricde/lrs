@@ -1,0 +1,15 @@
+The software Speack-Freely has not an installer. It's a "zip file". Then, we 
+create a directory, and we unzip "speakfb-7.6a.zip" inside.
+
+File name: speakfb-7.6a.zip 
+Directory name: speak-freely
+Version: 7.6.1
+Installed-Size: 1.03 Mo
+Description: Speak-Freely is an Internet voice application that allows you to 
+talk (actually send voice, not typed characters) over the internet.
+ 
+Source: http://sourceforge.net/projects/speak-freely/
+
+The file "installspeak-freely.bat" is useful of executable "shortcut.exe", to 
+create shortcuts.
+Source: http://www.optimumx.com/download/#Shortcut

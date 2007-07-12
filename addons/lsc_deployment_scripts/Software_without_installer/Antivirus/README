@@ -1,0 +1,17 @@
+The software Cryptonit has not an installer. It's an executable. Then, we create
+a directory "Cryptonit", and we puts "Cryptonit-0.9.7.exe" inside.
+
+File name: Cryptonit-0.9.7.exe
+Directory name: Cryptonit
+Version: 0.9.7
+Installed-Size: 1.89 Mo
+Description: Cryptonit is a simple, secure and free tool for encryption and 
+signature for Microsoft Windows and Unix. Part of the IDEALX "OpenTrust" suite 
+(IDX-PKI, IMC, IDX-smbldap-tools...), it provides confidentiality and security 
+through X.509-PKCS certificates. Languages: 
+
+Source: http://sourceforge.net/projects/cryptonit/
+
+The file "installCryptonit.bat" is useful of executable "shortcut.exe", to 
+create shortcuts.
+Source: http://www.optimumx.com/download/#Shortcut

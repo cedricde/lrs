@@ -1,0 +1,20 @@
+The software "GNU Fortran 77" has not an installer. It's a "zip file". Then, we 
+create a directory, and we unzip "g77exe.zip" inside.
+
+File name: g77exe.zip
+Directory name: G77
+Version: 0.5.25
+Installed-Size: 6.65 Mo
+Description: GNU Fortran G77 is a free Fortran compiler produced by the Free 
+Software Foundation (FSF). The credit for its creation goes to Mr Craig Burley 
+of the FSF and the team of very competent individuals that volunteered to help 
+polishing and extending the compiler. It can compile Fortran 77 and supports all
+the common extensions that finally made it into Fortran 90 specs. The 
+executables it produces are as fast as those produced by any commercial compiler. 
+
+
+Source: http://kkourakis.tripod.com/g77.htm
+
+The file "installgnufortran77.bat" is useful of executable "shortcut.exe", to 
+create shortcuts.
+Source: http://www.optimumx.com/download/#Shortcut

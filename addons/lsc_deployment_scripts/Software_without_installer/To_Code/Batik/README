@@ -1,0 +1,18 @@
+The software Batik has not an installer. It's a "zip file". Then, we create a 
+directory, and we unzip "Batik" inside.
+
+File name: batik-1.7beta1.zip
+Directory name: batik-1.7
+Version: 1.7 beta 1
+Installed-Size: 16.5 Mo
+Description: Batik is a Java-based toolkit for applications or applets that want
+to use images in the Scalable Vector Graphics (SVG) format for various purposes,
+such as display, generation or manipulation. With Batik, you can manipulate SVG 
+documents anywhere Java is available. You can also use the various Batik modules
+to generate, manipulate and transcode SVG images in your applications or applets. 
+ 
+Source: http://xmlgraphics.apache.org/batik/download.cgi#distributon
+
+The file "installbatik.bat" is useful of executable "shortcut.exe", to create
+shortcuts.
+Source: http://www.optimumx.com/download/#Shortcut

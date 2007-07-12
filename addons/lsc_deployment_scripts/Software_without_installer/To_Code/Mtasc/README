@@ -1,0 +1,17 @@
+The software Mtasc has not an installer. It's a "zip file". Then, we 
+create a directory, and we unzip "mtasc-1.13.zip" inside.
+
+File name: mtasc-1.13.zip  
+Directory name: mtasc-1.13
+Version: 1.13
+Installed-Size: 807 Ko
+Description: MTASC is the first ActionScript 2 Open Source free compiler.
+It can compile large number of .as class files in a very short time and generate
+directly the corresponding SWF bytecode without relying on Macromedia Flash or 
+other tools.
+
+Source: http://www.mtasc.org/#download
+
+The file "installmtasc.bat" is useful of executable "shortcut.exe", to create 
+shortcuts.
+Source: http://www.optimumx.com/download/#Shortcut

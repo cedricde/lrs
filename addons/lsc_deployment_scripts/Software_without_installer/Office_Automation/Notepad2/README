@@ -1,0 +1,16 @@
+The software Notepad2 has not an installer. It's a "zip file". Then, we 
+create a directory, and we unzip "notepad2.zip" inside.
+
+File name: notepad2.zip  
+Directory name: notepad2
+Version: 2.0.16
+Installed-Size: 598 Ko
+Description: Notepad2 is a fast and light-weight Notepad-like text editor with 
+syntax highlighting. This program can be run out of the box without installation,
+and does not touch your system's registry.
+
+Source: http://www.flos-freeware.ch/notepad2.html
+
+The file "installnotepad2.bat" is useful of executable "shortcut.exe", to create 
+shortcuts.
+Source: http://www.optimumx.com/download/#Shortcut

@@ -1,0 +1,17 @@
+The software BladeEnc has not an installer. It's a "zip file". Then, we create a 
+directory, and we unzip "BladeEnc" inside.
+
+File name: BEnc-0942-Win-i586.zip
+Directory name: BladeEnc
+Version: 0.94.2
+Installed-Size: 239 Ko
+Description: BladeEnc is a program to generate MP3 files from WAV, AIFF or RAW 
+sound files. BladeEnc is available for most modern computer platforms, including
+Windows, Linux, BeOS, MacOS, UnixWare, Solaris, FreeBSD, NetBSD, OpenBSD, OS/2 
+and many more. 
+
+Source: http://www2.arnes.si/~mmilut/BladeEnc.html
+
+The file "installBladeEnc.bat" is useful of executable "shortcut.exe", to create
+shortcuts.
+Source: http://www.optimumx.com/download/#Shortcut
