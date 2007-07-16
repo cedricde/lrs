@@ -107,7 +107,8 @@ define("EXTICONSFILE", realpath(dirname(__FILE__)."/../extension.icons"));
  */
 $repository_home_directory = "/tftpboot/revoboot/lsc/";
 
-define("MAX_COMMAND_LAUNCHER_PROCESSUS", 30);
+/* Each launched command needs ~ 5MB RAM */
+define("MAX_COMMAND_LAUNCHER_PROCESSUS", 50);
 
 define("MAX_LOG_SIZE", 100*1000); // octet
 ?>
