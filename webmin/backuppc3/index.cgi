@@ -53,11 +53,8 @@ use lib "/usr/share/backuppc/lib";
 use BackupPC::Lib;
 use BackupPC::CGI::Lib qw(:all);
 
-#system("echo 1 `date` >>/tmp/ac");
 BackupPC::CGI::Lib::NewRequest;
-#system("echo 2 `date` >>/tmp/ac");
 
-#system("echo \"=-=-=- $In{action}\" >> /tmp/ac");
 
 # LINBOX
 require "../web-lib.pl";
