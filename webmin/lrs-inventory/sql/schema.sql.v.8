@@ -1,0 +1,78 @@
+--
+-- Inventory update
+--
+
+ALTER TABLE Software ADD Comments varchar(128) default NULL;
+ALTER TABLE hasSlot CHANGE slots slot int(11) unsigned NOT NULL default '0';
+
+CREATE INDEX machine ON hasBios(machine);
+CREATE INDEX machine ON hasBootDisk(machine);
+CREATE INDEX machine ON hasBootGeneral(machine);
+CREATE INDEX machine ON hasBootMem(machine);
+CREATE INDEX machine ON hasBootPCI(machine);
+CREATE INDEX machine ON hasBootPart(machine);
+CREATE INDEX machine ON hasController(machine);
+CREATE INDEX machine ON hasCustom(machine);
+CREATE INDEX machine ON hasDrive(machine);
+CREATE INDEX machine ON hasHardware(machine);
+CREATE INDEX machine ON hasInput(machine);
+CREATE INDEX machine ON hasMemory(machine);
+CREATE INDEX machine ON hasModem(machine);
+CREATE INDEX machine ON hasMonitor(machine);
+CREATE INDEX machine ON hasNetwork(machine);
+CREATE INDEX machine ON hasPort(machine);
+CREATE INDEX machine ON hasPrinter(machine);
+CREATE INDEX machine ON hasSlot(machine);
+CREATE INDEX machine ON hasSoftware(machine);
+CREATE INDEX machine ON hasSound(machine);
+CREATE INDEX machine ON hasStorage(machine);
+CREATE INDEX machine ON hasVideoCard(machine);
+
+CREATE INDEX inventory ON hasBios(inventory);
+CREATE INDEX inventory ON hasBootDisk(inventory);
+CREATE INDEX inventory ON hasBootGeneral(inventory);
+CREATE INDEX inventory ON hasBootMem(inventory);
+CREATE INDEX inventory ON hasBootPCI(inventory);
+CREATE INDEX inventory ON hasBootPart(inventory);
+CREATE INDEX inventory ON hasController(inventory);
+CREATE INDEX inventory ON hasCustom(inventory);
+CREATE INDEX inventory ON hasDrive(inventory);
+CREATE INDEX inventory ON hasHardware(inventory);
+CREATE INDEX inventory ON hasInput(inventory);
+CREATE INDEX inventory ON hasMemory(inventory);
+CREATE INDEX inventory ON hasModem(inventory);
+CREATE INDEX inventory ON hasMonitor(inventory);
+CREATE INDEX inventory ON hasNetwork(inventory);
+CREATE INDEX inventory ON hasPort(inventory);
+CREATE INDEX inventory ON hasPrinter(inventory);
+CREATE INDEX inventory ON hasSlot(inventory);
+CREATE INDEX inventory ON hasSoftware(inventory);
+CREATE INDEX inventory ON hasSound(inventory);
+CREATE INDEX inventory ON hasStorage(inventory);
+CREATE INDEX inventory ON hasVideoCard(inventory);
+
+CREATE INDEX bios ON hasBios(bios);
+CREATE INDEX bootdisk ON hasBootDisk(bootdisk);
+CREATE INDEX bootgeneral ON hasBootGeneral(bootgeneral);
+CREATE INDEX bootmem ON hasBootMem(bootmem);
+CREATE INDEX bootpci ON hasBootPCI(bootpci);
+CREATE INDEX bootpart ON hasBootPart(bootpart);
+CREATE INDEX controller ON hasController(controller);
+CREATE INDEX custom ON hasCustom(custom);
+CREATE INDEX drive ON hasDrive(drive);
+CREATE INDEX hardware ON hasHardware(hardware);
+CREATE INDEX input ON hasInput(input);
+CREATE INDEX memory ON hasMemory(memory);
+CREATE INDEX modem ON hasModem(modem);
+CREATE INDEX monitor ON hasMonitor(monitor);
+CREATE INDEX network ON hasNetwork(network);
+CREATE INDEX port ON hasPort(port);
+CREATE INDEX printer ON hasPrinter(printer);
+CREATE INDEX slot ON hasSlot(slot);
+CREATE INDEX software ON hasSoftware(software);
+CREATE INDEX sound ON hasSound(sound);
+CREATE INDEX storage ON hasStorage(storage);
+CREATE INDEX videocard ON hasVideoCard(videocard);
+
+DELETE FROM Version;
+INSERT INTO Version VALUES( '8' );

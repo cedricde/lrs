@@ -29,6 +29,8 @@
 	$datasource = & DataSource::getDefaultDataSource();
 
 	// Read compressed data
+	if (!isset($HTTP_RAW_POST_DATA))
+		$HTTP_RAW_POST_DATA = file_get_contents("php://input");
 	$data = "$HTTP_RAW_POST_DATA";
 
 	// Uncompress it
