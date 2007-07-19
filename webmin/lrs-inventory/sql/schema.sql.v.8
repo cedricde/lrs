@@ -2,7 +2,7 @@
 -- Inventory update
 --
 
-ALTER TABLE Software ADD Comments varchar(128) default NULL;
+ALTER TABLE Software ADD Comments varchar(255) default NULL;
 ALTER TABLE hasSlot CHANGE slots slot int(11) unsigned NOT NULL default '0';
 
 CREATE INDEX machine ON hasBios(machine);

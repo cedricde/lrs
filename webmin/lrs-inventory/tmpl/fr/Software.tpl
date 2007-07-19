@@ -21,6 +21,7 @@
 				<th>Version {SORT_PRODUCTVERSION}</th>
 				<th>Taille {SORT_EXECUTABLESIZE}</th>
 				<th>Chemin {SORT_PRODUCTPATH}</th>
+				<th>Commentaire {SORT_COMMENTS}</th>
 				<th>Apparu le {SORT_FIRSTAPPARITION}</th>
 			</tr>
 			
@@ -33,6 +34,7 @@
 				<td class="{PRODUCTVERSION_CLASS}">{PRODUCTVERSION}</td>
 				<td class="{EXECUTABLESIZE_CLASS}">{EXECUTABLESIZE}</td>
 				<td class="{PRODUCTPATH_CLASS}">{PRODUCTPATH}/{APPLICATION}</td>
+				<td class="{COMMENTS_CLASS}">{COMMENTS}</td>
 				<td class="{FIRSTAPPARITION_CLASS}" nowrap="nowrap">{FIRSTAPPARITION}</td>
 			</tr>
 			

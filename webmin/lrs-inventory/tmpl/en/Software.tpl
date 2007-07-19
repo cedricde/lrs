@@ -21,6 +21,7 @@
 				<th>Vendor {SORT_PRODUCTVERSION}</th>
 				<th>Size {SORT_EXECUTABLESIZE}</th>
 				<th>Path {SORT_PRODUCTPATH}</th>
+				<th>Comment {SORT_COMMENTS}</th>
 				<th>Appearance {SORT_FIRSTAPPARITION}</th>
 			</tr>
 			
@@ -33,6 +34,7 @@
 				<td class="{PRODUCTVERSION_CLASS}">{PRODUCTVERSION}</td>
 				<td class="{EXECUTABLESIZE_CLASS}">{EXECUTABLESIZE}</td>
 				<td class="{PRODUCTPATH_CLASS}">{PRODUCTPATH}/{APPLICATION}</td>
+				<td class="{COMMENTS_CLASS}">{COMMENTS}</td>
 				<td class="{FIRSTAPPARITION_CLASS}">{FIRSTAPPARITION}</td>
 			</tr>
 			
