@@ -539,12 +539,12 @@ sub deep_copy {
 # return : nothing #FIXME
 sub print_machines_list($$$$) {
         my ($paramsref, $headcallbacksref, $bodycallbacksref, %in) = @_;
-
+	my %access = &get_module_acl();
         my $home=$TFTPBOOT;
     	my $text_wp = $text{'lab_wp'};
         my $baseuri=$paramsref->{'baseuri'};
-        $baseuri = $ENV{'SCRIPT_NAME'} unless $baseuri;
 
+        $baseuri = $ENV{'SCRIPT_NAME'} unless $baseuri;
         my $nowrap=$paramsref->{'nowrap'};
         if ($nowrap == 1) {
                 $nowrap = "NOWRAP" 
@@ -613,6 +613,19 @@ sub print_machines_list($$$$) {
 
 	%profiles = get_all_profiles(%ether);
 	#if ($LRS_HERE) { %profiles = get_all_profiles(%ether) };
+
+
+	# Show only allowed groups
+	if ( $access{'group_rx'} ne "") {
+                foreach my $key (keys %ether) {
+			if ($ether{$key}[1] =~ /:$access{'group_rx'}.*?\//i ) {
+				# OK keep it
+			} else {
+				# remove this host
+			        delete $ether{$key};
+			}
+                }
+	}
 
         # PROFILS parsing
         if ( (lc($in{'profile'}) eq "all") || ($in{'profile'} eq "") ) {
@@ -899,22 +912,24 @@ sub print_machines_list($$$$) {
         }
 
     	# last line: the whole profile
-        $template->assign('ROWSTYLE', "style='background-color: ".oddorevenline(\$lineisodd).";'");
-        $template->assign('CONTENT', "<i>$text_wp</i>");
-        $template->assign('FIRSTCELLARGS', "$nowrap $firstcellwidth");
-        $template->parse('mainlist.normalrow.firstcell');
-        foreach my $bodycallback (@$bodycallbacksref) {
-                foreach my $label (&$bodycallback({'name' => "ALLPROFILES", 'group' => "", 'profile' => $in{'profile'}, 'currentprofile' => $in{'profile'}, 'ether' => $ethero })) {
-                        if (defined($label) and $label) {
-                                my %localhash=%$label;                                                                        
-                                $template->assign('CONTENT', $localhash{'content'});
-                                $template->assign('ATTRIBS', $localhash{'attribs'});
-                                $template->parse('mainlist.normalrow.normalcell');
-                        }
-                }
+	if ( $access{'group_rx'} eq "") {
+    		$template->assign('ROWSTYLE', "style='background-color: ".oddorevenline(\$lineisodd).";'");
+    		$template->assign('CONTENT', "<i>$text_wp</i>");
+    		$template->assign('FIRSTCELLARGS', "$nowrap $firstcellwidth");
+    		$template->parse('mainlist.normalrow.firstcell');
+    		foreach my $bodycallback (@$bodycallbacksref) {
+            		foreach my $label (&$bodycallback({'name' => "ALLPROFILES", 'group' => "", 'profile' => $in{'profile'}, 'currentprofile' => $in{'profile'}, 'ether' => $ethero })) {
+                    		if (defined($label) and $label) {
+                            		my %localhash=%$label;                                                                        
+                            		$template->assign('CONTENT', $localhash{'content'});
+                            		$template->assign('ATTRIBS', $localhash{'attribs'});
+                            		$template->parse('mainlist.normalrow.normalcell');
+                    		}
+            		}
+    		}
+    		$template->parse('mainlist.normalrow');
         }
-        $template->parse('mainlist.normalrow');
-        
+	
         $template->parse('mainlist.endtable');
         $template->parse('mainlist');
         $template->out('mainlist');

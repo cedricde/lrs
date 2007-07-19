@@ -4,4 +4,4 @@ desc_fr=&nbsp;LRS : Centre de Contrôle&nbsp;
 category=other
 name=lbs_common
 depends=0.94
-version=1.4.13
+version=1.4.14
