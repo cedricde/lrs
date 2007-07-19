@@ -1,0 +1,13 @@
+Please replace TortoiseSVN-1.4.4.9706-win32-svn-1.4.4.msi with the original 
+installer you may found on: http://sourceforge.net/projects/tortoisecvs/
+
+Version: 1.4.4
+Installed-Size: 15.1 Mo
+Description: TortoiseCVS lets you work with files under CVS version control 
+directly from Windows Explorer. It's freely available under the GPL. 
+With TortoiseCVS you can directly check out modules, update, commit and see 
+differences by right clicking on files and folders within Explorer. You can see 
+the state of a file with overlays on top of the normal 
+
+
+Source: http://sourceforge.net/projects/tortoisecvs/
