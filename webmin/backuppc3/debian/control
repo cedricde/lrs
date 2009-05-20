@@ -8,7 +8,7 @@ Standards-Version: 3.6.1
 Package: webmin-backuppc3
 Section: utils
 Architecture: all
-Depends: lbs, webmin, php4, php4-cgi, backuppc (>= 3.0), webmin-lbs-common (>= 1.4.13)
+Depends: lbs, webmin, php5 | php4, php5-cgi | php4-cgi, backuppc (>= 3.0), webmin-lbs-common (>= 1.4.13)
 Description: Webmin backuppc module for the LRS
  This package contains the Webmin module for backuppc 3.0. 
  .
