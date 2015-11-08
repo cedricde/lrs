@@ -228,7 +228,7 @@ int getentry(char *file, char *pktmac)
 unsigned char *getmac(struct in_addr addr)
 {
     FILE *fi;
-    char *ptr;
+    char *ptr = NULL;
     char straddr[80];
     int l;
 
@@ -243,10 +243,11 @@ unsigned char *getmac(struct in_addr addr)
 	if (strstr(gBuff, straddr)) {
 	    ptr = (unsigned char *) strchr((char *) gBuff, ':') - 2;
 	    ptr[17] = 0;
-	    return ptr;
+	    break;
 	}
     }
-    return NULL;
+    fclose(fi);
+    return ptr;
 }
 
 /*
